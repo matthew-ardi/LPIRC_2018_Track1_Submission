@@ -1,0 +1,81 @@
+{% block content %}
+  <title>Profile</title>
+  <h2 class="sub-header">User Information</h2>
+    {% if messages %}
+      <ul class="messages">
+          {% for message in messages %}
+          <li{% if message.tags %}
+               {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %} style="color: red" class="{{ message.tags }}"
+               {% else %} style="color: green" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+             {% endif %}
+          {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% if request.user.first_name is None %}
+        <form method="post">
+            {% csrf_token %}
+               {% for field in nameForm %}
+               <p>
+                 {{ field.label_tag }}<br>
+                 {{ field }}
+                 {% for error in field.errors %}
+                   <p style="color: red">{{ error }}</p>
+                 {% endfor %}
+               </p>
+               {% endfor %}
+
+            <button class="btn" type="submit" name="saveName">Save My Name</button>
+
+        </form>
+    {% else %}
+        <h3>{{ request.user.get_full_name }}</h3>
+    {% endif %}
+
+
+
+    {% if github_login  %}
+        <p>Connected with <a href="https://github.com/{{ github_login.extra_data.login }}/" target="_blank">GitHub</a></p>
+            <div class="social-login-buttons" style="width:30%">
+            <a class="btn btn-block btn-social btn-github" href="/logout">
+            <span class="fa fa-github"></span>Log out Github
+            </a>
+        </div>
+    {% elif google_login %}
+        <p>Connected with Google</p>
+            <div class="social-login-buttons" style="width:30%">
+            <a class="btn btn-block btn-social btn-github" href="/logout">
+            <span class="fa fa-github"></span>Log out Google
+            </a>
+        </div>
+    {% else %}
+        <div class="panel-body">
+        <a href="/password_reset/">Change my password (Password reset)</a>
+    </div>
+    {% endif %}
+
+    <h3 class="sub-header">Email</h3>
+    <div class="panel-body">
+    {% if user.email %}
+        <p><b>Current email:</b> {{ user.email }}</p>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        {% for field in emailForm %}
+           <p>
+             {{ field.label_tag }}<br>
+             {{ field }}
+             {% for error in field.errors %}
+               <p style="color: red">{{ error }}</p>
+             {% endfor %}
+           </p>
+        {% endfor %}
+        {% if user.email %}
+            <button class="btn" type="submit" name="changeEmail">Change My Email</button>
+        {% else %}
+            <button class="btn" type="submit" name="changeEmail">Confirm My Email</button>
+        {% endif %}
+    </form>
+
+    <p><a href="/">LPIRC2018 Home</a></p>
+{% endblock %}

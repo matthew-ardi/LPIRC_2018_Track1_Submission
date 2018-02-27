@@ -1,0 +1,106 @@
+{% extends "app/base.html" %}
+
+{% block title %}LPIRC 2018{% endblock %}
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static "app/style.css" %}">
+{% endblock %}
+{% block content %}
+<body class="text-center">
+<div class="splash">
+    <img src="{% static "app/img/Rebooting_Computing_Logo.png" %}">
+    <div class="center">
+        <h1>Low Power Image Recognition Challenge</h1>
+        <h2>Track 3 Registration and Submissions</h2>
+    </div>
+</div>
+<div class="cover-container">
+    <div class="row">
+<div style="width: 50%; float:left">
+    <div class="d-md-flex flex-items-center gutter-md-spacious">
+        <div class="text-center">
+
+            <div class="text-center" >
+            {% if user.is_authenticated %}
+                <h1>Making a Submission</h1>
+                {% if user.registeruser.contract_signed == False %}
+                <p>Thank you for your registration. <br>
+                    You're seeing this message because we <b style="color:red">have not</b> received your terms of use signature<br>
+                    In order to make submissions, you need to<br>
+                    <b style="color:red">read and sign the <a href="/terms/">Terms of use</a> DocuSign contract.</b><br>
+                    Once we received your contract, you will be able to submit your work. This may take 1-2 work days.
+                </p>
+                {% else %}
+                    <p>*** submit ***
+                        <br>********* <b>put submission rules TBA</b> *********</p>
+                {% endif %}
+            {% else %}
+                <h1>Making a Submission</h1>
+                <p>Please register for your group to make submissions
+                    <br>********* <b>registration rules TBA</b> *********</p>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container" style="width: 50%; float:right">
+    {% if user.is_authenticated %}
+        {% if user.is_staff %}
+            <li id="adminSite"><a href="/admin/">Admin Site</a></li>
+        {% endif %}
+        <li id="someprofile"><a href="/profile/">{{request.user.username}}'s Profile </a></li>
+        <li><a href="/logout/">Logout</a></li>
+    {% else %}
+    <div>
+        <p>
+            <a class="oauth-btn btn btn-github " id="github_login"
+               href="{% url 'social:begin' 'github' %}">
+                <span class="fa fa-github"></span><btn class="btn-github">Sign in with Github</btn></a>
+            <a class="oauth-btn btn btn-google"
+               href="{% url 'social:begin' 'google-oauth2' %}">
+                <span class="fa fa-google"></span>Sign in with Google</a>
+        </p>
+
+        <h4>- or -</h4>
+        <h2 class="form-signin-heading">Log in</h2>
+        <form role="form" action="" method="post" class="form-signin">
+        {% csrf_token %}
+        {% for field in form %}
+        <p>
+            {{ field.label_tag }}<br>
+            {{ field }}
+        </p>
+        {% endfor %}
+    </div>
+    <div>
+        <button type="submit" class="btn">Sign in</button>
+        {% if form.non_field_errors %}
+        <ul class='form-errors'>
+            {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        </form>
+    </div>
+    <a href="/register/">Sign up</a>
+    <br>
+    <a href="/password_reset/">Forgot username or password?</a>
+
+    {% endif %}
+</div>
+    </div>
+</div>
+{% block footer %}
+<div class="container">
+    <hr class="divide-divider">
+    <footer>
+        <p class="pull-right hidden-xs"><a href="#">Back to top</a></p>
+        <p><a href="/terms/">Terms of Use</a>   ·   <a href="/ack/">Acknowledgements</a>   ·   <a href="/faqs/">FAQs</a></p>
+    </footer>
+</div>
+
+{% endblock %}
+
+</body>
+{% endblock %}

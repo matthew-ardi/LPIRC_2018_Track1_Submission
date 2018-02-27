@@ -1,0 +1,62 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block title %}LPIRC 2018{% endblock %}
+{% block content %}
+<title>Login</title>
+
+<body class="text-center">
+<div class="container" >
+    {% if messages %}
+      <ul class="messages">
+          {% for message in messages %}
+          <li{% if message.tags %}
+               {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %} style="color: red" class="{{ message.tags }}"
+               {% else %} style="color: green" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+             {% endif %}
+          {% endfor %}
+      </ul>
+    {% endif %}
+    <form  role="form" action="" method="post" class="form-signin">
+    <div>
+        <h2 class="form-signin-heading">Log in</h2>
+        {% csrf_token %}
+        {% for field in form %}
+        <p>
+            {{ field.label_tag }}<br>
+            {{ field }}
+        </p>
+        {% endfor %}
+    </div>
+    <div>
+        <button type="submit" class="btn">Sign in</button>
+        {% if form.non_field_errors %}
+        <ul class='form-errors'>
+            {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    </form>
+
+
+    <div>
+        <a href="/register/">Sign up</a>
+        <br>
+        <a href="/password_reset/">Forgot username or password?</a>
+    </div>
+
+
+    <h4>- or -</h4>
+    <p>
+        <a class="oauth-btn btn btn-github " id="github_login"
+           href="{% url 'social:begin' 'github' %}">
+            <span class="fa fa-github"></span><btn class="btn-github">Sign in with Github</btn></a>
+        <a class="oauth-btn btn btn-google"
+           href="{% url 'social:begin' 'google-oauth2' %}">
+            <span class="fa fa-google"></span>Sign in with Google</a>
+    </p>
+    <p><a href="/">LPIRC2018 Home</a></p>
+
+</body>
+{% endblock %}

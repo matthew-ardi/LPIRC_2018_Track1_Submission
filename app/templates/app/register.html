@@ -1,0 +1,35 @@
+{% block content %}
+<title>Register</title>
+<h2>Register</h2>
+<form method="post">
+    {% if messages %}
+      <ul class="messages">
+          {% for message in messages %}
+          <li{% if message.tags %}
+               {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %} style="color: red" class="{{ message.tags }}"
+               {% else %} style="color: green" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+             {% endif %}
+          {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% csrf_token %}
+    {% for field in form1 %} <!-- or for field in form2 -->
+      <p>
+      {{ field.label_tag }}<br>
+      {{ field }}
+      {% for error in field.errors %}
+        <p style="color: red">{{ error }}</p>
+     {% endfor %}
+      </p>
+    {% endfor %}
+
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+    <div class="g-recaptcha pull-left recaptcha-btn" data-sitekey={{sitekey}}></div>
+    <p><div class="pull-left terms col-sm-7 col-xs-12">By clicking on "Sign Up" below, you are agreeing to the <a href="/terms/">Terms of Service</a> and the <a href="/privacy/">Privacy Policy</a>.</div></p>
+    <button type="submit" name="registerbutton" class="btn  center-block">Sign up</button>
+
+    <p><a href="/login/">Sign in</a></p>
+    <p><a href="/">LPIRC2018 Home</a></p>
+</form>
+{% endblock %}

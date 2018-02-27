@@ -1,0 +1,13 @@
+{% block content %}
+<title>Account Successfully Activated</title>
+<h4>Account Successfully Activated</h4>
+<p>Congratulations! your account has been successfully activated!</p>
+<p>The website will automatically go back to home page in 5 seconds.</p>
+<p><a style="color: deepskyblue" href="/">Click here if there's no response</a></p>
+<script>
+    function redirect(){
+       window.location.href = "/";
+    }
+    setTimeout(redirect, 5000);
+</script>
+{% endblock %}
