@@ -94,6 +94,98 @@
     </div>
 </div>
 {% block footer %}
+
+<style type="text/css">.FAQ {
+  padding: 8em 0;
+  background-color: #F2F5FE;
+  padding-left: 2.5%; }
+  @media (max-width: 768px) {
+    .FAQ {
+      padding: 2em 0; } }
+  .FAQ__itemHeader {
+    margin-bottom: 1em; }
+  .FAQ .centered-faq-big {
+    text-align: left; }
+  .FAQ button {
+    width: 100%; }
+  .FAQ .BottomItem {
+    padding-left: 2.5%; }
+  .FAQ_list {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center; }
+    .FAQ_list_column {
+      -webkit-box-flex: 1;
+      -ms-flex: 1;
+      flex: 1;
+      max-width: 90%; }
+    @media (min-width: 768px) {
+      .FAQ_list_column {
+        -webkit-box-flex: 1;
+        -ms-flex: 1;
+        flex: 1;
+        max-width: 96%;
+        padding-right: 5%; } }
+  @media (min-width: 768px) {
+    .FAQ_list {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: horizontal;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+      flex-direction: row;
+      -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+      justify-content: space-between; }
+    .FAQ .centered-faq-big {
+      text-align: center; } }
+
+.FAQItem {
+  margin-bottom: 4em;
+  padding-left: 0px !important; }
+</style>
+<div class="FAQ">
+    <div class="container">
+        <h1>FAQs</h1>
+        <div class="spacer"></div>
+        <div class="FAQ_list">
+            <div class="FAQ_list_column">
+                <div class="FAQItem">
+                    <h3 class="FAQ__itemHeader">How many accounts can each team have?</h3>
+                    <p class="">Each team can only have one account for submission.</p>
+                </div>
+                <div class="FAQItem">
+                    <h3 class="FAQ__itemHeader">How long will my account be activated after registered and finished DocuSign?</h3>
+                    <p class="">We will activate your account as soon as possible after verified with DocuSign.</p>
+                </div>
+            </div>
+            <div class="FAQ_list_column">
+            <div class="FAQItem">
+                <h3 class="FAQ__itemHeader">How long do I need wait for resubmission?</h3>
+                <p class="">In order to reduce the workload of the server, participants can only submit once every 24 hours.</p>
+            </div>
+            <div class="FAQItem">
+                <h3 class="FAQ__itemHeader">When will I get the test score of my model?</h3>
+                <p class="">We will notify participants when the scores are available. </p>
+            </div>
+            </div>
+        </div>
+        <div class="FAQItem BottomItem">
+            <h3 class="FAQ__itemHeader centered-faq-big">Other questions?</h3>
+            <p class=" centered-faq-big">Please don't hesitate to reach out to us at <a href="who's email">who's email</a>!</p>
+        </div>
+    </div>
+</div>
+
+
 <div class="container">
     <hr class="divide-divider">
     <footer>
