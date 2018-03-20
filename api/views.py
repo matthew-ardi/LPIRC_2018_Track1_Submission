@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
@@ -13,21 +14,22 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def send_zip(request):
 
+    if 'HTTP_AUTHORIZATION' in request.META:
+        [user, password] = request.META['HTTP_AUTHORIZATION'].split(" ")
 
-    if request.method == 'GET':
-        if request.user.username == "THE_ONE_ALLOWED_USER":
+        if user == os.environ['ALLOWED_USER'] and password == os.environ['ALLOWED_USER_PASSWORD'] \
+        and request.method == 'GET':
+
             shutil.make_archive("files", 'zip', BASE_DIR + "/media/")
             file_path = BASE_DIR + "/files.zip"
             filename = "files.zip"
             # Grab ZIP file from in-memory, make response with correct MIME-type
             response = HttpResponse(open(file_path, 'rb').read(),\
-                                                             content_type='application/zip')
+                                                     content_type='application/zip')
             response['Content-Disposition'] = 'attachment; filename=filename'
             return response
 
-        # otherwise ask for authentification
-        response = HttpResponse("")
-        response.status_code = 401
-        response['WWW-Authenticate'] = 'Basic realm="restricted area"'
-        return response
-
+    response = HttpResponse("")
+    response.status_code = 401
+    response['WWW-Authenticate'] = 'Basic realm="restricted area"'
+    return response
