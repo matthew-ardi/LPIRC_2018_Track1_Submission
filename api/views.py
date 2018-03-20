@@ -17,7 +17,7 @@ def send_zip(request):
     # checking for basic http_auth
     if 'HTTP_AUTHORIZATION' in request.META:
         [user, password] = request.META['HTTP_AUTHORIZATION'].split(" ")
-        print(user, password)
+
         if user == os.environ['ALLOWED_USER'] and password == os.environ['ALLOWED_USER_PASSWORD'] \
         and request.method == 'GET':
 
