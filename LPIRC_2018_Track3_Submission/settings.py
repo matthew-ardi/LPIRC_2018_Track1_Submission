@@ -70,6 +70,8 @@ USE_X_FORWARDED_HOST=True
 
 INSTALLED_APPS = [
     'app',
+    'api',
+    'rest_framework',
     'social_django',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -181,3 +183,5 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'LPIRC_2018_Track3_Submission/static/app'),
 )
 
+MEDIA_URL = '/submissions/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "submissions/")
