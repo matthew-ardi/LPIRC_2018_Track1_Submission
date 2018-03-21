@@ -1,6 +1,10 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block title %}LPIRC 2018{% endblock %}
 {% block content %}
 <title>Register</title>
 <h2>Register</h2>
+<body class="text-center">
 <form method="post">
     {% if messages %}
       <ul class="messages">
@@ -23,13 +27,18 @@
      {% endfor %}
       </p>
     {% endfor %}
-
+    <div class="row">
     <script src='https://www.google.com/recaptcha/api.js'></script>
-    <div class="g-recaptcha pull-left recaptcha-btn" data-sitekey={{sitekey}}></div>
+    <div class="g-recaptcha recaptcha-btn" text-align="center" display="inline-block" data-sitekey={{sitekey}}></div>
+    </div>
+    <div class="row">
     <p><div class="pull-left terms col-sm-7 col-xs-12">By clicking on "Sign Up" below, you are agreeing to the <a href="/terms/">Terms of Service</a> and the <a href="/privacy/">Privacy Policy</a>.</div></p>
+    </div>
+    <div class="row">
     <button type="submit" name="registerbutton" class="btn  center-block">Sign up</button>
-
+    </div>
     <p><a href="/login/">Sign in</a></p>
     <p><a href="/">LPIRC2018 Home</a></p>
 </form>
+</body>
 {% endblock %}
