@@ -66,3 +66,34 @@ def list_files(request):
     response.status_code = 401
     response['WWW-Authenticate'] = 'Basic realm="restricted area"'
     return response
+
+
+
+# function to send a required submitted file
+# a sample GET request:
+# curl -H "Authorization: username password" http://lpirc.ecn.purdue.edu/submissions/get_file/filename --output submission.tfile
+def get_file(request, requested_file):
+
+    # checking for basic http_auth
+    if 'HTTP_AUTHORIZATION' in request.META:
+        [user, password] = request.META['HTTP_AUTHORIZATION'].split(" ")
+
+        if user == os.environ['ALLOWED_USER'] and password == os.environ['ALLOWED_USER_PASSWORD'] \
+        and request.method == 'GET':
+            try:
+                #grab requested file from in-memory, make response with correct MIME-type
+                returnFile = BASE_DIR+"/media/"+requested_file
+                response = HttpResponse(open(returnFile, 'rb').read(),\
+                                                     content_type='application/tfile')
+                response['Content-Disposition'] = 'attachment; filename=requested_file'
+            except Exception:
+                response = HttpResponse("The file does not exist")
+                response.status_code = 401
+                response['WWW-Authenticate'] = 'Basic realm="restricted area"'
+            return response
+
+    #default permission denied 401 response
+    response = HttpResponse("")
+    response.status_code = 401
+    response['WWW-Authenticate'] = 'Basic realm="restricted area"'
+    return response
