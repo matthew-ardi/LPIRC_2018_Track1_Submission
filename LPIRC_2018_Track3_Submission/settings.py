@@ -15,6 +15,9 @@ import os, sys, dj_database_url
 
 # Environment Variables Import
 try:
+    REFEREE = os.environ['REFEREE']
+    #ALLOWED_USER = os.environ['ALLOWED_USER']
+    #ALLOWED_USER_PASSWORD = os.environ['ALLOWED_USER_PASSWORD']
     # Does the site runs on production site or tested locally
     #IS_RPODUCTION_SITE = bool(os.environ['IS_PRODUCTION_SITE'] == "True")
     # SECURITY WARNING: keep the secret key used in production secret!
