@@ -26,10 +26,8 @@ try:
     #DATABASE_URL = os.environ["DATABASE_URL"]
 
     # Recaptcha Keys
-    if 'test' in sys.argv:
-        GOOGLE_RECAPTCHA_SECRET_KEY = os.environ['RECAPTCHA_TEST_PRIVATE_KEY']
-    else:
-        GOOGLE_RECAPTCHA_SECRET_KEY = os.environ['RECAPTCHA_PRIVATE_KEY']
+    GOOGLE_RECAPTCHA_SECRET_KEY = os.environ['RECAPTCHA_SECRET_KEY']
+    GOOGLE_RECAPTCHA_SITE_KEY = os.environ['RECAPTCHA_SITE_KEY']
 
     # Github Auth
     SOCIAL_AUTH_GITHUB_KEY = os.environ['GITHUB_KEY']
