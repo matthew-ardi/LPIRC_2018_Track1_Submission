@@ -97,3 +97,28 @@ def get_file(request, requested_file):
     response.status_code = 401
     response['WWW-Authenticate'] = 'Basic realm="restricted area"'
     return response
+
+
+
+# function to post scores by JSON format
+# a sample POST request:
+# curl -H "Authorization: username password" --score "$Score" {}"http://lpirc.ecn.purdue.edu/submissions/post --input JSON
+def post(request):
+
+    # checking for basic http_auth
+    if 'HTTP_AUTHORIZATION' in request.META:
+        [user, password] = request.META['HTTP_AUTHORIZATION'].split(" ")
+
+        if user == os.environ['ALLOWED_USER'] and password == os.environ['ALLOWED_USER_PASSWORD'] \
+        and request.method == 'POST':
+            score = request.score
+
+            response = HttpResponse("Posted Successfully")
+            response.status_code = 200
+            return response
+
+    #default permission denied 401 response
+    response = HttpResponse("")
+    response.status_code = 401
+    response['WWW-Authenticate'] = 'Basic realm="restricted area"'
+    return response
