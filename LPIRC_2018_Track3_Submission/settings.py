@@ -15,6 +15,9 @@ import os, sys, dj_database_url
 
 # Environment Variables Import
 try:
+    REFEREE = os.environ['REFEREE']
+    #ALLOWED_USER = os.environ['ALLOWED_USER']
+    #ALLOWED_USER_PASSWORD = os.environ['ALLOWED_USER_PASSWORD']
     # Does the site runs on production site or tested locally
     #IS_RPODUCTION_SITE = bool(os.environ['IS_PRODUCTION_SITE'] == "True")
     # SECURITY WARNING: keep the secret key used in production secret!
@@ -23,10 +26,8 @@ try:
     #DATABASE_URL = os.environ["DATABASE_URL"]
 
     # Recaptcha Keys
-    if 'test' in sys.argv:
-        GOOGLE_RECAPTCHA_SECRET_KEY = os.environ['RECAPTCHA_TEST_PRIVATE_KEY']
-    else:
-        GOOGLE_RECAPTCHA_SECRET_KEY = os.environ['RECAPTCHA_PRIVATE_KEY']
+    GOOGLE_RECAPTCHA_SECRET_KEY = os.environ['RECAPTCHA_SECRET_KEY']
+    GOOGLE_RECAPTCHA_SITE_KEY = os.environ['RECAPTCHA_SITE_KEY']
 
     # Github Auth
     SOCIAL_AUTH_GITHUB_KEY = os.environ['GITHUB_KEY']

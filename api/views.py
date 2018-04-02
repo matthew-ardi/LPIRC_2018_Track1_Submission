@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+#BASE_DIR = './'
 
 # function to send compressed directory of submitted files
 # a sample GET request:
@@ -117,8 +117,44 @@ def post(request):
             response.status_code = 200
             return response
 
+@login_required
+def listFiles(request):
+    # checking for username
+    user = request.user
+    if user.username == os.environ['REFEREE']:
+        submission_folder = BASE_DIR + "/media/"
+        files = [f for f in listdir(submission_folder) if isfile(join(submission_folder, f))]
+        response = HttpResponse(json.dumps(files), content_type ="application/json")
+        response.status_code = 200
+        return response
+
     #default permission denied 401 response
     response = HttpResponse("")
     response.status_code = 401
     response['WWW-Authenticate'] = 'Basic realm="restricted area"'
     return response
+
+@login_required
+def getFile(request, requested_file):
+
+    # checking for username
+    user = request.user
+    if user.username == os.environ['REFEREE']:
+        try:
+            #grab requested file from in-memory, make response with correct MIME-type
+            returnFile = BASE_DIR+"/media/"+requested_file
+            response = HttpResponse(open(returnFile, 'rb').read(),\
+                                                 content_type='application/tfile')
+            response['Content-Disposition'] = 'attachment; filename=requested_file'
+        except Exception:
+            response = HttpResponse("The file does not exist")
+            response.status_code = 401
+            response['WWW-Authenticate'] = 'Basic realm="restricted area"'
+        return response
+
+    #default permission denied 401 response
+    response = HttpResponse("")
+    response.status_code = 401
+    response['WWW-Authenticate'] = 'Basic realm="restricted area"'
+    return response
+
