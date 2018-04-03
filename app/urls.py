@@ -22,7 +22,7 @@ urlpatterns = [
     url(r'^$', auth_views.login, {'template_name': 'app/index.html'}, name='index'),
     url(r'^register/$', app_views.register, name='register'),
     #url(r'^login/$', auth_views.login, {'template_name': 'app/login.html'}, name='login'),
-    url(r'^redirect/$', app_views.redirect, name='redirect'),
+    url(r'^redirect_login/$', app_views.redirect_login, name='redirect_login'),
     url(r'^logout/$', auth_views.logout, {'next_page': '/'}),
 
     #reset password

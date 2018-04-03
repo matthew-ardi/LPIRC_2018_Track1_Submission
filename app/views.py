@@ -26,8 +26,8 @@ import re
 #def index(request):
 #    return render(request, 'app/index.html')
 
-def redirect(request):
-    return render(request, 'app/redirect.html')
+def redirect_login(request):
+    return render(request, 'app/redirect_login.html')
 
 #Social Login
 def oauthinfo(request):
@@ -173,9 +173,11 @@ def terms(request):
 
 def social_login_error(request):
     return render(request, 'app/social_login_error.html')
+
 def simple_upload(request):
-    if request.method == 'POST' and request.FILES['myfile']:
-        myfile = request.FILES['myfile']
+    try:
+        if request.method == 'POST' and request.FILES['myfile']:
+            myfile = request.FILES['myfile']
         if myfile.name[-6:] != ".tfile":
             return render(request, 'app/simple_upload.html', {
             'wrong_file': "Submission Failure: File format must be .tfile"
@@ -201,4 +203,5 @@ def simple_upload(request):
         return render(request, 'app/simple_upload.html', {
             'uploaded_file_url': myfile.name
         })
-    return render(request, 'app/simple_upload.html')
+    except:
+        return render(request, 'app/simple_upload.html')
