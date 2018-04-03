@@ -29,19 +29,19 @@
                 <p>Thank you for your registration. <br>
                     You're seeing this message because we <b style="color:red">have not</b> received your terms of use signature<br>
                     In order to make submissions, you need to<br>
-                    <b style="color:red">read and sign the <a href="https://na2.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=7f3e4ce4-0a5e-4707-b9b1-3b87ae892356">Terms of use</a> DocuSign contract.</b><br>
+                    <b style="color:red">read and sign the <a href="https://na2.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=7f3e4ce4-0a5e-4707-b9b1-3b87ae892356" target="_blank">Terms of use</a> DocuSign contract.</b><br>
                     Once we received your contract, you will be able to submit your work. This may take 1-2 work days.
-                    <br><a href="/rules/">Rules</a>
+                    <br><a href="/rules/" target="_blank">Track 1 Submission Guide</a>
                 </p>
 
                 {% else %}
                     <p><a href="/simple_upload/">.tfile File Submission</a>
-                    <br><a href="/rules/">Rules</a></p>
+                    <br><a href="/rules/" target="_blank">Track 1 Submission Guide</a></p>
                 {% endif %}
             {% else %}
                 <h1>Making a Submission</h1>
                 <p>Please register for your group to make submissions
-                <br><a href="/rules/">rules</a></p>
+                <br><a href="/rules/" target="_blank">Track 1 Submission Guide</a></p>
             {% endif %}
             </div>
         </div>
@@ -53,7 +53,6 @@
             <li id="adminSite"><a href="/admin/">Admin Site</a></li>
         {% endif %}
         <li id="someprofile"><a href="/profile/">{{request.user.username}}'s Profile </a></li>
-        <li><a href="/simple_upload/">.tfile File Submission</a></li>
         <li><a href="/logout/">Logout</a></li>
     {% else %}
     <div>
@@ -193,7 +192,7 @@
     <hr class="divide-divider">
     <footer>
         <p class="pull-right hidden-xs"><a href="#">Back to top</a></p>
-        <p><br><a href="/rules/">Rules</a>   ·   <a href="/terms/">Terms of Use</a>   ·   <a href="/ack/">Acknowledgements</a>   ·   <a href="/faqs/">FAQs</a></p>
+        <p><br><a href="/rules/" target="_blank">Track 1 Submission Guide</a>   ·   <a href="/terms/">Terms of Use</a>   ·   <a href="/ack/">Acknowledgements</a>   ·   <a href="/faqs/">FAQs</a></p>
     </footer>
 </div>
 
