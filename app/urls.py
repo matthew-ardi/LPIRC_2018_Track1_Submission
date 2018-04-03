@@ -24,6 +24,7 @@ urlpatterns = [
     #url(r'^login/$', auth_views.login, {'template_name': 'app/login.html'}, name='login'),
     url(r'^redirect_login/$', app_views.redirect_login, name='redirect_login'),
     url(r'^logout/$', auth_views.logout, {'next_page': '/'}),
+    url(r'^admin_email/$', app_views.admin_email, name='admin_email'),
 
     #reset password
     url(r'^password_reset/$', auth_views.password_reset, name='password_reset'),

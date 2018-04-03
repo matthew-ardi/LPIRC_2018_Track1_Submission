@@ -2,8 +2,10 @@ import os
 import json
 import urllib
 import sys
+from django.http import HttpResponse
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import login, update_session_auth_hash
 from django.contrib import messages
 from django.conf import settings
@@ -210,3 +212,19 @@ def simple_upload(request):
         })
     except:
         return render(request, 'app/simple_upload.html')
+
+
+@staff_member_required
+def admin_email(request):
+    # obtain user id list from session, or none
+    user_selected = request.session.get('user_id_selected', None)
+
+    # generate email list based on user ids
+    email_list =""
+    if user_selected is not None:
+        for i in user_selected:
+            obj = User.objects.get(id=i)
+            if obj.email != '':
+                email_list = email_list + ',' + str(obj.email)
+
+    return HttpResponse(email_list[1:])
