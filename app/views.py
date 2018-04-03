@@ -185,6 +185,7 @@ def simple_upload(request):
     try:
         if request.method == 'POST' and request.FILES['myfile']:
             myfile = request.FILES['myfile']
+            
         if myfile.name[-6:] != ".tfile":
             return render(request, 'app/simple_upload.html', {
             'wrong_file': "Submission Failure: File format must be .tfile"
@@ -210,6 +211,7 @@ def simple_upload(request):
         return render(request, 'app/simple_upload.html', {
             'uploaded_file_url': myfile.name
         })
+      
     except:
         return render(request, 'app/simple_upload.html')
 
