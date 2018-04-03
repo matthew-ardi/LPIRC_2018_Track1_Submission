@@ -1,0 +1,16 @@
+{% block content %}
+  <title>Submit</title>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="myfile">
+    <button type="submit">Upload</button>
+  </form>
+
+  {% if uploaded_file_url %}
+    <p>File uploaded: {{ uploaded_file_url }}</a></p>
+  {% endif %}
+  {% if wrong_file %}
+    <p>{{ wrong_file }}</a></p>
+  {% endif %}
+  <p><a href="/">LPIRC2018 Home</a></p>
+{% endblock %}
