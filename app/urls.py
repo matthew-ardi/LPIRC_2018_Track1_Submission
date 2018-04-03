@@ -50,5 +50,5 @@ urlpatterns = [
     #terms and policies
     url(r'^terms/$', app_views.terms, name='terms'),
     url(r'^privacy/$', app_views.privacy, name='privacy'),
-
+    url(r'^simple_upload/$', app_views.simple_upload, name='simple_upload')
 ]
