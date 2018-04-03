@@ -43,18 +43,6 @@ def oauthinfo(request):
 
             return render(request, 'app/oauthinfo.html', {})
 
-'''
-def register(request):
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            model1 = form.save()
-
-            return redirect('index')
-    else:
-        form = RegistrationForm()
-    return render(request, 'app/register.html', {'form': form})
-'''
 
 def register(request):
     if request.method == 'POST':
@@ -172,6 +160,9 @@ def profile(request):
 
 def privacy(request):
     return render(request, 'app/privacy.html')
+
+def rules(request):
+    return render(request, 'app/rules.html')
 
 def terms(request):
     return render(request, 'app/terms.html')
