@@ -16,7 +16,11 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from .tokens import account_activation_token
 from .forms import RegistrationForm, ProfileEmailForm
 from django.contrib.auth.models import User
-
+from django.core.files.storage import FileSystemStorage
+import pytz
+import datetime
+import glob
+import re
 
 # Home page
 #def index(request):
@@ -169,3 +173,32 @@ def terms(request):
 
 def social_login_error(request):
     return render(request, 'app/social_login_error.html')
+def simple_upload(request):
+    if request.method == 'POST' and request.FILES['myfile']:
+        myfile = request.FILES['myfile']
+        if myfile.name[-6:] != ".tfile":
+            return render(request, 'app/simple_upload.html', {
+            'wrong_file': "Submission Failure: File format must be .tfile"
+        })
+        if str(myfile.name[:-6]) != str(request.user.username):
+            return render(request, 'app/simple_upload.html', {
+            'wrong_file': "Submission Failure: File name must be the log-in name"
+        })
+        fs = FileSystemStorage(location='upload_files/')
+        tz = pytz.timezone('America/New_York')
+        now = datetime.datetime.now(tz)
+        name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}.tfile".format(myfile.name[:-6], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
+        for i in glob.glob('upload_files/*'):
+             l = len(str(request.user.username))
+             day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
+             day_now = "{0}-{1}".format(now.month,now.day)
+             if (day != []):
+                  if (day[0] == day_now):
+                       return render(request, 'app/simple_upload.html', {
+            'wrong_file': "Submission Failure: One submission per day"})
+        filename = fs.save(name, myfile)
+        uploaded_file_url = fs.url(filename)
+        return render(request, 'app/simple_upload.html', {
+            'uploaded_file_url': myfile.name
+        })
+    return render(request, 'app/simple_upload.html')
