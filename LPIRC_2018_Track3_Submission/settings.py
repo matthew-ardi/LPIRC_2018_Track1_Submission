@@ -157,7 +157,7 @@ AUTHENTICATION_BACKENDS = (
 )
 LOGIN_URL = 'index'
 LOGOUT_URL = 'logout'
-LOGIN_REDIRECT_URL = 'redirect'
+LOGIN_REDIRECT_URL = 'redirect_login'
 
 SOCIAL_AUTH_LOGIN_ERROR_URL = '/social_login_error/'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'index'

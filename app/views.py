@@ -174,7 +174,12 @@ def terms(request):
 def social_login_error(request):
     return render(request, 'app/social_login_error.html')
 
+@login_required
 def simple_upload(request):
+    user = request.user
+    if user.registeruser.contract_signed == False:
+        return redirect('index')
+
     try:
         if request.method == 'POST' and request.FILES['myfile']:
             myfile = request.FILES['myfile']
