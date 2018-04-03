@@ -8,3 +8,4 @@ urlpatterns = [
     url(r'^listFiles/$', api_views.listFiles),
     url(r'^getFile/(?P<requested_file>[\s\S]+)$', api_views.getFile),
 ]
+
