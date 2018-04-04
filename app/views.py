@@ -172,6 +172,8 @@ def rules(request):
 
 def terms(request):
     return render(request, 'app/terms.html')
+def terms2(request):
+    return render(request, 'app/terms2.html')
 
 def social_login_error(request):
     return render(request, 'app/social_login_error.html')
