@@ -202,10 +202,11 @@ def simple_upload(request):
         name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}.tfile".format(myfile.name[:-6], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
         for i in glob.glob('upload_files/*'):
              l = len(str(request.user.username))
-             day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
-             day_now = "{0}-{1}".format(now.month,now.day)
-             if (day != []):
-                  if (day[0] == day_now):
+             if i[13:(13+l)] == str(request.user.username)：
+                 day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
+                 day_now = "{0}-{1}".format(now.month,now.day)
+                 if (day != []):
+                    if (day[0] == day_now):
                        return render(request, 'app/simple_upload.html', {
             'wrong_file': "Submission Failure: One submission per day"})
         filename = fs.save(name, myfile)
