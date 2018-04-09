@@ -7,5 +7,7 @@ urlpatterns = [
     url(r'^get_file/(?P<requested_file>[\s\S]+)$', api_views.get_file),
     url(r'^listFiles/$', api_views.listFiles),
     url(r'^getFile/(?P<requested_file>[\s\S]+)$', api_views.getFile),
+    url(r'^postScore/$', api_views.postScore),
+    url(r'^getScore/(?P<requested_file>[\s\S]+)$', api_views.getScore),
 ]
 
