@@ -2,8 +2,10 @@ import os
 import json
 import urllib
 import sys
+from django.http import HttpResponse
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import login, update_session_auth_hash
 from django.contrib import messages
 from django.conf import settings
@@ -16,14 +18,18 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from .tokens import account_activation_token
 from .forms import RegistrationForm, ProfileEmailForm
 from django.contrib.auth.models import User
-
+from django.core.files.storage import FileSystemStorage
+import pytz
+import datetime
+import glob
+import re
 
 # Home page
 #def index(request):
 #    return render(request, 'app/index.html')
 
-def redirect(request):
-    return render(request, 'app/redirect.html')
+def redirect_login(request):
+    return render(request, 'app/redirect_login.html')
 
 #Social Login
 def oauthinfo(request):
@@ -43,18 +49,6 @@ def oauthinfo(request):
 
             return render(request, 'app/oauthinfo.html', {})
 
-'''
-def register(request):
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            model1 = form.save()
-
-            return redirect('index')
-    else:
-        form = RegistrationForm()
-    return render(request, 'app/register.html', {'form': form})
-'''
 
 def register(request):
     if request.method == 'POST':
@@ -173,8 +167,69 @@ def profile(request):
 def privacy(request):
     return render(request, 'app/privacy.html')
 
+def rules(request):
+    return render(request, 'app/rules.html')
+
 def terms(request):
     return render(request, 'app/terms.html')
+def terms2(request):
+    return render(request, 'app/terms2.html')
 
 def social_login_error(request):
     return render(request, 'app/social_login_error.html')
+
+@login_required
+def simple_upload(request):
+    user = request.user
+    if user.registeruser.contract_signed == False:
+        return redirect('index')
+
+    try:
+        if request.method == 'POST' and request.FILES['myfile']:
+            myfile = request.FILES['myfile']
+            
+        if myfile.name[-6:] != ".tfile":
+            return render(request, 'app/simple_upload.html', {
+            'wrong_file': "Submission Failure: File format must be .tfile"
+        })
+        if str(myfile.name[:-6]) != str(request.user.username):
+            return render(request, 'app/simple_upload.html', {
+            'wrong_file': "Submission Failure: File name must be the log-in name"
+        })
+        fs = FileSystemStorage(location='upload_files/')
+        tz = pytz.timezone('America/New_York')
+        now = datetime.datetime.now(tz)
+        name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}.tfile".format(myfile.name[:-6], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
+        for i in glob.glob('upload_files/*'):
+             l = len(str(request.user.username))
+             if i[13:(13+l)] == str(request.user.username)：
+                 day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
+                 day_now = "{0}-{1}".format(now.month,now.day)
+                 if (day != []):
+                    if (day[0] == day_now):
+                       return render(request, 'app/simple_upload.html', {
+            'wrong_file': "Submission Failure: One submission per day"})
+        filename = fs.save(name, myfile)
+        uploaded_file_url = fs.url(filename)
+        return render(request, 'app/simple_upload.html', {
+            'uploaded_file_url': myfile.name
+        })
+      
+    except:
+        return render(request, 'app/simple_upload.html')
+
+
+@staff_member_required
+def admin_email(request):
+    # obtain user id list from session, or none
+    user_selected = request.session.get('user_id_selected', None)
+
+    # generate email list based on user ids
+    email_list =""
+    if user_selected is not None:
+        for i in user_selected:
+            obj = User.objects.get(id=i)
+            if obj.email != '':
+                email_list = email_list + ',' + str(obj.email)
+
+    return HttpResponse(email_list[1:])
