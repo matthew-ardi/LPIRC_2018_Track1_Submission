@@ -135,7 +135,7 @@ def getScore(request, requested_file):
             score = Score.objects.get(filename=requested_file)
         except Exception as exc:
             return HttpResponse(exc)
-        response = HttpResponse(score)
+        response = HttpResponse(score.runtime)
         response.status_code = 200
         return response
     response = HttpResponse("Get Failed")

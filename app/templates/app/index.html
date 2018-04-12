@@ -21,7 +21,6 @@
 <div style="width: 50%; float:left">
     <div class="d-md-flex flex-items-center gutter-md-spacious">
         <div class="text-center">
-
             <div class="text-center" >
             {% if user.is_authenticated %}
                 <h1>Making a Submission</h1>
@@ -35,6 +34,7 @@
                 </p>
 
                 {% else %}
+                    <p><a href="/score_board/">score_board</a>
                     <p><a href="/simple_upload/">.tfile File Submission</a>
                     <br><a href="/rules/" target="_blank">Track 1 Submission Guide</a></p>
                 {% endif %}
