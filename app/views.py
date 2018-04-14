@@ -23,8 +23,11 @@ import pytz
 import datetime
 import glob
 import re
+
+from django.core.mail import send_mail
 from api.models import Score
 from app.models import Tfile1
+
 # Home page
 #def index(request):
 #    return render(request, 'app/index.html')
@@ -52,6 +55,7 @@ def oauthinfo(request):
 
 
 def register(request):
+
     if request.method == 'POST':
         form1 = RegistrationForm(request.POST)
 
@@ -63,10 +67,13 @@ def register(request):
                 'secret': settings.GOOGLE_RECAPTCHA_SECRET_KEY,
                 'response': recaptcha_response
             }
+
+
             data = urllib.parse.urlencode(values).encode()
             req =  urllib.request.Request(url, data=data)
             response = urllib.request.urlopen(req)
             result = json.loads(response.read().decode())
+	    
             if result['success']:
                 #model1 is the model for user
                 model1 = form1.save(commit=False) #Required information of user
@@ -181,6 +188,7 @@ def social_login_error(request):
 
 @login_required
 def simple_upload(request):
+
     user = request.user
     #if user.registeruser.contract_signed == False:
         #return redirect('index')
@@ -188,7 +196,6 @@ def simple_upload(request):
     try:
         if request.method == 'POST' and request.FILES['myfile']:
             myfile = request.FILES['myfile']
-            
         if myfile.name[-6:] != ".tfile":
             return render(request, 'app/simple_upload.html', {
             'wrong_file': "Submission Failure: File format must be .tfile"
@@ -212,6 +219,24 @@ def simple_upload(request):
             'wrong_file': "Submission Failure: One submission per day"})
         filename = fs.save(name, myfile)
         uploaded_file_url = fs.url(filename)
+
+        """
+	send_mail(
+           'LPIRC2018: Submission Succeed',
+           'Dear Participants, \n\nThank you for your submission. You may login and upload a file once a day. The deadline for submission is June 10th.\n\nThanks,\nLPIRC Group',
+           'bofpurdue@gmail.com',
+           [request.user.email],
+           fail_silently=False,
+        )
+        send_mail(
+           'LPIRC2018: Submission Succeed',
+           'A new submission is added, please check',
+           'bofpurdue@gmail.com',
+           ['fu200@purdue.edu'],
+           fail_silently=False,
+        )
+        """
+
         Tfile1.objects.create(user=user)
         user.tfile1.fn = myfile.name
         try:
@@ -221,10 +246,11 @@ def simple_upload(request):
             t = 0
         us = Tfile1(user=user, fn=name)
         us.save()
+
         return render(request, 'app/simple_upload.html', {
             'uploaded_file_url': myfile.name
         })
-      
+
     except:
         return render(request, 'app/simple_upload.html')
 
