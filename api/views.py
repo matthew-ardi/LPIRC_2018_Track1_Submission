@@ -2,10 +2,10 @@ import os
 import mimetypes
 import shutil
 import json
-
+from api.models import Score
 from os import listdir
 from os.path import isfile, join
-
+from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
@@ -102,20 +102,46 @@ def get_file(request, requested_file):
 
 # function to post scores by JSON format
 # a sample POST request:
-# curl -H "Authorization: username password" --score "$Score" {}"http://lpirc.ecn.purdue.edu/submissions/post --input JSON
-def post(request):
+# curl -X POST -H "Content-Type: application/json" -d '{"filename": "foo_bar_baz5.lite","runtime": 123,"metric2": 234,"metric3": 567}' http://127.0.0.1:8000/submissions/postScore/
 
-    # checking for basic http_auth
-    if 'HTTP_AUTHORIZATION' in request.META:
-        [user, password] = request.META['HTTP_AUTHORIZATION'].split(" ")
+@csrf_exempt
+def postScore(request):
+    
+    if request.method == 'POST':
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        content = body['filename']
+        try:
+            p = Score.objects.create(filename=body['filename'],runtime=body['runtime'],metric2=body['metric2'],metric3=body['metric3'])
+            p.save()
+        except Exception as exc:
+            return HttpResponse(exc)
+        response = HttpResponse('Post Successful')
+        response.status_code = 200
+        return response
+    response = HttpResponse("Post Failed")
+    response.status_code = 401
+    response['WWW-Authenticate'] = 'Basic realm="restricted area"'
+    return response
 
-        if user == os.environ['ALLOWED_USER'] and password == os.environ['ALLOWED_USER_PASSWORD'] \
-        and request.method == 'POST':
-            score = request.score
-
-            response = HttpResponse("Posted Successfully")
-            response.status_code = 200
-            return response
+# function to get scores by filename
+# a sample GET request:
+# curl http://127.0.0.1:8000/submissions/getScore/foo_bar_baz.lite
+@csrf_exempt
+def getScore(request, requested_file):
+    
+    if request.method == 'GET':
+        try:
+            score = Score.objects.get(filename=requested_file)
+        except Exception as exc:
+            return HttpResponse(exc)
+        response = HttpResponse(score.runtime)
+        response.status_code = 200
+        return response
+    response = HttpResponse("Get Failed")
+    response.status_code = 401
+    response['WWW-Authenticate'] = 'Basic realm="restricted area"'
+    return response
 
 @login_required
 def listFiles(request):

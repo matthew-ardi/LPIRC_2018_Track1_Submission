@@ -51,8 +51,12 @@ urlpatterns = [
     #upload
     url(r'^simple_upload/$', app_views.simple_upload, name='simple_upload'),
 
+    #score board
+    url(r'^score_board/$', app_views.score_board, name='score_board'),
+
     #terms and policies
     url(r'^terms/$', app_views.terms, name='terms'),
+    url(r'^terms2/$', app_views.terms2, name='terms2'),
     url(r'^privacy/$', app_views.privacy, name='privacy'),
     url(r'^rules/$', app_views.rules, name='rules'),
 ]

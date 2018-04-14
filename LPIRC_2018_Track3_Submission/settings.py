@@ -14,6 +14,8 @@ import os, sys, dj_database_url
 
 
 # Environment Variables Import
+PRODUCTION = True
+
 try:
     REFEREE = os.environ['REFEREE']
     #ALLOWED_USER = os.environ['ALLOWED_USER']
@@ -42,9 +44,9 @@ try:
     EMAIL_USE_TLS = True
     # Email backend
     # send email through smtp
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' if PRODUCTION\
+        else 'django.core.mail.backends.console.EmailBackend'
     # show email on console
-    #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 except KeyError as e:
     print('Lacking Environment Variables: ' + str(e))
     exit()
@@ -60,7 +62,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = False if PRODUCTION else True
 
 ALLOWED_HOSTS = ['*']
 

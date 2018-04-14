@@ -23,7 +23,10 @@ import pytz
 import datetime
 import glob
 import re
+
 from django.core.mail import send_mail
+from api.models import Score
+from app.models import Tfile1
 
 # Home page
 #def index(request):
@@ -177,6 +180,8 @@ def rules(request):
 
 def terms(request):
     return render(request, 'app/terms.html')
+def terms2(request):
+    return render(request, 'app/terms2.html')
 
 def social_login_error(request):
     return render(request, 'app/social_login_error.html')
@@ -185,8 +190,8 @@ def social_login_error(request):
 def simple_upload(request):
 
     user = request.user
-    if user.registeruser.contract_signed == False:
-        return redirect('index')
+    #if user.registeruser.contract_signed == False:
+        #return redirect('index')
 
     try:
         if request.method == 'POST' and request.FILES['myfile']:
@@ -205,14 +210,16 @@ def simple_upload(request):
         name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}.tfile".format(myfile.name[:-6], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
         for i in glob.glob('upload_files/*'):
              l = len(str(request.user.username))
-             day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
-             day_now = "{0}-{1}".format(now.month,now.day)
-             if (day != []):
-                  if (day[0] == day_now):
+             if i[13:(13+l)] == str(request.user.username):
+                 day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
+                 day_now = "{0}-{1}".format(now.month,now.day)
+                 if (day != []):
+                    if (day[0] == day_now):
                        return render(request, 'app/simple_upload.html', {
             'wrong_file': "Submission Failure: One submission per day"})
         filename = fs.save(name, myfile)
         uploaded_file_url = fs.url(filename)
+
         """
 	send_mail(
            'LPIRC2018: Submission Succeed',
@@ -229,6 +236,17 @@ def simple_upload(request):
            fail_silently=False,
         )
         """
+
+        Tfile1.objects.create(user=user)
+        user.tfile1.fn = myfile.name
+        try:
+            u = Tfile1.objects.get(user=user)
+            u.delete()
+        except:
+            t = 0
+        us = Tfile1(user=user, fn=name)
+        us.save()
+
         return render(request, 'app/simple_upload.html', {
             'uploaded_file_url': myfile.name
         })
@@ -251,3 +269,18 @@ def admin_email(request):
                 email_list = email_list + ',' + str(obj.email)
 
     return HttpResponse(email_list[1:])
+
+
+def score_board(request):
+    user = request.user
+    fileList=[]
+    scores = Score.objects.all()
+    for item in scores:
+        fileList.append(item.runtime)
+    fileList.sort()
+    try:
+        fn = user.tfile1.fn[:-6]+".lite"
+        fn = Score.objects.get(filename=fn).runtime
+    except:
+        fn = "Not Provided."
+    return render(request, 'app/score_board.html', {'board': "{}".format(fileList[0]), 'board1': "{}".format(fileList[1]),'board2': "{}".format(fileList[2]),'board3': "{}".format(fileList[3]),'board4': "{}".format(fileList[4]),'name': "{}".format(fn)})
