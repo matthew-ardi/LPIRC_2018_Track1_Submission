@@ -208,12 +208,14 @@ def simple_upload(request):
         })
 
         fs = FileSystemStorage(location='submissions_track1/')
+
         fs1= FileSystemStorage(location='upload/')
         tz = pytz.timezone('America/New_York')
         now = datetime.datetime.now(tz)
         name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(myfile.name[:-6], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
 	
         for i in glob.glob('upload/*'):
+
              l = len(str(request.user.username))
              nm = re.search(r'^(\w+)-2018-', i[7:])
              nm = nm.group()
@@ -226,7 +228,9 @@ def simple_upload(request):
                     if (day[0] == day_now):
                        return render(request, 'app/simple_upload.html', {
             'wrong_file': "Submission Failure: One submission per day"})
+
         filename = fs1.save(name, myfile)
+
         # to anonymise the username
         # used sha512 hash
         # new filename is a hash in hex format
@@ -300,9 +304,11 @@ def score_board(request):
         fn = user.tfile1.fn[:-6]+".lite"
         fn1 = Score.objects.get(filename=fn).runtime
     except:
+
         fn1 = "Not Provided."
     l = len(fileList)
     if l < 5:
         for i in range(0,5-l):
             fileList.append("None")
     return render(request, 'app/score_board.html', {'board': "{}".format(fileList[0]), 'board1': "{}".format(fileList[1]),'board2': "{}".format(fileList[2]),'board3': "{}".format(fileList[3]),'board4': "{}".format(fileList[4]),'name': "{}".format(fn1)})
+
