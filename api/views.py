@@ -2,6 +2,7 @@ import os
 import mimetypes
 import shutil
 import json
+
 from api.models import Score
 from os import listdir
 from os.path import isfile, join
@@ -27,7 +28,7 @@ def send_zip(request):
         and request.method == 'GET':
 
             #shutil is a native library
-            #compress the upload_files files directory and save this compressed file as files.zip in the root directory
+            #compress the submissions_track1 files directory and save this compressed file as files.zip in the root directory
             shutil.make_archive("files", 'zip', BASE_DIR + "/media/")
 
             #grab ZIP file from in-memory, make response with correct MIME-type

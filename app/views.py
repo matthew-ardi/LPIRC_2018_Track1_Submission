@@ -204,11 +204,11 @@ def simple_upload(request):
             return render(request, 'app/simple_upload.html', {
             'wrong_file': "Submission Failure: File name must be the log-in name"
         })
-        fs = FileSystemStorage(location='upload_files/')
+        fs = FileSystemStorage(location='submissions_track1/')
         tz = pytz.timezone('America/New_York')
         now = datetime.datetime.now(tz)
         name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}.tfile".format(myfile.name[:-6], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
-        for i in glob.glob('upload_files/*'):
+        for i in glob.glob('submissions_track1/*'):
              l = len(str(request.user.username))
              if i[13:(13+l)] == str(request.user.username):
                  day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
