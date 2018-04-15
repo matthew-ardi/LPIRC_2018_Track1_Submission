@@ -70,9 +70,7 @@
         {% if user.is_staff %}
 </div>
 	<div align="center">
-            <li id="adminSite"><a href="/admin/">Admin Site</a></li>
-	    <li id="someprofile"><a href="/profile/">{{request.user.username}}'s Profile </a></li>
-	    <li><a href="/logout/">Logout</a></li>
+           <h4> <li id="adminSite"><a style="color:red" href="/admin/">Admin Site</a></li> </h4>
 	</div>
         {% endif %}
 

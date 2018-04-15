@@ -9,5 +9,6 @@ urlpatterns = [
     url(r'^getFile/(?P<requested_file>[\s\S]+)$', api_views.getFile),
     url(r'^postScore/$', api_views.postScore),
     url(r'^getScore/(?P<requested_file>[\s\S]+)$', api_views.getScore),
+
 ]
 
