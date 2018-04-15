@@ -1,6 +1,7 @@
 import os
 import json
 import urllib
+import json
 import sys
 from django.http import HttpResponse
 from django.contrib.sites.shortcuts import get_current_site
@@ -27,6 +28,7 @@ import re
 from django.core.mail import send_mail
 from api.models import Score
 from app.models import Tfile1
+from hashlib import sha224 as hashfunction
 
 # Home page
 #def index(request):
@@ -204,10 +206,12 @@ def simple_upload(request):
             return render(request, 'app/simple_upload.html', {
             'wrong_file': "Submission Failure: File name must be the log-in name"
         })
+
         fs = FileSystemStorage(location='submissions_track1/')
         tz = pytz.timezone('America/New_York')
         now = datetime.datetime.now(tz)
-        name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}.tfile".format(myfile.name[:-6], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
+        name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(myfile.name[:-6], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
+
         for i in glob.glob('submissions_track1/*'):
              l = len(str(request.user.username))
              if i[13:(13+l)] == str(request.user.username):
@@ -217,7 +221,17 @@ def simple_upload(request):
                     if (day[0] == day_now):
                        return render(request, 'app/simple_upload.html', {
             'wrong_file': "Submission Failure: One submission per day"})
-        filename = fs.save(name, myfile)
+
+        # to anonymise the username
+        # used sha512 hash
+        # new filename is a hash in hex format
+        # map of hash to filename is appended to file hash_to_originalfilename.json in the root directory
+        hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
+        with open('hash_to_originalfilename.json', "a+") as writeJSON:
+            json.dump({hash_of_filename: name}, writeJSON, indent=2)
+        hash_of_filename = hash_of_filename + ".tfile"
+
+        filename = fs.save(hash_of_filename, myfile)
         uploaded_file_url = fs.url(filename)
 
         """
@@ -250,7 +264,6 @@ def simple_upload(request):
         return render(request, 'app/simple_upload.html', {
             'uploaded_file_url': myfile.name
         })
-
     except:
         return render(request, 'app/simple_upload.html')
 
