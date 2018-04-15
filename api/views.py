@@ -103,7 +103,7 @@ def get_file(request, requested_file):
 
 # function to post scores by JSON format
 # a sample POST request:
-# curl -X POST -H "Content-Type: application/json" -d '{"filename": "foo_bar_baz5.lite","runtime": 123,"metric2": 234,"metric3": 567}' http://127.0.0.1:8000/submissions/postScore/
+# curl -X POST -H "Content-Type: application/json" -d '{"filename": "<hash of foo_bar_baz5>.lite","runtime": 123,"metric2": 234,"metric3": 567}' http://127.0.0.1:8000/submissions/postScore/
 
 @csrf_exempt
 def postScore(request):
@@ -112,6 +112,11 @@ def postScore(request):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
         content = body['filename']
+        content = ''.join(content.split())[:-5]
+        with open('hash_to_originalfilename.json') as json_data:
+            d = json.load(json_data)
+
+        content = d[content]
         try:
             p = Score.objects.create(filename=body['filename'],runtime=body['runtime'],metric2=body['metric2'],metric3=body['metric3'])
             p.save()
@@ -128,6 +133,7 @@ def postScore(request):
 # function to get scores by filename
 # a sample GET request:
 # curl http://127.0.0.1:8000/submissions/getScore/foo_bar_baz.lite
+
 @csrf_exempt
 def getScore(request, requested_file):
     
