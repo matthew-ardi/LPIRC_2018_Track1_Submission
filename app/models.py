@@ -14,3 +14,7 @@ def update_user_registeruser(sender, instance, created, **kwargs):
     if created:
         RegisterUser.objects.create(user=instance)
     instance.registeruser.save()
+
+class Tfile1(models.Model):
+	user = models.OneToOneField(User)
+	fn = models.CharField(max_length=100)

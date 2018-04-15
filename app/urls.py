@@ -22,8 +22,9 @@ urlpatterns = [
     url(r'^$', auth_views.login, {'template_name': 'app/index.html'}, name='index'),
     url(r'^register/$', app_views.register, name='register'),
     #url(r'^login/$', auth_views.login, {'template_name': 'app/login.html'}, name='login'),
-    url(r'^redirect/$', app_views.redirect, name='redirect'),
+    url(r'^redirect_login/$', app_views.redirect_login, name='redirect_login'),
     url(r'^logout/$', auth_views.logout, {'next_page': '/'}),
+    url(r'^admin_email/$', app_views.admin_email, name='admin_email'),
 
     #reset password
     url(r'^password_reset/$', auth_views.password_reset, name='password_reset'),
@@ -47,10 +48,15 @@ urlpatterns = [
     #profile
     url(r'^profile/$', app_views.profile, name='profile'),
 
+    #upload
+    url(r'^simple_upload/$', app_views.simple_upload, name='simple_upload'),
+
+    #score board
+    url(r'^score_board/$', app_views.score_board, name='score_board'),
+
     #terms and policies
     url(r'^terms/$', app_views.terms, name='terms'),
+    url(r'^terms2/$', app_views.terms2, name='terms2'),
     url(r'^privacy/$', app_views.privacy, name='privacy'),
-
-     url(r'^simple_upload/$', app_views.simple_upload, name='simple_upload'),
-
+    url(r'^rules/$', app_views.rules, name='rules'),
 ]

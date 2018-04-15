@@ -1,4 +1,6 @@
 {% block content %}
+<center style="border: 1px solid DodgerBlue">
+  <p></p>
   <title>Submit</title>
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
@@ -7,10 +9,11 @@
   </form>
 
   {% if uploaded_file_url %}
-    <p>File uploaded: {{ uploaded_file_url }}</a></p>
+    <p>File uploaded: {{ uploaded_file_url }}</p>
   {% endif %}
   {% if wrong_file %}
-    <p>{{ wrong_file }}</a></p>
+    <p>{{ wrong_file }}</p>
   {% endif %}
   <p><a href="/">LPIRC2018 Home</a></p>
+</center>
 {% endblock %}

@@ -1,9 +1,12 @@
 import os
 import json
 import urllib
+import json
 import sys
+from django.http import HttpResponse
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import login, update_session_auth_hash
 from django.contrib import messages
 from django.conf import settings
@@ -22,12 +25,17 @@ import datetime
 import glob
 import re
 
+from django.core.mail import send_mail
+from api.models import Score
+from app.models import Tfile1
+from hashlib import sha224 as hashfunction
+
 # Home page
 #def index(request):
 #    return render(request, 'app/index.html')
 
-def redirect(request):
-    return render(request, 'app/redirect.html')
+def redirect_login(request):
+    return render(request, 'app/redirect_login.html')
 
 #Social Login
 def oauthinfo(request):
@@ -47,20 +55,9 @@ def oauthinfo(request):
 
             return render(request, 'app/oauthinfo.html', {})
 
-'''
-def register(request):
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            model1 = form.save()
-
-            return redirect('index')
-    else:
-        form = RegistrationForm()
-    return render(request, 'app/register.html', {'form': form})
-'''
 
 def register(request):
+
     if request.method == 'POST':
         form1 = RegistrationForm(request.POST)
 
@@ -72,10 +69,13 @@ def register(request):
                 'secret': settings.GOOGLE_RECAPTCHA_SECRET_KEY,
                 'response': recaptcha_response
             }
+
+
             data = urllib.parse.urlencode(values).encode()
             req =  urllib.request.Request(url, data=data)
             response = urllib.request.urlopen(req)
             result = json.loads(response.read().decode())
+	    
             if result['success']:
                 #model1 is the model for user
                 model1 = form1.save(commit=False) #Required information of user
@@ -96,21 +96,12 @@ def register(request):
                 return redirect('email_confirmation_sent')
             else:
                 messages.error(request, 'Invalid reCAPTCHA. Please confirm you are not a robot and try again.')
-                if 'test' in sys.argv:
-                    sitekey = os.environ['RECAPTCHA_TEST_SITE_KEY']
-                else:
-                    sitekey = os.environ['RECAPTCHA_SITE_KEY']
+                sitekey = settings.GOOGLE_RECAPTCHA_SITE_KEY
         else:
-            if 'test' in sys.argv:
-                sitekey = os.environ['RECAPTCHA_TEST_SITE_KEY']
-            else:
-                sitekey = os.environ['RECAPTCHA_SITE_KEY']
+            sitekey = settings.GOOGLE_RECAPTCHA_SITE_KEY
     else:
         form1 = RegistrationForm()
-        if 'test' in sys.argv:
-            sitekey = os.environ['RECAPTCHA_TEST_SITE_KEY']
-        else:
-            sitekey = os.environ['RECAPTCHA_SITE_KEY']
+        sitekey = settings.GOOGLE_RECAPTCHA_SITE_KEY
 
     return render(request, 'app/register.html', {'form1': form1, 'sitekey': sitekey})
 
@@ -186,15 +177,27 @@ def profile(request):
 def privacy(request):
     return render(request, 'app/privacy.html')
 
+def rules(request):
+    return render(request, 'app/rules.html')
+
 def terms(request):
     return render(request, 'app/terms.html')
+def terms2(request):
+    return render(request, 'app/terms2.html')
 
 def social_login_error(request):
     return render(request, 'app/social_login_error.html')
 
+@login_required
 def simple_upload(request):
-    if request.method == 'POST' and request.FILES['myfile']:
-        myfile = request.FILES['myfile']
+
+    user = request.user
+    #if user.registeruser.contract_signed == False:
+        #return redirect('index')
+
+    try:
+        if request.method == 'POST' and request.FILES['myfile']:
+            myfile = request.FILES['myfile']
         if myfile.name[-6:] != ".tfile":
             return render(request, 'app/simple_upload.html', {
             'wrong_file': "Submission Failure: File format must be .tfile"
@@ -203,21 +206,94 @@ def simple_upload(request):
             return render(request, 'app/simple_upload.html', {
             'wrong_file': "Submission Failure: File name must be the log-in name"
         })
-        fs = FileSystemStorage(location='upload_files/')
+
+        fs = FileSystemStorage(location='submissions_track1/')
         tz = pytz.timezone('America/New_York')
         now = datetime.datetime.now(tz)
-        name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}.tfile".format(myfile.name[:-6], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
-        for i in glob.glob('upload_files/*'):
+        name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(myfile.name[:-6], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
+
+        for i in glob.glob('submissions_track1/*'):
              l = len(str(request.user.username))
-             day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
-             day_now = "{0}-{1}".format(now.month,now.day)
-             if (day != []):
-                  if (day[0] == day_now):
+             if i[13:(13+l)] == str(request.user.username):
+                 day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
+                 day_now = "{0}-{1}".format(now.month,now.day)
+                 if (day != []):
+                    if (day[0] == day_now):
                        return render(request, 'app/simple_upload.html', {
             'wrong_file': "Submission Failure: One submission per day"})
-        filename = fs.save(name, myfile)
+
+        # to anonymise the username
+        # used sha512 hash
+        # new filename is a hash in hex format
+        # map of hash to filename is appended to file hash_to_originalfilename.json in the root directory
+        hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
+        with open('hash_to_originalfilename.json', "a+") as writeJSON:
+            json.dump({hash_of_filename: name}, writeJSON, indent=2)
+        hash_of_filename = hash_of_filename + ".tfile"
+
+        filename = fs.save(hash_of_filename, myfile)
         uploaded_file_url = fs.url(filename)
+
+        """
+	send_mail(
+           'LPIRC2018: Submission Succeed',
+           'Dear Participants, \n\nThank you for your submission. You may login and upload a file once a day. The deadline for submission is June 10th.\n\nThanks,\nLPIRC Group',
+           'bofpurdue@gmail.com',
+           [request.user.email],
+           fail_silently=False,
+        )
+        send_mail(
+           'LPIRC2018: Submission Succeed',
+           'A new submission is added, please check',
+           'bofpurdue@gmail.com',
+           ['fu200@purdue.edu'],
+           fail_silently=False,
+        )
+        """
+
+        Tfile1.objects.create(user=user)
+        user.tfile1.fn = myfile.name
+        try:
+            u = Tfile1.objects.get(user=user)
+            u.delete()
+        except:
+            t = 0
+        us = Tfile1(user=user, fn=name)
+        us.save()
+
         return render(request, 'app/simple_upload.html', {
             'uploaded_file_url': myfile.name
         })
-    return render(request, 'app/simple_upload.html')
+    except:
+        return render(request, 'app/simple_upload.html')
+
+
+@staff_member_required
+def admin_email(request):
+    # obtain user id list from session, or none
+    user_selected = request.session.get('user_id_selected', None)
+
+    # generate email list based on user ids
+    email_list =""
+    if user_selected is not None:
+        for i in user_selected:
+            obj = User.objects.get(id=i)
+            if obj.email != '':
+                email_list = email_list + ',' + str(obj.email)
+
+    return HttpResponse(email_list[1:])
+
+
+def score_board(request):
+    user = request.user
+    fileList=[]
+    scores = Score.objects.all()
+    for item in scores:
+        fileList.append(item.runtime)
+    fileList.sort()
+    try:
+        fn = user.tfile1.fn[:-6]+".lite"
+        fn = Score.objects.get(filename=fn).runtime
+    except:
+        fn = "Not Provided."
+    return render(request, 'app/score_board.html', {'board': "{}".format(fileList[0]), 'board1': "{}".format(fileList[1]),'board2': "{}".format(fileList[2]),'board3': "{}".format(fileList[3]),'board4': "{}".format(fileList[4]),'name': "{}".format(fn)})

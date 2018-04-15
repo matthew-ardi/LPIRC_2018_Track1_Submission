@@ -14,19 +14,21 @@ import os, sys, dj_database_url
 
 
 # Environment Variables Import
+PRODUCTION = True
+
 try:
+    REFEREE = os.environ['REFEREE']
+    #ALLOWED_USER = os.environ['ALLOWED_USER']
+    #ALLOWED_USER_PASSWORD = os.environ['ALLOWED_USER_PASSWORD']
     # Does the site runs on production site or tested locally
-    #IS_RPODUCTION_SITE = bool(os.environ['IS_PRODUCTION_SITE'] == "True")
     # SECURITY WARNING: keep the secret key used in production secret!
     SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
     # Database URLS
     #DATABASE_URL = os.environ["DATABASE_URL"]
 
     # Recaptcha Keys
-    if 'test' in sys.argv:
-        GOOGLE_RECAPTCHA_SECRET_KEY = os.environ['RECAPTCHA_TEST_PRIVATE_KEY']
-    else:
-        GOOGLE_RECAPTCHA_SECRET_KEY = os.environ['RECAPTCHA_PRIVATE_KEY']
+    GOOGLE_RECAPTCHA_SECRET_KEY = os.environ['RECAPTCHA_SECRET_KEY']
+    GOOGLE_RECAPTCHA_SITE_KEY = os.environ['RECAPTCHA_SITE_KEY']
 
     # Github Auth
     SOCIAL_AUTH_GITHUB_KEY = os.environ['GITHUB_KEY']
@@ -35,15 +37,16 @@ try:
     SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ['GOOGLE_LOGIN_KEY']
     SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ['GOOGLE_LOGIN_SECRET']
     # Email Smtp Settings
-    #EMAIL_HOST = os.environ['EMAIL_HOST']
-    #EMAIL_PORT = os.environ['EMAIL_PORT']
-    #EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
-    #EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
+    EMAIL_HOST = os.environ['EMAIL_HOST']
+    EMAIL_PORT = os.environ['EMAIL_PORT']
+    EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+    EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
+    EMAIL_USE_TLS = True
     # Email backend
     # send email through smtp
-    #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' if PRODUCTION\
+        else 'django.core.mail.backends.console.EmailBackend'
     # show email on console
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 except KeyError as e:
     print('Lacking Environment Variables: ' + str(e))
     exit()
@@ -59,7 +62,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = False if PRODUCTION else True
 
 ALLOWED_HOSTS = ['*']
 
@@ -156,7 +159,7 @@ AUTHENTICATION_BACKENDS = (
 )
 LOGIN_URL = 'index'
 LOGOUT_URL = 'logout'
-LOGIN_REDIRECT_URL = 'redirect'
+LOGIN_REDIRECT_URL = 'redirect_login'
 
 SOCIAL_AUTH_LOGIN_ERROR_URL = '/social_login_error/'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'index'
@@ -180,7 +183,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'LPIRC_2018_Track3_Submission/static/app'),
+    os.path.join(BASE_DIR, 'app/static/app'),
 )
 
 MEDIA_URL = '/submissions/'

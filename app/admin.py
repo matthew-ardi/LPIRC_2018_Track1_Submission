@@ -24,9 +24,9 @@ def email_users(self, request, queryset):
     for l in list:
         user_id_selected.append(l['id'])
 
-    # open a session and render the email_selected to admin_send_email view
+    # open a session and render the email_selected to admin_email view
     request.session['user_id_selected'] = user_id_selected
-    return redirect('admin_send_email')
+    return redirect('admin_email')
 email_users.short_description = "Email Users"
 
 
