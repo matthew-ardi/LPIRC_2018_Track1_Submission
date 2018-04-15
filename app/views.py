@@ -251,8 +251,8 @@ def simple_upload(request):
         )
         """
 
-        Tfile1.objects.create(user=user)
-        user.tfile1.fn = myfile.name
+        #Tfile1.objects.create(user=user)
+        #user.tfile1.fn = myfile.name
         try:
             u = Tfile1.objects.get(user=user)
             u.delete()
