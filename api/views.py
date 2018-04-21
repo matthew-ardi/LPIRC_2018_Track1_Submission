@@ -107,28 +107,27 @@ def get_file(request, requested_file):
 @login_required
 @csrf_exempt
 def postScore(request):
-    
-    if request.method == 'POST':
-        body_unicode = request.body.decode('utf-8')
-        body = json.loads(body_unicode)
-        content = body['filename']
-        content = ''.join(content.split())[:-5]
-        with open('hash_to_originalfilename.json') as json_data:
-            d = json.load(json_data)
 
-        content = d[content]
-        try:
-            p = Score.objects.create(filename=body['filename'],runtime=body['runtime'],metric2=body['metric2'],metric3=body['metric3'])
-            p.save()
-        except Exception as exc:
-            return HttpResponse(exc)
-        response = HttpResponse('Post Successful')
-        response.status_code = 200
-        return response
-    # response = HttpResponse("Post Failed")
-    # response.status_code = 401
-    # response['WWW-Authenticate'] = 'Basic realm="restricted area"'
-    # return response
+    if request.method == 'POST':
+        user = request.user
+        if user.username == os.environ['REFEREE']:
+            body_unicode = request.body.decode('utf-8')
+            body = json.loads(body_unicode)
+            content = body['filename']
+            content = ''.join(content.split())[:-5]
+            with open('hash_to_originalfilename.json') as json_data:
+                d = json.load(json_data)
+
+            content = d[content]
+            try:
+                p = Score.objects.create(filename=body['filename'],runtime=body['runtime'],metric2=body['metric2'],metric3=body['metric3'])
+                p.save()
+            except Exception as exc:
+                return HttpResponse(exc)
+            response = HttpResponse('Post Successful')
+            response.status_code = 200
+            return response
+
     return render(request, 'api/action_fail.html')
 
 # function to get scores by filename
@@ -146,10 +145,7 @@ def getScore(request, requested_file):
         response = HttpResponse(score.runtime)
         response.status_code = 200
         return response
-    # response = HttpResponse("Get Failed")
-    # response.status_code = 401
-    # response['WWW-Authenticate'] = 'Basic realm="restricted area"'
-    # return response
+
     return render(request, 'api/action_fail.html')
 
 @login_required
@@ -163,11 +159,6 @@ def listFiles(request):
         response.status_code = 200
         return response
 
-    #default permission denied 401 response
-    # response = HttpResponse("")
-    # response.status_code = 401
-    # response['WWW-Authenticate'] = 'Basic realm="restricted area"'
-    # return response
     return render(request, 'api/action_fail.html')
 
 @login_required
@@ -188,10 +179,5 @@ def getFile(request, requested_file):
             response['WWW-Authenticate'] = 'Basic realm="restricted area"'
         return response
 
-    #default permission denied 401 response
-    # response = HttpResponse("")
-    # response.status_code = 401
-    # response['WWW-Authenticate'] = 'Basic realm="restricted area"'
-    # return response
     return render(request, 'api/action_fail.html')
 
