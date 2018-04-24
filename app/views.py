@@ -1,7 +1,6 @@
 import os
 import json
 import urllib
-import json
 import sys
 from django.http import HttpResponse
 from django.contrib.sites.shortcuts import get_current_site
@@ -236,13 +235,47 @@ def simple_upload(request):
         # used sha512 hash
         # new filename is a hash in hex format
         # map of hash to filename is appended to file hash_to_originalfilename.json in the root directory
+        
+        # d = {}
+        # try:
+        #     with open('hash_to_originalfilename.json', "rb") as json_data:
+        #        d = json.load(json_data)
+        # except:
+        #     print(d)
+        # print(d)
+        # hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
+        # hash_of_filename = hash_of_filename + ".tfile"
+        # d[hash_of_filename] = name       
+        # #with open('hash_to_originalfilename.json', "w") as writeJSON:
+        # json.dump(d, open('hash_to_originalfilename.json',"wb"))
+
+        
         hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
-        with open('hash_to_originalfilename.json', "a+") as writeJSON:
-            json.dump({hash_of_filename: name}, writeJSON, indent=2)
         hash_of_filename = hash_of_filename + ".tfile"
+        nameStore = name + ".tfile"
+
+        try:
+            with open('hash_to_originalfilename.json', "r") as jsonFile:
+                jsonFile.close()
+
+        except Exception as exc:
+
+            with open('hash_to_originalfilename.json', "w") as jsonFile:
+                json.dump({}, jsonFile, indent=2)
+                jsonFile.close()
+
+        with open('hash_to_originalfilename.json', "r+") as jsonFile:
+            data = json.load(jsonFile)
+            data[hash_of_filename] = nameStore   
+            jsonFile.seek(0)
+            json.dump(data, jsonFile, indent=2)
+            jsonFile.truncate()
 
         filename = fs.save(hash_of_filename, myfile)
         uploaded_file_url = fs.url(filename)
+
+
+
 
         """
 	send_mail(
@@ -313,10 +346,33 @@ def simple_upload(request):
         # used sha512 hash
         # new filename is a hash in hex format
         # map of hash to filename is appended to file hash_to_originalfilename.json in the root directory
+            # hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
+            # with open('hash_to_originalfilename.json', "a+") as writeJSON:
+            #     json.dump({hash_of_filename: name}, writeJSON, indent=2)
+            # hash_of_filename = hash_of_filename + ".tfile"
+
+
             hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
-            with open('hash_to_originalfilename.json', "a+") as writeJSON:
-                json.dump({hash_of_filename: name}, writeJSON, indent=2)
             hash_of_filename = hash_of_filename + ".tfile"
+            nameStore = name + ".tfile"
+
+            try:
+                with open('hash_to_originalfilename.json', "r") as jsonFile:
+                    jsonFile.close()
+
+            except Exception as exc:
+
+                with open('hash_to_originalfilename.json', "w") as jsonFile:
+                    json.dump({}, jsonFile, indent=2)
+                    jsonFile.close()
+
+            with open('hash_to_originalfilename.json', "r+") as jsonFile:
+                data = json.load(jsonFile)
+                data[hash_of_filename] = nameStore   
+                jsonFile.seek(0)
+                json.dump(data, jsonFile, indent=2)
+                jsonFile.truncate()
+                
 
             filename = fs.save(hash_of_filename, myfile)
             uploaded_file_url = fs.url(filename)

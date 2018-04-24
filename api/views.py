@@ -104,36 +104,46 @@ def get_file(request, requested_file):
 # function to post scores by JSON format
 # a sample POST request:
 # curl -X POST -H "Content-Type: application/json" -d '{"filename": "<hash of foo_bar_baz5>.lite","runtime": 123,"metric2": 234,"metric3": 567}' http://127.0.0.1:8000/submissions/postScore/
-@login_required
+#@login_required
 @csrf_exempt
 def postScore(request):
+    #response = HttpResponse('Get in Function')
 
     if request.method == 'POST':
-        user = request.user
-        if user.username == os.environ['REFEREE']:
-            body_unicode = request.body.decode('utf-8')
-            body = json.loads(body_unicode)
-            content = body['filename']
-            content = ''.join(content.split())[:-5]
-            with open('hash_to_originalfilename.json') as json_data:
-                d = json.load(json_data)
-
-            content = d[content]
-            try:
-                p = Score.objects.create(filename=body['filename'],runtime=body['runtime'],metric2=body['metric2'],metric3=body['metric3'])
+        #user = request.user
+        #if user.username == os.environ['REFEREE']:
+        d=[]
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        content = body['filename']
+        #try:
+        orgName = ''.join(content.split())[:-5]
+        with open('hash_to_originalfilename.json','r') as json_data:
+            d = json.load(json_data)
+            orgName = d[content]
+        try:
+            if Score.objects.filter(filename=orgName).exists():
+                obj = Score.objects.get(filename=orgName)
+                obj.runtime = body['runtime']
+                obj.metric2 = body['metric2']
+                obj.metric3 = body['metric3']
+                obj.save()
+            else:
+                p = Score.objects.create(filename=orgName,runtime=body['runtime'],metric2=body['metric2'],metric3=body['metric3'])
                 p.save()
-            except Exception as exc:
-                return HttpResponse(exc)
-            response = HttpResponse('Post Successful')
-            response.status_code = 200
-            return response
-
-    return render(request, 'api/action_fail.html')
+        except Exception as exc:
+            return HttpResponse(exc)
+        response = HttpResponse('Post Successful')
+        response.status_code = 200
+        return response
+    response = HttpResponse('Post Fail')
+    response.status_code = 401
+    return response#render(request, 'api/action_fail.html')
 
 # function to get scores by filename
 # a sample GET request:
 # curl http://127.0.0.1:8000/submissions/getScore/foo_bar_baz.lite
-@login_required
+#@login_required
 @csrf_exempt
 def getScore(request, requested_file):
     
