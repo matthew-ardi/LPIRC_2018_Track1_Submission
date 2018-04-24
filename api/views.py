@@ -14,6 +14,7 @@ from django.http import HttpResponse
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #BASE_DIR = './'
+track1_submissions_folder = "/submissions_track1/"
 
 # function to send compressed directory of submitted files
 # a sample GET request:
@@ -29,7 +30,7 @@ def send_zip(request):
 
             #shutil is a native library
             #compress the submissions_track1 files directory and save this compressed file as files.zip in the root directory
-            shutil.make_archive("files", 'zip', BASE_DIR + "/media/")
+            shutil.make_archive("files", 'zip', BASE_DIR + "/submissions_track1/")
 
             #grab ZIP file from in-memory, make response with correct MIME-type
             file_path = BASE_DIR + "/files.zip"
@@ -56,7 +57,7 @@ def list_files(request):
         if user == os.environ['ALLOWED_USER'] and password == os.environ['ALLOWED_USER_PASSWORD'] \
         and request.method == 'GET':
 
-            submission_folder = BASE_DIR + "/media/"
+            submission_folder = BASE_DIR + track1_submissions_folder
             files = [f for f in listdir(submission_folder) if isfile(join(submission_folder, f))]
             response = HttpResponse(json.dumps(files), content_type ="application/json")
             response.status_code = 200
@@ -83,7 +84,7 @@ def get_file(request, requested_file):
         and request.method == 'GET':
             try:
                 #grab requested file from in-memory, make response with correct MIME-type
-                returnFile = BASE_DIR+"/media/"+requested_file
+                returnFile = BASE_DIR + track1_submissions_folder + requested_file
                 response = HttpResponse(open(returnFile, 'rb').read(),\
                                                      content_type='application/tfile')
                 response['Content-Disposition'] = 'attachment; filename=requested_file'
@@ -153,7 +154,7 @@ def listFiles(request):
     # checking for username
     user = request.user
     if user.username == os.environ['REFEREE']:
-        submission_folder = BASE_DIR + "/media/"
+        submission_folder = BASE_DIR + track1_submissions_folder
         files = [f for f in listdir(submission_folder) if isfile(join(submission_folder, f))]
         response = HttpResponse(json.dumps(files), content_type ="application/json")
         response.status_code = 200
@@ -169,7 +170,7 @@ def getFile(request, requested_file):
     if user.username == os.environ['REFEREE']:
         try:
             #grab requested file from in-memory, make response with correct MIME-type
-            returnFile = BASE_DIR+"/media/"+requested_file
+            returnFile = BASE_DIR + track1_submissions_folder + requested_file
             response = HttpResponse(open(returnFile, 'rb').read(),\
                                                  content_type='application/tfile')
             response['Content-Disposition'] = 'attachment; filename=requested_file'
