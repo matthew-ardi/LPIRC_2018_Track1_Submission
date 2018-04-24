@@ -21,4 +21,3 @@ class ProfileEmailForm(forms.ModelForm):
         if User.objects.filter(email=data).exists():
             raise forms.ValidationError("This email has already been used")
         return data
-
