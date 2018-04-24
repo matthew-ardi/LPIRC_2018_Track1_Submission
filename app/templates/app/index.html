@@ -14,7 +14,7 @@
     <div class="center">
         <h1>Low Power Image Recognition Challenge</h1>
         <h1>Registration and Submissions Portal</h1>
-	<h4> Description: (<a href="/rules/"> Track1</a>, Track2, Track3 ) </h4>
+	<h4> Description: (<a href="/rules/" target="_blank" > Track1</a>, Track2, Track3 ) </h4>
     </div>
 </div>
 <div class="cover-container" align="center">
@@ -24,18 +24,17 @@
 -->
     <div class="d-md-flexæ÷  flex-items-center gutter-md-spacious">
         <div class="text-center">
-
 	    <br><br>
-
             <div class="text-center" >
             {% if user.is_authenticated %}
+
                 {% if user.registeruser.contract_signed == False %}
 
 		{% if user.is_staff != True %}
 		<h3><b style="color:red">You have not done the registration yet</b></h3>
 		<h4>
                 <p>Thank you for your registration. There is one more step. <br>
-		    Please <b style="color:black"> read and sign <a href="https://na2.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=7f3e4ce4-0a5e-4707-b9b1-3b87ae892356">the terms of use signature</a> DocuSign contract</b>
+		    Please <b style="color:black"> read and sign <a target="_blank" href="https://na2.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=7f3e4ce4-0a5e-4707-b9b1-3b87ae892356">the terms of use signature</a> DocuSign contract</b>
                     to finish the registration. <br>
                     Once we received your contract, we will activate your account. This may take 1-2 working days.
 		    <br><br><a href="/logout/">Logout</a>
@@ -47,7 +46,9 @@
 
 		    <h2>Welcome to the submission site</h2>
 		    <h4><br><a href="/rules/"><li>Track 1 submission guide</li></a><br>
-                    <a href="/simple_upload/"><li>.tfile File Submission</li></a></h4>
+                    <a href="/simple_upload/"><li>.tfile File Submission</li></a><br>
+                    <a href="/score_board/"><li>score</li></a></h4>
+
 
                 {% endif %}
             {% else %}
@@ -70,9 +71,7 @@
         {% if user.is_staff %}
 </div>
 	<div align="center">
-            <li id="adminSite"><a href="/admin/">Admin Site</a></li>
-	    <li id="someprofile"><a href="/profile/">{{request.user.username}}'s Profile </a></li>
-	    <li><a href="/logout/">Logout</a></li>
+           <h4> <li id="adminSite"><a style="color:red" href="/admin/">Admin Site</a></li> </h4>
 	</div>
         {% endif %}
 
