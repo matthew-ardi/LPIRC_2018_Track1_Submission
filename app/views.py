@@ -181,6 +181,9 @@ def privacy(request):
 def rules(request):
     return render(request, 'app/rules.html')
 
+def track2(request):
+    return render(request, 'app/track2.html')
+
 def terms(request):
     return render(request, 'app/terms.html')
 def terms2(request):
