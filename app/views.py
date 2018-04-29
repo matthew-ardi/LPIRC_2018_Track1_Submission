@@ -182,7 +182,8 @@ def rules(request):
     return render(request, 'app/rules.html')
 
 def track2(request):
-    return render(request, 'app/track2.html')
+#    return render(request, 'app/track2.html')
+    return redirect('https://engineering.purdue.edu/people/bo.fu.1')
 
 def terms(request):
     return render(request, 'app/terms.html')
