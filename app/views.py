@@ -76,7 +76,7 @@ def register(request):
             req =  urllib.request.Request(url, data=data)
             response = urllib.request.urlopen(req)
             result = json.loads(response.read().decode())
-	    
+
             if result['success']:
                 #model1 is the model for user
                 model1 = form1.save(commit=False) #Required information of user
@@ -218,7 +218,7 @@ def simple_upload(request):
         tz = pytz.timezone('America/New_York')
         now = datetime.datetime.now(tz)
         name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(myfile.name[:-6], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
-	
+
         for i in glob.glob('upload/*'):
 
              l = len(str(request.user.username))
@@ -296,8 +296,8 @@ def simple_upload(request):
             tz = pytz.timezone('America/New_York')
             now = datetime.datetime.now(tz)
             name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(myfile.name[:-6], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
- 
-            for i in glob.glob('upload2/*'): 
+
+            for i in glob.glob('upload2/*'):
                 l = len(str(request.user.username))
                 nm = re.search(r'^(\w+)-2018-', i[8:])
                 nm = nm.group()
@@ -310,7 +310,7 @@ def simple_upload(request):
                        if (day[0] == day_now):
                           return render(request, 'app/simple_upload.html', {
                           'wrong_file2': "Submission Failure: One submission per day"})
-            
+
             filename = fs1.save(name, myfile)
 
         # to anonymise the username
@@ -373,4 +373,3 @@ def score_board(request):
         for i in range(0,5-l):
             fileList.append("None")
     return render(request, 'app/score_board.html', {'board': "{}".format(fileList[0]), 'board1': "{}".format(fileList[1]),'board2': "{}".format(fileList[2]),'board3': "{}".format(fileList[3]),'board4': "{}".format(fileList[4]),'name': "{}".format(fn1)})
-
