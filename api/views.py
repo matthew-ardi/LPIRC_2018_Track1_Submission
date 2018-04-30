@@ -15,6 +15,7 @@ from django.http import HttpResponse
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #BASE_DIR = './'
 track1_submissions_folder = "/submissions_track1/"
+track2_submissions_folder = "/submissions_track2/"
 
 # function to send compressed directory of submitted files
 # a sample GET request:
@@ -49,7 +50,7 @@ def send_zip(request):
 # function to send a list of names of submitted files
 # a sample GET request:
 # curl -H "Authorization: username password" http://lpirc.ecn.purdue.edu/submissions/list_files/ --output compressed_directory_of_submissions.zip
-def list_files(request):
+def list_files1(request):
     # checking for basic http_auth
     if 'HTTP_AUTHORIZATION' in request.META:
         [user, password] = request.META['HTTP_AUTHORIZATION'].split(" ")
@@ -69,12 +70,30 @@ def list_files(request):
     response['WWW-Authenticate'] = 'Basic realm="restricted area"'
     return response
 
+def list_files2(request):
+    # checking for basic http_auth
+    if 'HTTP_AUTHORIZATION' in request.META:
+        [user, password] = request.META['HTTP_AUTHORIZATION'].split(" ")
 
+        if user == os.environ['ALLOWED_USER'] and password == os.environ['ALLOWED_USER_PASSWORD'] \
+        and request.method == 'GET':
+
+            submission_folder = BASE_DIR + track2_submissions_folder
+            files = [f for f in listdir(submission_folder) if isfile(join(submission_folder, f))]
+            response = HttpResponse(json.dumps(files), content_type ="application/json")
+            response.status_code = 200
+            return response
+
+    #default permission denied 401 response
+    response = HttpResponse("")
+    response.status_code = 401
+    response['WWW-Authenticate'] = 'Basic realm="restricted area"'
+    return response
 
 # function to send a required submitted file
 # a sample GET request:
 # curl -H "Authorization: username password" http://lpirc.ecn.purdue.edu/submissions/get_file/filename --output submission.tfile
-def get_file(request, requested_file):
+def get_file1(request, requested_file):
 
     # checking for basic http_auth
     if 'HTTP_AUTHORIZATION' in request.META:
@@ -100,7 +119,31 @@ def get_file(request, requested_file):
     response['WWW-Authenticate'] = 'Basic realm="restricted area"'
     return response
 
+def get_file2(request, requested_file):
 
+    # checking for basic http_auth
+    if 'HTTP_AUTHORIZATION' in request.META:
+        [user, password] = request.META['HTTP_AUTHORIZATION'].split(" ")
+
+        if user == os.environ['ALLOWED_USER'] and password == os.environ['ALLOWED_USER_PASSWORD'] \
+        and request.method == 'GET':
+            try:
+                #grab requested file from in-memory, make response with correct MIME-type
+                returnFile = BASE_DIR + track2_submissions_folder + requested_file
+                response = HttpResponse(open(returnFile, 'rb').read(),\
+                                                     content_type='application/tfile')
+                response['Content-Disposition'] = 'attachment; filename=requested_file'
+            except Exception:
+                response = HttpResponse("The file does not exist")
+                response.status_code = 401
+                response['WWW-Authenticate'] = 'Basic realm="restricted area"'
+            return response
+
+    #default permission denied 401 response
+    response = HttpResponse("")
+    response.status_code = 401
+    response['WWW-Authenticate'] = 'Basic realm="restricted area"'
+    return response
 
 # function to post scores by JSON format
 # a sample POST request:
@@ -150,7 +193,7 @@ def getScore(request, requested_file):
     return render(request, 'api/action_fail.html')
 
 @login_required
-def listFiles(request):
+def listFiles1(request):
     # checking for username
     user = request.user
     if user.username == os.environ['REFEREE']:
@@ -163,7 +206,20 @@ def listFiles(request):
     return render(request, 'api/action_fail.html')
 
 @login_required
-def getFile(request, requested_file):
+def listFiles2(request):
+    # checking for username
+    user = request.user
+    if user.username == 'jingchi':
+        submission_folder = BASE_DIR + track2_submissions_folder
+        files = [f for f in listdir(submission_folder) if isfile(join(submission_folder, f))]
+        response = HttpResponse(json.dumps(files), content_type ="application/json")
+        response.status_code = 200
+        return response
+
+    return render(request, 'api/action_fail.html')
+
+@login_required
+def getFile1(request, requested_file):
 
     # checking for username
     user = request.user
@@ -171,6 +227,26 @@ def getFile(request, requested_file):
         try:
             #grab requested file from in-memory, make response with correct MIME-type
             returnFile = BASE_DIR + track1_submissions_folder + requested_file
+            response = HttpResponse(open(returnFile, 'rb').read(),\
+                                                 content_type='application/tfile')
+            response['Content-Disposition'] = 'attachment; filename=requested_file'
+        except Exception:
+            response = HttpResponse("The file does not exist")
+            response.status_code = 401
+            response['WWW-Authenticate'] = 'Basic realm="restricted area"'
+        return response
+
+    return render(request, 'api/action_fail.html')
+
+@login_required
+def getFile2(request, requested_file):
+
+    # checking for username
+    user = request.user
+    if user.username == 'jingchi':
+        try:
+            #grab requested file from in-memory, make response with correct MIME-type
+            returnFile = BASE_DIR + track2_submissions_folder + requested_file
             response = HttpResponse(open(returnFile, 'rb').read(),\
                                                  content_type='application/tfile')
             response['Content-Disposition'] = 'attachment; filename=requested_file'
