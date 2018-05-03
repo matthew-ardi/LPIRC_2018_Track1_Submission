@@ -229,7 +229,7 @@ def simple_upload(request):
                        return render(request, 'app/simple_upload.html', {
             'wrong_file': "Submission Failure: One submission per day"})
 
-        filename = fs1.save(name, myfile)
+        filename = fs1.save(name+".tfile", myfile)
 
         # to anonymise the username
         # used sha512 hash
@@ -301,7 +301,7 @@ def simple_upload(request):
             u.delete()
         except:
             t = 0
-        us = Tfile1(user=user, fn=hash_of_filename)
+        us = Tfile1(user=user, fn=name+".tfile")
         us.save()
 
         return render(request, 'app/simple_upload.html', {
@@ -313,7 +313,7 @@ def simple_upload(request):
                 myfile = request.FILES['myfile2']
             if myfile.name[-6:] != ".tfile":
                 return render(request, 'app/simple_upload.html', {
-               'wrong_file2': "Submission Failure: File format must be .tfile"
+                'wrong_file2': "Submission Failure: File format must be .tfile"
             })
             if str(myfile.name[:-6]) != str(request.user.username):
                 return render(request, 'app/simple_upload.html', {
@@ -336,11 +336,11 @@ def simple_upload(request):
                     if (day != []):
                     #return render(request, 'app/simple_upload.html', {
             #'wrong_file': "{} {}".format(day[0],day_now)})
-                       if (day[0] == day_now):
-                          return render(request, 'app/simple_upload.html', {
-                          'wrong_file2': "Submission Failure: One submission per day"})
+                         if (day[0] == day_now):
+                               return render(request, 'app/simple_upload.html', {
+                               'wrong_file2': "Submission Failure: One submission per day"})
             
-            filename = fs1.save(name, myfile)
+            filename = fs1.save(name+".tfile", myfile)
 
         # to anonymise the username
         # used sha512 hash
@@ -381,11 +381,11 @@ def simple_upload(request):
                 u.delete()
             except:
                 t = 0
-            us = Tfile2(user=user, fn=hash_of_filename)
+            us = Tfile2(user=user, fn=nameStore)
             us.save()
 
             return render(request, 'app/simple_upload.html', {
-            'uploaded_file_url2': myfile.name
+           'uploaded_file_url2': myfile.name
             })
         except:
             return render(request, 'app/simple_upload.html')
@@ -412,10 +412,12 @@ def score_board(request):
     fileList=[]
     scores = Score.objects.all()
     for item in scores:
-        fileList.append(item.runtime)
+        name = "upload/"+item.filename
+        if name in glob.glob('upload/*'):
+             fileList.append(item.runtime)
     fileList.sort()
     try:
-        fn = user.tfile1.fn[:-6]+".lite"
+        fn = user.tfile1.fn
         fn1 = Score.objects.get(filename=fn).runtime
     except:
 
@@ -424,5 +426,6 @@ def score_board(request):
     if l < 5:
         for i in range(0,5-l):
             fileList.append("None")
+    #fn2 = glob.glob('upload2/*')
     return render(request, 'app/score_board.html', {'board': "{}".format(fileList[0]), 'board1': "{}".format(fileList[1]),'board2': "{}".format(fileList[2]),'board3': "{}".format(fileList[3]),'board4': "{}".format(fileList[4]),'name': "{}".format(fn1)})
 

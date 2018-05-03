@@ -109,7 +109,7 @@ def get_file(request, requested_file):
 @csrf_exempt
 def postScore(request):
 
-    if request.method == 'POST':
+    if (1):#request.method == 'POST':
         user = request.user
         if user.username == os.environ['REFEREE']:
             d=[]
@@ -135,13 +135,14 @@ def postScore(request):
             response = HttpResponse('Post Successful')
             response.status_code = 200
             return response
-
+    response = HttpResponse('Post Wrong')
+    response.status_code = 400
     return render(request, 'api/action_fail.html')
 
 # function to get scores by filename
 # a sample GET request:
 # curl http://127.0.0.1:8000/submissions/getScore/foo_bar_baz.lite
-#@login_required
+@login_required
 @csrf_exempt
 def getScore(request, requested_file):
     
