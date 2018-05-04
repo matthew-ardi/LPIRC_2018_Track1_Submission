@@ -233,20 +233,17 @@ def simple_upload(request):
                        return render(request, 'app/simple_upload.html', {
             'wrong_file': "Track 1 Submission Failure: One submission per day"})
 
-        filename = fs1.save(name, myfile)
+#        filename = fs1.save(name, myfile)
 
         # to anonymise the username
         # used sha512 hash
         # new filename is a hash in hex format
         # map of hash to filename is appended to file hash_to_originalfilename.json in the root directory
         hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
+
         with open('hash_to_originalfilename.json', "a+") as writeJSON:
             json.dump({hash_of_filename: name}, writeJSON, indent=2)
         hash_of_filename = hash_of_filename + ".lite"
-
-        #return render(request, 'app/simple_upload.html', {
-        #    'uploaded_file_url': myfile.name
-        #})
 
         filename = fs.save(hash_of_filename, myfile)
         uploaded_file_url = fs.url(filename)
@@ -315,7 +312,7 @@ def simple_upload(request):
                           return render(request, 'app/simple_upload.html', {
                           'wrong_file2': "Track 2 Submission Failure: One submission per day"})
 
-            filename = fs1.save(name, myfile)
+#            filename = fs1.save(name, myfile)
 
         # to anonymise the username
         # used sha512 hash
