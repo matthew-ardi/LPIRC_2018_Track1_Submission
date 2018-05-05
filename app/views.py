@@ -1,7 +1,6 @@
 import os
 import json
 import urllib
-import json
 import sys
 from django.http import HttpResponse
 from django.contrib.sites.shortcuts import get_current_site
@@ -233,20 +232,57 @@ def simple_upload(request):
                        return render(request, 'app/simple_upload.html', {
             'wrong_file': "Track 1 Submission Failure: One submission per day"})
 
-#        filename = fs1.save(name, myfile)
+
+        filename = fs1.save(name+".lite", myfile)
+
 
         # to anonymise the username
         # used sha512 hash
         # new filename is a hash in hex format
         # map of hash to filename is appended to file hash_to_originalfilename.json in the root directory
+        
+        # d = {}
+        # try:
+        #     with open('hash_to_originalfilename.json', "rb") as json_data:
+        #        d = json.load(json_data)
+        # except:
+        #     print(d)
+        # print(d)
+        # hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
+        # hash_of_filename = hash_of_filename + ".tfile"
+        # d[hash_of_filename] = name       
+        # #with open('hash_to_originalfilename.json', "w") as writeJSON:
+        # json.dump(d, open('hash_to_originalfilename.json',"wb"))
+
+        
         hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
 
-        with open('hash_to_originalfilename.json', "a+") as writeJSON:
-            json.dump({hash_of_filename: name}, writeJSON, indent=2)
         hash_of_filename = hash_of_filename + ".lite"
+        nameStore = name + ".lite"
+
+        try:
+            with open('hash_to_originalfilename.json', "r") as jsonFile:
+                jsonFile.close()
+
+        except Exception as exc:
+
+            with open('hash_to_originalfilename.json', "w") as jsonFile:
+                json.dump({}, jsonFile, indent=2)
+                jsonFile.close()
+
+        with open('hash_to_originalfilename.json', "r+") as jsonFile:
+            data = json.load(jsonFile)
+            data[hash_of_filename] = nameStore   
+            jsonFile.seek(0)
+            json.dump(data, jsonFile, indent=2)
+            jsonFile.truncate()
+
 
         filename = fs.save(hash_of_filename, myfile)
         uploaded_file_url = fs.url(filename)
+
+
+
 
         """
 	send_mail(
@@ -273,7 +309,11 @@ def simple_upload(request):
         except:
             t = 0
 
-        us = Tfile1(user=user, fn=hash_of_filename)
+        us = Tfile1(user=user, fn=name+".lite")
+
+
+        #us = Tfile1(user=user, fn=hash_of_filename) 
+
         us.save()
 
         return render(request, 'app/simple_upload.html', {
@@ -285,7 +325,9 @@ def simple_upload(request):
                 myfile = request.FILES['myfile2']
             if myfile.name[-5:] != ".lite":
                 return render(request, 'app/simple_upload.html', {
+
                'wrong_file2': "Track 2 Submission Failure: File format must be .lite"
+
             })
             if str(myfile.name[:-5]) != str(request.user.username):
                 return render(request, 'app/simple_upload.html', {
@@ -308,20 +350,48 @@ def simple_upload(request):
                     if (day != []):
                     #return render(request, 'app/simple_upload.html', {
             #'wrong_file': "{} {}".format(day[0],day_now)})
-                       if (day[0] == day_now):
-                          return render(request, 'app/simple_upload.html', {
-                          'wrong_file2': "Track 2 Submission Failure: One submission per day"})
 
-#            filename = fs1.save(name, myfile)
+
+                         if (day[0] == day_now):
+                               return render(request, 'app/simple_upload.html', {
+                               'wrong_file2': "Submission Failure: One submission per day"})
+            
+            filename = fs1.save(name+".tfile", myfile)
+
 
         # to anonymise the username
         # used sha512 hash
         # new filename is a hash in hex format
         # map of hash to filename is appended to file hash_to_originalfilename.json in the root directory
+            # hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
+            # with open('hash_to_originalfilename.json', "a+") as writeJSON:
+            #     json.dump({hash_of_filename: name}, writeJSON, indent=2)
+            # hash_of_filename = hash_of_filename + ".tfile"
+
+
             hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
-            with open('hash_to_originalfilename.json', "a+") as writeJSON:
-                json.dump({hash_of_filename: name}, writeJSON, indent=2)
+
             hash_of_filename = hash_of_filename + ".lite"
+            nameStore = name + ".lite"
+
+            try:
+                with open('hash_to_originalfilename.json', "r") as jsonFile:
+                    jsonFile.close()
+
+            except Exception as exc:
+
+                with open('hash_to_originalfilename.json', "w") as jsonFile:
+                    json.dump({}, jsonFile, indent=2)
+                    jsonFile.close()
+
+            with open('hash_to_originalfilename.json', "r+") as jsonFile:
+                data = json.load(jsonFile)
+                data[hash_of_filename] = nameStore   
+                jsonFile.seek(0)
+                json.dump(data, jsonFile, indent=2)
+                jsonFile.truncate()
+                
+
 
             filename = fs.save(hash_of_filename, myfile)
             uploaded_file_url = fs.url(filename)
@@ -330,11 +400,12 @@ def simple_upload(request):
                 u.delete()
             except:
                 t = 0
-            us = Tfile2(user=user, fn=hash_of_filename)
+            us = Tfile2(user=user, fn=nameStore)
             us.save()
 
-            return render(request, 'app/index.html', {
-            'uploaded_file_url2': myfile.name
+
+            return render(request, 'app/simple_upload.html', {
+           'uploaded_file_url2': myfile.name
             })
         except:
             return render(request, 'app/simple_upload.html')
@@ -361,10 +432,16 @@ def score_board(request):
     fileList=[]
     scores = Score.objects.all()
     for item in scores:
-        fileList.append(item.runtime)
+        name = "upload/"+item.filename
+        if name in glob.glob('upload/*'):
+             fileList.append(item.runtime)
     fileList.sort()
     try:
+
+        #fn = user.tfile1.fn
+
         fn = user.tfile1.fn[:-5]+".lite"
+
         fn1 = Score.objects.get(filename=fn).runtime
     except:
 
@@ -373,4 +450,5 @@ def score_board(request):
     if l < 5:
         for i in range(0,5-l):
             fileList.append("None")
+    #fn2 = glob.glob('upload2/*')
     return render(request, 'app/score_board.html', {'board': "{}".format(fileList[0]), 'board1': "{}".format(fileList[1]),'board2': "{}".format(fileList[2]),'board3': "{}".format(fileList[3]),'board4': "{}".format(fileList[4]),'name': "{}".format(fn1)})

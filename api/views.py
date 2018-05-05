@@ -152,26 +152,34 @@ def get_file2(request, requested_file):
 @csrf_exempt
 def postScore(request):
 
-    if request.method == 'POST':
+    if (1):#request.method == 'POST':
         user = request.user
         if user.username == os.environ['REFEREE']:
+            d=[]
             body_unicode = request.body.decode('utf-8')
             body = json.loads(body_unicode)
             content = body['filename']
-            content = ''.join(content.split())[:-5]
-            with open('hash_to_originalfilename.json') as json_data:
+            orgName = ''.join(content.split())[:-5]
+            with open('hash_to_originalfilename.json','r') as json_data:
                 d = json.load(json_data)
-
-            content = d[content]
+                orgName = d[content]
             try:
-                p = Score.objects.create(filename=body['filename'],runtime=body['runtime'],metric2=body['metric2'],metric3=body['metric3'])
-                p.save()
+                if Score.objects.filter(filename=orgName).exists():
+                    obj = Score.objects.get(filename=orgName)
+                    obj.runtime = body['runtime']
+                    obj.metric2 = body['metric2']
+                    obj.metric3 = body['metric3']
+                    obj.save()
+                else:
+                    p = Score.objects.create(filename=orgName,runtime=body['runtime'],metric2=body['metric2'],metric3=body['metric3'])
+                    p.save()
             except Exception as exc:
                 return HttpResponse(exc)
             response = HttpResponse('Post Successful')
             response.status_code = 200
             return response
-
+    response = HttpResponse('Post Wrong')
+    response.status_code = 400
     return render(request, 'api/action_fail.html')
 
 # function to get scores by filename
