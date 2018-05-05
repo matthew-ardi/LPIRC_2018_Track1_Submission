@@ -17,12 +17,6 @@
     <button type="submit">Upload</button>
   </form>
 
-  {% if uploaded_file_url %}
-    <p>File uploaded: {{ uploaded_file_url }}</p>
-  {% endif %}
-  {% if wrong_file %}
-    <p>{{ wrong_file }}</p>
-  {% endif %}
 </div>
 <div id="text2" style="display:none">
     <form method="post" enctype="multipart/form-data">
@@ -31,12 +25,6 @@
     <button type="submit">Upload</button>
   </form>
 
-  {% if uploaded_file_url2 %}
-    <p>File uploaded: {{ uploaded_file_url2 }}</p>
-  {% endif %}
-  {% if wrong_file2 %}
-    <p>{{ wrong_file2 }}</p>
-  {% endif %}
 </div>
 
 
@@ -70,8 +58,19 @@ function myFunction2() {
     }
 }
 </script>
+  {% if uploaded_file_url %}
+    <p>Track 1 File uploaded: {{ uploaded_file_url }}</p>
+  {% endif %}
+  {% if wrong_file %}
+    <p>{{ wrong_file }}</p>
+  {% endif %}
 
-  <h6>Alert: Please reclick the previous checkbox to check the submission result.</h6>
+  {% if uploaded_file_url2 %}
+    <p>Track 2 File uploaded: {{ uploaded_file_url2 }}</p>
+  {% endif %}
+  {% if wrong_file2 %}
+    <p>{{ wrong_file2 }}</p>
+  {% endif %}
   <p><a href="/">LPIRC2018 Home</a></p>
 </center>
 {% endblock %}

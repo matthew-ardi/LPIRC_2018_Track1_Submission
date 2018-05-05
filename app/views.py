@@ -75,7 +75,7 @@ def register(request):
             req =  urllib.request.Request(url, data=data)
             response = urllib.request.urlopen(req)
             result = json.loads(response.read().decode())
-	    
+
             if result['success']:
                 #model1 is the model for user
                 model1 = form1.save(commit=False) #Required information of user
@@ -180,6 +180,10 @@ def privacy(request):
 def rules(request):
     return render(request, 'app/rules.html')
 
+def track2(request):
+#    return render(request, 'app/track2.html')
+    return redirect('https://engineering.purdue.edu/people/bo.fu.1')
+
 def terms(request):
     return render(request, 'app/terms.html')
 def terms2(request):
@@ -198,13 +202,13 @@ def simple_upload(request):
     try:
         if request.method == 'POST' and request.FILES['myfile']:
             myfile = request.FILES['myfile']
-        if myfile.name[-6:] != ".tfile":
+        if myfile.name[-7:] != ".tflite":
             return render(request, 'app/simple_upload.html', {
-            'wrong_file': "Submission Failure: File format must be .tfile"
+            'wrong_file': "Track 1 Submission Failure: File format must be .tflite"
         })
-        if str(myfile.name[:-6]) != str(request.user.username):
+        if str(myfile.name[:-7]) != str(request.user.username):
             return render(request, 'app/simple_upload.html', {
-            'wrong_file': "Submission Failure: File name must be the log-in name"
+            'wrong_file': "Track 1 Submission Failure: File name must be the log-in name"
         })
 
         fs = FileSystemStorage(location='submissions_track1/')
@@ -212,14 +216,13 @@ def simple_upload(request):
         fs1= FileSystemStorage(location='upload/')
         tz = pytz.timezone('America/New_York')
         now = datetime.datetime.now(tz)
-        name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(myfile.name[:-6], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
-	
-        for i in glob.glob('upload/*'):
+        name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(myfile.name[:-7], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
 
+        for i in glob.glob('upload/*'):
              l = len(str(request.user.username))
              nm = re.search(r'^(\w+)-2018-', i[7:])
              nm = nm.group()
-             if nm[:-6] == str(request.user.username):
+             if nm[:-7] == str(request.user.username):
                  day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
                  day_now = "{0}-{1}".format(now.month,now.day)
                  if (day != []):
@@ -227,7 +230,7 @@ def simple_upload(request):
             #'wrong_file': "{} {}".format(day[0],day_now)})
                     if (day[0] == day_now):
                        return render(request, 'app/simple_upload.html', {
-            'wrong_file': "Submission Failure: One submission per day"})
+            'wrong_file': "Track 1 Submission Failure: One submission per day"})
 
         filename = fs1.save(name+".tfile", myfile)
 
@@ -251,6 +254,7 @@ def simple_upload(request):
 
         
         hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
+
         hash_of_filename = hash_of_filename + ".tfile"
         nameStore = name + ".tfile"
 
@@ -311,31 +315,32 @@ def simple_upload(request):
         try:
             if request.method == 'POST' and request.FILES['myfile2']:
                 myfile = request.FILES['myfile2']
-            if myfile.name[-6:] != ".tfile":
+            if myfile.name[-7:] != ".tflite":
                 return render(request, 'app/simple_upload.html', {
                 'wrong_file2': "Submission Failure: File format must be .tfile"
             })
-            if str(myfile.name[:-6]) != str(request.user.username):
+            if str(myfile.name[:-7]) != str(request.user.username):
                 return render(request, 'app/simple_upload.html', {
-                'wrong_file2': "Submission Failure: File name must be the log-in name!"
+                'wrong_file2': "Track 2 Submission Failure: File name must be the log-in name!"
             })
             fs = FileSystemStorage(location='submissions_track2/')
 
             fs1= FileSystemStorage(location='upload2/')
             tz = pytz.timezone('America/New_York')
             now = datetime.datetime.now(tz)
-            name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(myfile.name[:-6], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
- 
-            for i in glob.glob('upload2/*'): 
+            name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(myfile.name[:-7], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
+
+            for i in glob.glob('upload2/*'):
                 l = len(str(request.user.username))
                 nm = re.search(r'^(\w+)-2018-', i[8:])
                 nm = nm.group()
-                if nm[:-6] == str(request.user.username):
+                if nm[:-7] == str(request.user.username):
                     day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
                     day_now = "{0}-{1}".format(now.month,now.day)
                     if (day != []):
                     #return render(request, 'app/simple_upload.html', {
             #'wrong_file': "{} {}".format(day[0],day_now)})
+
                          if (day[0] == day_now):
                                return render(request, 'app/simple_upload.html', {
                                'wrong_file2': "Submission Failure: One submission per day"})
@@ -353,6 +358,7 @@ def simple_upload(request):
 
 
             hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
+
             hash_of_filename = hash_of_filename + ".tfile"
             nameStore = name + ".tfile"
 
@@ -383,6 +389,7 @@ def simple_upload(request):
                 t = 0
             us = Tfile2(user=user, fn=nameStore)
             us.save()
+
 
             return render(request, 'app/simple_upload.html', {
            'uploaded_file_url2': myfile.name
@@ -428,4 +435,3 @@ def score_board(request):
             fileList.append("None")
     #fn2 = glob.glob('upload2/*')
     return render(request, 'app/score_board.html', {'board': "{}".format(fileList[0]), 'board1': "{}".format(fileList[1]),'board2': "{}".format(fileList[2]),'board3': "{}".format(fileList[3]),'board4': "{}".format(fileList[4]),'name': "{}".format(fn1)})
-
