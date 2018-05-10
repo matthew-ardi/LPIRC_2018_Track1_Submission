@@ -440,7 +440,7 @@ def score_board(request):
 
         #fn = user.tfile1.fn
 
-        fn = user.tfile1.fn[:-5]+".lite"
+        fn = user.tfile1.fn#[:-5]+".lite"
 
         fn1 = Score.objects.get(filename=fn).runtime
     except:
