@@ -222,7 +222,7 @@ def simple_upload(request):
              l = len(str(request.user.username))
              nm = re.search(r'^(\w+)-2018-', i[7:])
              nm = nm.group()
-             if nm[:-5] == str(request.user.username):
+             if nm[:-6] == str(request.user.username):
                  day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
                  day_now = "{0}-{1}".format(now.month,now.day)
                  if (day != []):
@@ -344,7 +344,7 @@ def simple_upload(request):
                 l = len(str(request.user.username))
                 nm = re.search(r'^(\w+)-2018-', i[8:])
                 nm = nm.group()
-                if nm[:-5] == str(request.user.username):
+                if nm[:-6] == str(request.user.username):
                     day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
                     day_now = "{0}-{1}".format(now.month,now.day)
                     if (day != []):

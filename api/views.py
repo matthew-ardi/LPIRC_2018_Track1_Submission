@@ -152,7 +152,8 @@ def get_file2(request, requested_file):
 @csrf_exempt
 def postScore(request):
 
-    if request.method == 'POST':
+    #if request.method == 'POST':
+    if (1): 
         #user = request.user
         #if user.username == os.environ['REFEREE']:
             d=[]
