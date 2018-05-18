@@ -23,6 +23,7 @@ import pytz
 import datetime
 import glob
 import re
+import logging
 
 from django.core.mail import send_mail
 from api.models import Score
@@ -222,21 +223,23 @@ def simple_upload(request):
         name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(myfile.name[:-5], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
 
 
+        for i in glob.glob('upload/*'):
+             l = len(str(request.user.username))
+             nm = re.search(r'^(\w+)-2018-', i[7:])
+             nm = nm.group()
+             if nm[:-6] == str(request.user.username):
+                 day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
+                 day_now = "{0}-{1}".format(now.month,now.day)
+                 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+                 logging.debug('This is the day_now : ' + nm)
+                 if (day != []):
+                    #return render(request, 'app/simple_upload.html', {
+            #'wrong_file': "{} {}".format(day[0],day_now)})
+                    if (day[0] == day_now):
 
+                       return render(request, 'app/simple_upload.html', {
+            'wrong_file': "Track 1 Submission Failure: One submission per day"})
 
-        # for i in glob.glob('upload/*'):
-        #      l = len(str(request.user.username))
-        #      nm = re.search(r'^(\w+)-2018-', i[7:])
-        #      nm = nm.group()
-        #      if nm[:-6] == str(request.user.username):
-        #          day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
-        #          day_now = "{0}-{1}".format(now.month,now.day)
-        #          if (day != []):
-        #             #return render(request, 'app/simple_upload.html', {
-        #     #'wrong_file': "{} {}".format(day[0],day_now)})
-        #             if (day[0] == day_now):
-        #                return render(request, 'app/simple_upload.html', {
-        #     'wrong_file': "Track 1 Submission Failure: One submission per day"})
 
 
         filename = fs1.save(name+".lite", myfile)
@@ -246,7 +249,7 @@ def simple_upload(request):
         # used sha512 hash
         # new filename is a hash in hex format
         # map of hash to filename is appended to file hash_to_originalfilename.json in the root directory
-        
+
         # d = {}
         # try:
         #     with open('hash_to_originalfilename.json', "rb") as json_data:
@@ -256,11 +259,11 @@ def simple_upload(request):
         # print(d)
         # hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
         # hash_of_filename = hash_of_filename + ".tfile"
-        # d[hash_of_filename] = name       
+        # d[hash_of_filename] = name
         # #with open('hash_to_originalfilename.json', "w") as writeJSON:
         # json.dump(d, open('hash_to_originalfilename.json',"wb"))
 
-        
+
         hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
 
         hash_of_filename = hash_of_filename + ".lite"
@@ -278,7 +281,7 @@ def simple_upload(request):
 
         with open('hash_to_originalfilename.json', "r+") as jsonFile:
             data = json.load(jsonFile)
-            data[hash_of_filename] = nameStore   
+            data[hash_of_filename] = nameStore
             jsonFile.seek(0)
             json.dump(data, jsonFile, indent=2)
             jsonFile.truncate()
@@ -333,7 +336,6 @@ def simple_upload(request):
         return render(request, 'app/simple_upload.html', {
             'uploaded_file_url': myfile.name + " has been successfully submitted"
         })
-
 
     except:
         return render(request, 'app/simple_upload.html')
