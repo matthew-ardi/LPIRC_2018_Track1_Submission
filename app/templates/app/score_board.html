@@ -1,14 +1,56 @@
 {% block content %}
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 15px;
+}
+</style>
 <center style="border: 1px solid DodgerBlue">
   <p></p>
   <title>Rank</title>
+
   <p>Rank:</p>
-  <p>1. {{ board }}</p>
-  <p>2. {{ board1 }}</p>
-  <p>3. {{ board2 }}</p>
-  <p>4. {{ board3 }}</p>
-  <p>5. {{ board4 }}</p>
+
+ <table style="width:70%">
+   <tr>
+    <th></th>
+    <th>Runtime</th> 
+    <th>acc_clf</th>
+    <th>acc</th>
+  </tr>
+  {% for nameRank, runtimeRank, acc_clfRank, accRank in zipRank %}
+    <tr>
+      <td>{{ nameRank }}</td>
+      <td>{{ runtimeRank }}</td>
+      <td>{{ acc_clfRank }}</td>
+      <td>{{ accRank }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
   <p> Current User's run time: {{ name }} </p>
+
+ <table style="width:70%">
+   <tr>
+    <th>Submit Time</th> 
+    <th>Runtime</th> 
+    <th>acc_clf</th>
+    <th>acc</th>
+  </tr>
+  {% for time, runtimeScore, acc_clfScore, accScore in zipScore %}
+    <tr>
+      <th>{{ time }}</th>
+      <td>{{ runtimeScore }}</td>
+      <td>{{ acc_clfScore }}</td>
+      <td>{{ accScore }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+
   <p><a href="/">LPIRC2018 Home</a></p>
 </center>
 {% endblock %}

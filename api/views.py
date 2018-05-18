@@ -152,8 +152,8 @@ def get_file2(request, requested_file):
 @csrf_exempt
 def postScore(request):
 
-    #if request.method == 'POST':
-    if (1): 
+    if request.method == 'POST':
+    #if (1): 
         #user = request.user
         #if user.username == os.environ['REFEREE']:
             d=[]
@@ -168,11 +168,11 @@ def postScore(request):
                 if Score.objects.filter(filename=orgName).exists():
                     obj = Score.objects.get(filename=orgName)
                     obj.runtime = body['runtime']
-                    obj.metric2 = body['metric2']
-                    obj.metric3 = body['metric3']
+                    obj.acc_clf = body['acc_clf']
+                    obj.acc = body['acc']
                     obj.save()
                 else:
-                    p = Score.objects.create(filename=orgName,runtime=body['runtime'],metric2=body['metric2'],metric3=body['metric3'])
+                    p = Score.objects.create(filename=orgName,runtime=body['runtime'],acc_clf=body['acc_clf'],acc=body['acc'])
                     p.save()
             except Exception as exc:
                 return HttpResponse(exc)
