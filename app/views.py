@@ -226,22 +226,22 @@ def simple_upload(request):
         name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(myfile.name[:-5], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
 
 
-        for i in glob.glob('upload/*'):
-             l = len(str(request.user.username))
-             nm = re.search(r'^(\w+)-2018-', i[7:])
-             nm = nm.group()
-             if nm[:-6] == str(request.user.username):
-                 day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
-                 day_now = "{0}-{1}".format(now.month,now.day)
-                 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-                 logging.debug('This is the day_now : ' + nm)
-                 if (day != []):
-                    #return render(request, 'app/simple_upload.html', {
-            #'wrong_file': "{} {}".format(day[0],day_now)})
-                    if (day[0] == day_now):
+        # for i in glob.glob('upload/*'):
+        #      l = len(str(request.user.username))
+        #      nm = re.search(r'^(\w+)-2018-', i[7:])
+        #      nm = nm.group()
+        #      if nm[:-6] == str(request.user.username):
+        #          day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
+        #          day_now = "{0}-{1}".format(now.month,now.day)
+        #          logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        #          logging.debug('This is the day_now : ' + nm)
+        #          if (day != []):
+        #             #return render(request, 'app/simple_upload.html', {
+        #     #'wrong_file': "{} {}".format(day[0],day_now)})
+        #             if (day[0] == day_now):
 
-                       return render(request, 'app/simple_upload.html', {
-            'wrong_file': "Track 1 Submission Failure: One submission per day"})
+        #                return render(request, 'app/simple_upload.html', {
+        #     'wrong_file': "Track 1 Submission Failure: One submission per day"})
 
         
         filename = fs1.save(name+".lite", myfile)
@@ -437,8 +437,12 @@ def score_board(request):
     fn = user.tfile1.fn
     fnList = fn.split(" ")
     for item in fnList:
-        day = re.findall(r'-(\w+-\w+-\w+:\w+):',item[usernameLength-1:])
-        userSubmittedTime.append(day[0])
+        day = re.findall(r'-(\w+-\w+-\w+):(\w+):',item[usernameLength-1:])
+        if len(day[0][1]) <= 1:
+            secondPadding = ":0" + day[0][1]
+        else:
+            secondPadding = ":"+ day[0][1]
+        userSubmittedTime.append(day[0][0] + secondPadding)
         try:
             userRuntimeScore.append(Score.objects.get(filename=item).runtime)
             userAcc_clfScore.append(Score.objects.get(filename=item).acc_clf)
