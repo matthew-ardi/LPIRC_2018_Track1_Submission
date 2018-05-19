@@ -187,6 +187,9 @@ def track1_info(request):
 def track2_info(request):
     return render(request, 'app/track2_info.html')
 
+def general_faq(request):
+    return render(request, 'app/general_faq.html')
+
 def track2(request):
 #    return render(request, 'app/track2.html')
     return redirect('https://engineering.purdue.edu/people/bo.fu.1')
