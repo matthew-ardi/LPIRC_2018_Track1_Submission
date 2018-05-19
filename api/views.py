@@ -151,14 +151,15 @@ def get_file2(request, requested_file):
 #@login_required
 @csrf_exempt
 def postScore(request):
-
     if request.method == 'POST':
-    #if (1): 
         #user = request.user
         #if user.username == os.environ['REFEREE']:
+        try:
             d=[]
             body_unicode = request.body.decode('utf-8')
             body = json.loads(body_unicode)
+            content = body['results']
+            body = content[0]
             content = body['filename']
             orgName = ''.join(content.split())[:-5]
             with open('hash_to_originalfilename.json','r') as json_data:
@@ -179,6 +180,9 @@ def postScore(request):
             response = HttpResponse('Post Successful')
             response.status_code = 200
             return response
+        except Exception as exc:
+            return HttpResponse(exc)
+
     response = HttpResponse('Post Unsuccessful')
     response.status_code = 401
     return render(request, 'api/action_fail.html')
