@@ -58,6 +58,7 @@ urlpatterns = [
     url(r'^terms/$', app_views.terms, name='terms'),
     url(r'^terms2/$', app_views.terms2, name='terms2'),
     url(r'^privacy/$', app_views.privacy, name='privacy'),
-    url(r'^rules/$', app_views.rules, name='rules'),
+    url(r'^track1_info/$', app_views.track1_info, name='track1_info'),
+    url(r'^track2_info/$', app_views.track2_info, name='track2_info'),
     url(r'^track2/$', app_views.track2, name='track2'),
 ]
