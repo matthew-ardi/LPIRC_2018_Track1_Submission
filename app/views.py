@@ -181,8 +181,11 @@ def profile(request):
 def privacy(request):
     return render(request, 'app/privacy.html')
 
-def rules(request):
-    return render(request, 'app/rules.html')
+def track1_info(request):
+    return render(request, 'app/track1_info.html')
+
+def track2_info(request):
+    return render(request, 'app/track2_info.html')
 
 def track2(request):
 #    return render(request, 'app/track2.html')
@@ -242,7 +245,7 @@ def simple_upload(request):
 
 
 
-        # filename = fs1.save(name+".lite", myfile)
+        filename = fs1.save(name+".lite", myfile)
 
 
         # to anonymise the username
@@ -268,8 +271,7 @@ def simple_upload(request):
 
         hash_of_filename = hash_of_filename + ".lite"
         nameStore = name + ".lite"
-        filename = fs.save(hash_of_filename, myfile)
-        uploaded_file_url = fs.url(filename)
+        filename = fs.save(name+".lite", myfile)
         try:
             with open('hash_to_originalfilename.json', "r") as jsonFile:
                 jsonFile.close()
