@@ -220,9 +220,6 @@ def simple_upload(request):
             return render(request, 'app/simple_upload.html', {
             'wrong_file': "Track 1 Submission Failure: File name must be the log-in name"
         })
-
-        fs = FileSystemStorage(location='submissions_track1/')
-
         fs1= FileSystemStorage(location='upload/')
         tz = pytz.timezone('America/New_York')
         now = datetime.datetime.now(tz)
@@ -247,34 +244,19 @@ def simple_upload(request):
             'wrong_file': "Track 1 Submission Failure: One submission per day"})
 
 
+        # file upload process by chunks to save system's memory
+        with open('upload/'+name+".lite", 'wb+') as destination:
+            for chunk in myfile.chunks():
+                destination.write(chunk)
 
-        filename = fs1.save(name+".lite", myfile)
-
-
-        # to anonymise the username
-        # used sha512 hash
-        # new filename is a hash in hex format
-        # map of hash to filename is appended to file hash_to_originalfilename.json in the root directory
-
-        # d = {}
-        # try:
-        #     with open('hash_to_originalfilename.json', "rb") as json_data:
-        #        d = json.load(json_data)
-        # except:
-        #     print(d)
-        # print(d)
-        # hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
-        # hash_of_filename = hash_of_filename + ".tfile"
-        # d[hash_of_filename] = name
-        # #with open('hash_to_originalfilename.json', "w") as writeJSON:
-        # json.dump(d, open('hash_to_originalfilename.json',"wb"))
-
-
+        fs = FileSystemStorage(location='submissions_track1/')
         hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
-
         hash_of_filename = hash_of_filename + ".lite"
         nameStore = name + ".lite"
-        filename = fs.save(name+".lite", myfile)
+
+
+
+
         try:
             with open('hash_to_originalfilename.json', "r") as jsonFile:
                 jsonFile.close()
@@ -293,37 +275,14 @@ def simple_upload(request):
             jsonFile.truncate()
 
 
-        # filename = fs.save(hash_of_filename, myfile)
-        # uploaded_file_url = fs.url(filename)
+        # file upload process by chunks to save system's memory
+        with open('submissions_track1/'+hash_of_filename, 'wb+') as destination:
+            for chunk in myfile.chunks():
+                destination.write(chunk)
 
 
-
-
-        """
-	send_mail(
-           'LPIRC2018: Submission Succeed',
-           'Dear Participants, \n\nThank you for your submission. You may login and upload a file once a day. The deadline for submission is June 10th.\n\nThanks,\nLPIRC Group',
-           'bofpurdue@gmail.com',
-           [request.user.email],
-           fail_silently=False,
-        )
-        send_mail(
-           'LPIRC2018: Submission Succeed',
-           'A new submission is added, please check',
-           'bofpurdue@gmail.com',
-           ['fu200@purdue.edu'],
-           fail_silently=False,
-        )
-        """
-
-        # try:
-        #     u = Tfile1.objects.filter(user=user).delete()
-        # except:
-        #     t = 0
         try:
             newFileName = name+".lite"
-            #us = Tfile1(user=user, fn=fileName)
-            #us.save()
             filenameModel, created = Tfile1.objects.get_or_create(
                 user = user,
                 defaults={"fn":newFileName}
@@ -344,100 +303,102 @@ def simple_upload(request):
         })
 
     except:
-        return render(request, 'app/simple_upload.html')
+        try:
+            if request.method == 'POST' and request.FILES['myfile2']:
+                myfile = request.FILES['myfile2']
+            if myfile.name[-5:] != ".lite":
+                return render(request, 'app/simple_upload.html', {
+
+               'wrong_file2': "Track 2 Submission Failure: File format must be .lite"
+
+            })
+            if str(myfile.name[:-5]) != str(request.user.username):
+                return render(request, 'app/simple_upload.html', {
+                'wrong_file2': "Track 2 Submission Failure: File name must be the log-in name!"
+            })
+            fs = FileSystemStorage(location='submissions_track2/')
+
+            fs1= FileSystemStorage(location='upload2/')
+            tz = pytz.timezone('America/New_York')
+            now = datetime.datetime.now(tz)
+            name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(myfile.name[:-5], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
+
+            for i in glob.glob('upload2/*'):
+                l = len(str(request.user.username))
+                nm = re.search(r'^(\w+)-2018-', i[8:])
+                nm = nm.group()
+                if nm[:-6] == str(request.user.username):
+                    day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
+                    day_now = "{0}-{1}".format(now.month,now.day)
+                    if (day != []):
+                    #return render(request, 'app/simple_upload.html', {
+            #'wrong_file': "{} {}".format(day[0],day_now)})
 
 
-        #Before except
-    # except:
-    #     try:
-    #         if request.method == 'POST' and request.FILES['myfile2']:
-    #             myfile = request.FILES['myfile2']
-    #         if myfile.name[-5:] != ".lite":
-    #             return render(request, 'app/simple_upload.html', {
-
-    #            'wrong_file2': "Track 2 Submission Failure: File format must be .lite"
-
-    #         })
-        #     if str(myfile.name[:-5]) != str(request.user.username):
-        #         return render(request, 'app/simple_upload.html', {
-        #         'wrong_file2': "Track 2 Submission Failure: File name must be the log-in name!"
-        #     })
-        #     fs = FileSystemStorage(location='submissions_track2/')
-
-        #     fs1= FileSystemStorage(location='upload2/')
-        #     tz = pytz.timezone('America/New_York')
-        #     now = datetime.datetime.now(tz)
-        #     name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(myfile.name[:-5], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
-
-        #     for i in glob.glob('upload2/*'):
-        #         l = len(str(request.user.username))
-        #         nm = re.search(r'^(\w+)-2018-', i[8:])
-        #         nm = nm.group()
-        #         if nm[:-6] == str(request.user.username):
-        #             day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
-        #             day_now = "{0}-{1}".format(now.month,now.day)
-        #             if (day != []):
-        #             #return render(request, 'app/simple_upload.html', {
-        #     #'wrong_file': "{} {}".format(day[0],day_now)})
-
-
-        #                  if (day[0] == day_now):
-        #                        return render(request, 'app/simple_upload.html', {
-        #                        'wrong_file2': "Submission Failure: One submission per day"})
-
-        #     filename = fs1.save(name+".tfile", myfile)
-
-
-        # # to anonymise the username
-        # # used sha512 hash
-        # # new filename is a hash in hex format
-        # # map of hash to filename is appended to file hash_to_originalfilename.json in the root directory
-        #     # hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
-        #     # with open('hash_to_originalfilename.json', "a+") as writeJSON:
-        #     #     json.dump({hash_of_filename: name}, writeJSON, indent=2)
-        #     # hash_of_filename = hash_of_filename + ".tfile"
-
-
-        #     hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
-
-        #     hash_of_filename = hash_of_filename + ".lite"
-        #     nameStore = name + ".lite"
-
-        #     try:
-        #         with open('hash_to_originalfilename.json', "r") as jsonFile:
-        #             jsonFile.close()
-
-        #     except Exception as exc:
-
-        #         with open('hash_to_originalfilename.json', "w") as jsonFile:
-        #             json.dump({}, jsonFile, indent=2)
-        #             jsonFile.close()
-
-        #     with open('hash_to_originalfilename.json', "r+") as jsonFile:
-        #         data = json.load(jsonFile)
-        #         data[hash_of_filename] = nameStore
-        #         jsonFile.seek(0)
-        #         json.dump(data, jsonFile, indent=2)
-        #         jsonFile.truncate()
+                         if (day[0] == day_now):
+                               return render(request, 'app/simple_upload.html', {
+                               'wrong_file2': "Submission Failure: One submission per day"})
 
 
 
-        #     filename = fs.save(hash_of_filename, myfile)
-        #     uploaded_file_url = fs.url(filename)
-        #     try:
-        #         u = Tfile2.objects.get(user=user)
-        #         u.delete()
-        #     except:
-        #         t = 0
-        #     us = Tfile2(user=user, fn=nameStore)
-        #     us.save()
+            # file upload process by chunks to save system's memory
+            with open('upload2/'+name+".lite", 'wb+') as destination:
+                for chunk in myfile.chunks():
+                    destination.write(chunk)
 
 
-        #     return render(request, 'app/simple_upload.html', {
-        #    'uploaded_file_url2': myfile.name
-        #     })
-        # except:
-        #     return render(request, 'app/simple_upload.html')
+        # to anonymise the username
+        # used sha512 hash
+        # new filename is a hash in hex format
+        # map of hash to filename is appended to file hash_to_originalfilename.json in the root directory
+            # hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
+            # with open('hash_to_originalfilename.json', "a+") as writeJSON:
+            #     json.dump({hash_of_filename: name}, writeJSON, indent=2)
+            # hash_of_filename = hash_of_filename + ".tfile"
+
+
+            hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
+
+            hash_of_filename = hash_of_filename + ".lite"
+            nameStore = name + ".lite"
+
+            try:
+                with open('hash_to_originalfilename.json', "r") as jsonFile:
+                    jsonFile.close()
+
+            except Exception as exc:
+
+                with open('hash_to_originalfilename.json', "w") as jsonFile:
+                    json.dump({}, jsonFile, indent=2)
+                    jsonFile.close()
+
+            with open('hash_to_originalfilename.json', "r+") as jsonFile:
+                data = json.load(jsonFile)
+                data[hash_of_filename] = nameStore
+                jsonFile.seek(0)
+                json.dump(data, jsonFile, indent=2)
+                jsonFile.truncate()
+
+
+            # file upload process by chunks to save system's memory
+            with open('submissions_track2/'+hash_of_filename, 'wb+') as destination:
+                for chunk in myfile.chunks():
+                    destination.write(chunk)
+
+            try:
+                u = Tfile2.objects.get(user=user)
+                u.delete()
+            except:
+                t = 0
+            us = Tfile2(user=user, fn=nameStore)
+            us.save()
+
+
+            return render(request, 'app/simple_upload.html', {
+           'uploaded_file_url2': myfile.name
+            })
+        except:
+            return render(request, 'app/simple_upload.html')
 
 
 @staff_member_required
@@ -458,6 +419,7 @@ def admin_email(request):
 
 def score_board(request):
     user = request.user
+    usernameLength = len(str(request.user.username))
     runtimeList=[]
     m1List = []
     acc_clfList = []
@@ -478,19 +440,20 @@ def score_board(request):
     userAcc_clfScore = []
     userAccScore = []
 
-    try:
-        fn = user.tfile1.fn
-        fnList = fn.split(" ")
-        for item in fnList:
-            userSubmittedTime.append(item[7:][:-9])
+
+    fn = user.tfile1.fn
+    fnList = fn.split(" ")
+    for item in fnList:
+        day = re.findall(r'-(\w+-\w+-\w+:\w+):',item[usernameLength-1:])
+        userSubmittedTime.append(day[0])
+        try:
             userRuntimeScore.append(Score.objects.get(filename=item).runtime)
             userAcc_clfScore.append(Score.objects.get(filename=item).acc_clf)
             userAccScore.append(Score.objects.get(filename=item).acc)
-    except:
-        userSubmittedTime.append("Not Provided")
-        userRuntimeScore.append("Not Provided")
-        userAcc_clfScore.append("Not Provided")
-        userAccScore.append("Not Provided")
+        except:
+            userRuntimeScore.append("Not Provided")
+            userAcc_clfScore.append("Not Provided")
+            userAccScore.append("Not Provided")
 
     l = len(runtimeList)
     if l < 5:
@@ -503,7 +466,6 @@ def score_board(request):
     zipScore = zip(userSubmittedTime, userRuntimeScore,userAcc_clfScore,userAccScore)
     zipRank = zip(RankList, runtimeList,acc_clfList,accList)
 
-    #fn2 = glob.glob('upload2/*')
     return render(request, 'app/score_board.html',
         {'zipRank': zipRank,
         'zipScore': zipScore,})
