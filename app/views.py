@@ -226,32 +226,38 @@ def simple_upload(request):
         name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(myfile.name[:-5], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
 
 
-        for i in glob.glob('upload/*'):
-             l = len(str(request.user.username))
-             nm = re.search(r'^(\w+)-2018-', i[7:])
-             nm = nm.group()
-             if nm[:-6] == str(request.user.username):
-                 day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
-                 day_now = "{0}-{1}".format(now.month,now.day)
-                 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-                 logging.debug('This is the day_now : ' + nm)
-                 if (day != []):
-                    #return render(request, 'app/simple_upload.html', {
-            #'wrong_file': "{} {}".format(day[0],day_now)})
-                    if (day[0] == day_now):
+        # for i in glob.glob('upload/*'):
+        #      l = len(str(request.user.username))
+        #      nm = re.search(r'^(\w+)-2018-', i[7:])
+        #      nm = nm.group()
+        #      if nm[:-6] == str(request.user.username):
+        #          day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
+        #          day_now = "{0}-{1}".format(now.month,now.day)
+        #          logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        #          logging.debug('This is the day_now : ' + nm)
+        #          if (day != []):
+        #             #return render(request, 'app/simple_upload.html', {
+        #     #'wrong_file': "{} {}".format(day[0],day_now)})
+        #             if (day[0] == day_now):
+        #
+        #                return render(request, 'app/simple_upload.html', {
+        #     'wrong_file': "Track 1 Submission Failure: One submission per day"})
 
-                       return render(request, 'app/simple_upload.html', {
-            'wrong_file': "Track 1 Submission Failure: One submission per day"})
 
-        
-        filename = fs1.save(name+".lite", myfile)
+        # filename = fs1.save(name+".lite", myfile)
+
+        with open('upload/'+name+".lite", 'wb+') as destination:
+            for chunk in myfile.chunks():
+                destination.write(chunk)
 
         fs = FileSystemStorage(location='submissions_track1/')
         hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
         hash_of_filename = hash_of_filename + ".lite"
         nameStore = name + ".lite"
-        filename = fs.save(hash_of_filename, myfile)
-        uploaded_file_url = fs.url(filename)
+        # filename = fs.save(hash_of_filename, myfile)
+        # uploaded_file_url = fs.url(filename)
+
+
 
         try:
             with open('hash_to_originalfilename.json', "r") as jsonFile:
@@ -273,7 +279,9 @@ def simple_upload(request):
 
         # filename = fs.save(hash_of_filename, myfile)
         # uploaded_file_url = fs.url(filename)
-
+        with open('submissions_track1/'+hash_of_filename, 'wb+') as destination:
+            for chunk in myfile.chunks():
+                destination.write(chunk)
 
 
         try:
