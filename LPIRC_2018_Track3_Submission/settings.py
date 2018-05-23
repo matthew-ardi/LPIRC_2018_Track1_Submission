@@ -18,8 +18,10 @@ PRODUCTION = True
 
 try:
     REFEREE = os.environ['REFEREE']
-    #ALLOWED_USER = os.environ['ALLOWED_USER']
-    #ALLOWED_USER_PASSWORD = os.environ['ALLOWED_USER_PASSWORD']
+    ALLOWED_USER = os.environ['ALLOWED_USER']
+    ALLOWED_USER_PASSWORD = os.environ['ALLOWED_USER_PASSWORD']
+    ALLOWED_USER2 = os.environ['ALLOWED_USER2']
+    ALLOWED_USER_PASSWORD2 = os.environ['ALLOWED_USER_PASSWORD2']
     # Does the site runs on production site or tested locally
     # SECURITY WARNING: keep the secret key used in production secret!
     SECRET_KEY = os.environ['DJANGO_SECRET_KEY']

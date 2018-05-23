@@ -433,7 +433,7 @@ def score_board(request):
              accList.append(item.acc)
     runtimeList.sort()
     acc_clfList.sort()
-    accList.sort()
+    accList.sort(reverse = True)
 
     userSubmittedTime = []
     userRuntimeScore = []
