@@ -424,16 +424,14 @@ def score_board(request):
     m1List = []
     acc_clfList = []
     accList = []
-    scores = Score.objects.all()
+    scores = Score.objects.all().order_by('acc')
     for item in scores:
         name = "upload/"+item.filename
         if name in glob.glob('upload/*'):
              runtimeList.append(item.runtime)
              acc_clfList.append(item.acc_clf)
              accList.append(item.acc)
-    runtimeList.sort()
-    acc_clfList.sort()
-    accList.sort(reverse = True)
+
 
     userSubmittedTime = []
     userRuntimeScore = []
@@ -469,6 +467,7 @@ def score_board(request):
     RankList = ["1st","2nd","3rd","4th","5th"]
     zipScore = zip(userSubmittedTime, userRuntimeScore,userAcc_clfScore,userAccScore)
     zipRank = zip(RankList, runtimeList,acc_clfList,accList)
+
 
     return render(request, 'app/score_board.html',
         {'zipRank': zipRank,
