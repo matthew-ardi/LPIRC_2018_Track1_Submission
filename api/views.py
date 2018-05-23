@@ -75,7 +75,7 @@ def list_files2(request):
     if 'HTTP_AUTHORIZATION' in request.META:
         [user, password] = request.META['HTTP_AUTHORIZATION'].split(" ")
 
-        if user == os.environ['ALLOWED_USER'] and password == os.environ['ALLOWED_USER_PASSWORD'] \
+        if user == os.environ['ALLOWED_USER2'] and password == os.environ['ALLOWED_USER_PASSWORD2'] \
         and request.method == 'GET':
 
             submission_folder = BASE_DIR + track2_submissions_folder
@@ -196,7 +196,7 @@ def postScore(request):
 #@login_required
 @csrf_exempt
 def getScore(request, requested_file):
-    
+
     if request.method == 'GET':
         try:
             score = Score.objects.get(filename=requested_file)
@@ -208,7 +208,7 @@ def getScore(request, requested_file):
 
     return render(request, 'api/action_fail.html')
 
-@login_required
+# @login_required
 def listFiles1(request):
     # checking for username
     user = request.user
@@ -273,4 +273,3 @@ def getFile2(request, requested_file):
         return response
 
     return render(request, 'api/action_fail.html')
-
