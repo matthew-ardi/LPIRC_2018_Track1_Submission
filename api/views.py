@@ -153,35 +153,38 @@ def get_file2(request, requested_file):
 def postScore(request):
     if request.method == 'POST':
         #user = request.user
-        #if user.username == os.environ['REFEREE']:
-        try:
-            d=[]
-            body_unicode = request.body.decode('utf-8')
-            body = json.loads(body_unicode)
-            content = body['results']
-            body = content[0]
-            content = body['filename']
-            orgName = ''.join(content.split())[:-5]
-            with open('hash_to_originalfilename.json','r') as json_data:
-                d = json.load(json_data)
-                orgName = d[content]
+        #if request.user.username == 'alanbition':#os.environ['REFEREE']:
             try:
-                if Score.objects.filter(filename=orgName).exists():
-                    obj = Score.objects.get(filename=orgName)
-                    obj.runtime = body['runtime']
-                    obj.acc_clf = body['acc_clf']
-                    obj.acc = body['acc']
-                    obj.save()
-                else:
-                    p = Score.objects.create(filename=orgName,runtime=body['runtime'],acc_clf=body['acc_clf'],acc=body['acc'])
-                    p.save()
+                d=[]
+                body_unicode = request.body.decode('utf-8')
+                body = json.loads(body_unicode)
+                content = body['results']
+                for item in content:
+                    body = item
+                    content = body['filename']
+                    orgName = ''.join(content.split())[:-5]
+                    with open('hash_to_originalfilename.json','r') as json_data:
+                        d = json.load(json_data)
+                        orgName = d[content]
+                    try:
+                        if Score.objects.filter(filename=orgName).exists():
+                            obj = Score.objects.get(filename=orgName)
+                            obj.runtime = body['runtime']
+                            obj.acc_clf = body['acc_clf']
+                            obj.acc = body['acc']
+                            obj.save()
+                        else:
+                            p = Score.objects.create(filename=orgName,runtime=body['runtime'],acc_clf=body['acc_clf'],acc=body['acc'])
+                            p.save()
+                    except Exception as exc:
+                        return HttpResponse(exc)
+
+
+                response = HttpResponse('Post Successful')
+                response.status_code = 200
+                return response
             except Exception as exc:
                 return HttpResponse(exc)
-            response = HttpResponse('Post Successful')
-            response.status_code = 200
-            return response
-        except Exception as exc:
-            return HttpResponse(exc)
 
     response = HttpResponse('Post Unsuccessful')
     response.status_code = 401
