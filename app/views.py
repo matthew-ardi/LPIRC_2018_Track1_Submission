@@ -225,6 +225,7 @@ def simple_upload(request):
         now = datetime.datetime.now(tz)
         name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(myfile.name[:-5], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
 
+
         submissionCounts = 0
 
         for i in glob.glob('upload/*'):
@@ -242,7 +243,7 @@ def simple_upload(request):
 
         if submissionCounts > 3:
            return render(request, 'app/simple_upload.html', {
-    'wrong_file': "Track 1 Submission Failure: Three submissions per day"})
+'wrong_file': "Track 1 Submission Failure: Three submissions per day"})
 
 
         # file upload process by chunks to save system's memory
@@ -425,7 +426,7 @@ def score_board(request):
     m1List = []
     acc_clfList = []
     accList = []
-    scores = Score.objects.all().order_by('-acc')
+    scores = Score.objects.all().order_by('acc')
     for item in scores:
         name = "upload/"+item.filename
         if name in glob.glob('upload/*'):
