@@ -125,7 +125,7 @@ def get_file2(request, requested_file):
     if 'HTTP_AUTHORIZATION' in request.META:
         [user, password] = request.META['HTTP_AUTHORIZATION'].split(" ")
 
-        if user == os.environ['ALLOWED_USER'] and password == os.environ['ALLOWED_USER_PASSWORD'] \
+        if user == os.environ['ALLOWED_USER2'] and password == os.environ['ALLOWED_USER_PASSWORD2'] \
         and request.method == 'GET':
             try:
                 #grab requested file from in-memory, make response with correct MIME-type
@@ -172,6 +172,8 @@ def postScore(request):
                             obj.runtime = body['runtime']
                             obj.acc_clf = body['acc_clf']
                             obj.acc = body['acc']
+                            # obj.n_clf = body['n_clf']
+                            # obj.acc_over_time = body['acc_over_time']
                             obj.save()
                         else:
                             p = Score.objects.create(filename=orgName,runtime=body['runtime'],acc_clf=body['acc_clf'],acc=body['acc'])
