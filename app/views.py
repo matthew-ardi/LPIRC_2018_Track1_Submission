@@ -221,30 +221,78 @@ def simple_upload(request):
             'wrong_file': "Track 1 Submission Failure: File name must be the log-in name"
         })
         fs1= FileSystemStorage(location='upload/')
+        fs2 = FileSystemStorage(location='model_validation/')
         tz = pytz.timezone('America/New_York')
         now = datetime.datetime.now(tz)
         name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(myfile.name[:-5], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
 
         submissionCounts = 0
 
-        for i in glob.glob('upload/*'):
-             l = len(str(request.user.username))
-             nm = re.search(r'^(\w+)-2018-', i[7:])
-             nm = nm.group()
-             if nm[:-6] == str(request.user.username):
-                 day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
-                 day_now = "{0}-{1}".format(now.month,now.day)
-                 if (day != []):
-                    #return render(request, 'app/simple_upload.html', {
-            #'wrong_file': "{} {}".format(day[0],day_now)})
-                    if (day[0] == day_now):
-                        submissionCounts += 1
+    #     for i in glob.glob('upload/*'):
+    #          l = len(str(request.user.username))
+    #          nm = re.search(r'^(\w+)-2018-', i[7:])
+    #          nm = nm.group()
+    #          if nm[:-6] == str(request.user.username):
+    #              day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
+    #              day_now = "{0}-{1}".format(now.month,now.day)
+    #              if (day != []):
+    #                 #return render(request, 'app/simple_upload.html', {
+    #         #'wrong_file': "{} {}".format(day[0],day_now)})
+    #                 if (day[0] == day_now):
+    #                     submissionCounts += 1
+    #
+    #     if submissionCounts > 3:
+    #        return render(request, 'app/simple_upload.html', {
+    # 'wrong_file': "Track 1 Submission Failure: Three submissions per day"})
+        true_filename = name+".lite"
+        try:
+            with open('model_validation/'+name+".lite", 'wb+') as destination:
+                for chunk in myfile.chunks():
+                    destination.write(chunk)
 
-        if submissionCounts > 3:
-           return render(request, 'app/simple_upload.html', {
-    'wrong_file': "Track 1 Submission Failure: Three submissions per day"})
+            # Model validation
 
+            orig_dir = os.getcwd()
+            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            logging.debug('This is the output : ' + str(orig_dir))
 
+            os.chdir("/home/mechttam/tensorflow")
+            retval = os.getcwd()
+            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            logging.debug('This is the output : ' + str(retval))
+
+            retval = os.system('ls')
+            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            logging.debug('This is the output : ' + str(retval))
+
+            os.system('touch WORKSPACE')
+            test_output = os.popen('bazel-bin/tensorflow/contrib/lite/java/ovic/ovic_validator /home/mechttam/Documents/PurdueCAM2/IEEE_lpirc/LPIRC_2018_Track1_Submission/model_validation/'+true_filename).read()
+            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            logging.debug('This is the test result : ' + test_output)
+
+            output_split = test_output.split()
+            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            logging.debug('This is the test result : ' + output_split[0])
+
+            if 'Successfully' in test_output:
+                logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+                logging.debug('test passed')
+            elif 'Failed' in test_output:
+                logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+                logging.debug('test failed')
+                return render(request, 'app/simple_upload.html', {
+                    'invalid_model': myfile.name #" did not pass the bazel test"
+                })
+            else:
+                logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+                logging.debug('unknown error')
+        except:
+            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            logging.debug('unknown error1')
+
+        final_dir = os.chdir(orig_dir)
+        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        logging.debug('This is the output : ' + str(final_dir))
         # file upload process by chunks to save system's memory
         with open('upload/'+name+".lite", 'wb+') as destination:
             for chunk in myfile.chunks():
@@ -399,6 +447,8 @@ def simple_upload(request):
            'uploaded_file_url2': myfile.name
             })
         except:
+            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            logging.debug('unknown error2')
             return render(request, 'app/simple_upload.html')
 
 
@@ -469,7 +519,7 @@ def score_board(request):
     zipScore = zip(userSubmittedTime, userRuntimeScore,userAcc_clfScore,userAccScore)
     zipRank = zip(RankList, runtimeList,acc_clfList,accList)
 
-
+    # Score.objects.all().delete() #to clear score objects
     return render(request, 'app/score_board.html',
         {'zipRank': zipRank,
         'zipScore': zipScore,})

@@ -2,6 +2,8 @@ import os
 import mimetypes
 import shutil
 import json
+import logging
+import subprocess
 
 from api.models import Score
 from os import listdir
@@ -61,6 +63,7 @@ def list_files1(request):
             submission_folder = BASE_DIR + track1_submissions_folder
             files = [f for f in listdir(submission_folder) if isfile(join(submission_folder, f))]
             response = HttpResponse(json.dumps(files), content_type ="application/json")
+
             response.status_code = 200
             return response
 
@@ -153,7 +156,7 @@ def get_file2(request, requested_file):
 def postScore(request):
     if request.method == 'POST':
         #user = request.user
-        #if user.username == os.environ['REFEREE']:
+        #if request.user.username == 'alanbition':#os.environ['REFEREE']:
             try:
                 d=[]
                 body_unicode = request.body.decode('utf-8')
