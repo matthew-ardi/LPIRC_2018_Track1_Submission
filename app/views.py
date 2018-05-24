@@ -225,23 +225,24 @@ def simple_upload(request):
         now = datetime.datetime.now(tz)
         name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(myfile.name[:-5], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
 
+        submissionCounts = 0
 
-        # for i in glob.glob('upload/*'):
-        #      l = len(str(request.user.username))
-        #      nm = re.search(r'^(\w+)-2018-', i[7:])
-        #      nm = nm.group()
-        #      if nm[:-6] == str(request.user.username):
-        #          day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
-        #          day_now = "{0}-{1}".format(now.month,now.day)
-        #          logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        #          logging.debug('This is the day_now : ' + nm)
-        #          if (day != []):
-        #             #return render(request, 'app/simple_upload.html', {
-        #     #'wrong_file': "{} {}".format(day[0],day_now)})
-        #             if (day[0] == day_now):
+        for i in glob.glob('upload/*'):
+             l = len(str(request.user.username))
+             nm = re.search(r'^(\w+)-2018-', i[7:])
+             nm = nm.group()
+             if nm[:-6] == str(request.user.username):
+                 day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
+                 day_now = "{0}-{1}".format(now.month,now.day)
+                 if (day != []):
+                    #return render(request, 'app/simple_upload.html', {
+            #'wrong_file': "{} {}".format(day[0],day_now)})
+                    if (day[0] == day_now):
+                        submissionCounts += 1
 
-        #                return render(request, 'app/simple_upload.html', {
-        #     'wrong_file': "Track 1 Submission Failure: One submission per day"})
+        if submissionCounts > 3:
+           return render(request, 'app/simple_upload.html', {
+    'wrong_file': "Track 1 Submission Failure: Three submissions per day"})
 
 
         # file upload process by chunks to save system's memory
