@@ -148,12 +148,12 @@ def get_file2(request, requested_file):
 # function to post scores by JSON format
 # a sample POST request:
 # curl -X POST -H "Content-Type: application/json" -d '{"filename": "<hash of foo_bar_baz5>.lite","runtime": 123,"metric2": 234,"metric3": 567}' http://127.0.0.1:8000/submissions/postScore/
-#@login_required
-@csrf_exempt
+@login_required
+#@csrf_exempt
 def postScore(request):
     if request.method == 'POST':
         #user = request.user
-        #if request.user.username == 'alanbition':#os.environ['REFEREE']:
+        #if user.username == os.environ['REFEREE']:
             try:
                 d=[]
                 body_unicode = request.body.decode('utf-8')
@@ -186,9 +186,9 @@ def postScore(request):
             except Exception as exc:
                 return HttpResponse(exc)
 
-    response = HttpResponse('Post Unsuccessful')
+    response = HttpResponse(request.user.username)
     response.status_code = 401
-    return render(request, 'api/action_fail.html')
+    return response#render(request, 'api/action_fail.html')
 
 # function to get scores by filename
 # a sample GET request:
