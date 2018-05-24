@@ -426,7 +426,8 @@ def score_board(request):
     m1List = []
     acc_clfList = []
     accList = []
-    scores = Score.objects.all().order_by('acc')
+
+    scores = Score.objects.all().order_by('-acc')
     for item in scores:
         name = "upload/"+item.filename
         if name in glob.glob('upload/*'):
@@ -470,7 +471,7 @@ def score_board(request):
     zipScore = zip(userSubmittedTime, userRuntimeScore,userAcc_clfScore,userAccScore)
     zipRank = zip(RankList, runtimeList,acc_clfList,accList)
 
-
+    # Score.objects.all().delete() #to clear score objects
     return render(request, 'app/score_board.html',
         {'zipRank': zipRank,
         'zipScore': zipScore,})
