@@ -15,7 +15,7 @@ from django.http import HttpResponse
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #BASE_DIR = './'
 track1_submissions_folder = "/submissions_track1/"
-track2_submissions_folder = "/submissions_track2/"
+track2_submissions_folder = "/upload2/"
 
 # function to send compressed directory of submitted files
 # a sample GET request:
