@@ -425,7 +425,7 @@ def score_board(request):
     m1List = []
     acc_clfList = []
     accList = []
-    scores = Score.objects.all().order_by('acc')
+    scores = Score.objects.all().order_by('-acc')
     for item in scores:
         name = "upload/"+item.filename
         if name in glob.glob('upload/*'):
