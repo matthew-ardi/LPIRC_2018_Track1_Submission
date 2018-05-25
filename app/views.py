@@ -221,10 +221,10 @@ def simple_upload(request):
             'wrong_file': "Track 1 Submission Failure: File name must be the log-in name"
         })
         fs1= FileSystemStorage(location='upload/')
+        fs2 = FileSystemStorage(location='model_validation/')
         tz = pytz.timezone('America/New_York')
         now = datetime.datetime.now(tz)
         name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(myfile.name[:-5], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
-
 
         submissionCounts = 0
 
@@ -238,13 +238,12 @@ def simple_upload(request):
                  if (day != []):
                     #return render(request, 'app/simple_upload.html', {
             #'wrong_file': "{} {}".format(day[0],day_now)})
-                     if (day[0] == day_now):
-                         submissionCounts += 1
+                    if (day[0] == day_now):
+                        submissionCounts += 1
 
         if submissionCounts > 3:
            return render(request, 'app/simple_upload.html', {
-           'wrong_file': "Track 1 Submission Failure: Three submissions per day"})
-
+    'wrong_file': "Track 1 Submission Failure: Three submissions per day"})
 
         # file upload process by chunks to save system's memory
         with open('upload/'+name+".lite", 'wb+') as destination:
@@ -400,6 +399,8 @@ def simple_upload(request):
            'uploaded_file_url2': myfile.name
             })
         except:
+            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            logging.debug('unknown error2')
             return render(request, 'app/simple_upload.html')
 
 
@@ -446,26 +447,32 @@ def score_board(request):
     userN_clfScore = []
     userAcc_over_timeScore = []
 
+    try:
+        fn = user.tfile1.fn
+        fnList = fn.split(" ")
 
-    fn = user.tfile1.fn
-    fnList = fn.split(" ")
-    for item in fnList:
-        day = re.findall(r'-(\w+-\w+-\w+):(\w+):',item[usernameLength-1:])
-        if len(day[0][1]) <= 1:
-            secondPadding = ":0" + day[0][1]
-        else:
-            secondPadding = ":"+ day[0][1]
-        userSubmittedTime.append(day[0][0] + secondPadding)
-        try:
-            userRuntimeScore.append(Score.objects.get(filename=item).runtime)
-            userAcc_clfScore.append(Score.objects.get(filename=item).acc_clf)
-            userAccScore.append(Score.objects.get(filename=item).acc)
-        except:
-            userRuntimeScore.append("Not Provided")
-            userAcc_clfScore.append("Not Provided")
-            userAccScore.append("Not Provided")
-            userN_clfScore.append("Not Provided")
-            userAcc_over_timeScore.append("Not Provided")
+        for item in fnList:
+            day = re.findall(r'-(\w+-\w+-\w+):(\w+):',item[usernameLength-1:])
+            if len(day[0][1]) <= 1:
+                secondPadding = ":0" + day[0][1]
+            else:
+                secondPadding = ":"+ day[0][1]
+            userSubmittedTime.append(day[0][0] + secondPadding)
+            try:
+                userRuntimeScore.append(Score.objects.get(filename=item).runtime)
+                userAcc_clfScore.append(Score.objects.get(filename=item).acc_clf)
+                userAccScore.append(Score.objects.get(filename=item).acc)
+                # userN_clfScore.append(Score.objects.get(filename=item).n_clf)
+                # userAcc_over_timeScore.append(Score.objects.get(filename=item).acc_over_time)
+            except:
+                userRuntimeScore.append("Not Provided")
+                userAcc_clfScore.append("Not Provided")
+                userAccScore.append("Not Provided")
+                userN_clfScore.append("Not Provided")
+                userAcc_over_timeScore.append("Not Provided")
+    except:
+        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        logging.debug('user has not submitted a file')
 
     l = len(runtimeList)
     if l < 5:
