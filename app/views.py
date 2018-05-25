@@ -436,8 +436,8 @@ def score_board(request):
              runtimeList.append(item.runtime)
              acc_clfList.append(item.acc_clf)
              accList.append(item.acc)
-             # n_clfList.append(item.n_clf)
-             # acc_over_timeList.append(item.acc_over_time)
+             n_clfList.append(item.n_clf)
+             acc_over_timeList.append(item.acc_over_time)
 
 
     userSubmittedTime = []
@@ -462,8 +462,8 @@ def score_board(request):
                 userRuntimeScore.append(Score.objects.get(filename=item).runtime)
                 userAcc_clfScore.append(Score.objects.get(filename=item).acc_clf)
                 userAccScore.append(Score.objects.get(filename=item).acc)
-                # userN_clfScore.append(Score.objects.get(filename=item).n_clf)
-                # userAcc_over_timeScore.append(Score.objects.get(filename=item).acc_over_time)
+                userN_clfScore.append(Score.objects.get(filename=item).n_clf)
+                userAcc_over_timeScore.append(Score.objects.get(filename=item).acc_over_time)
             except:
                 userRuntimeScore.append("Not Provided")
                 userAcc_clfScore.append("Not Provided")
