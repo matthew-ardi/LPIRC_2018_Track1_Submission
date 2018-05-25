@@ -9,7 +9,7 @@
   <div>
   Track2: <input type="checkbox" id="myCheck2"  onclick="myFunction2()">
   </div>
-  
+
 <div id="text" style="display:none">
     <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
@@ -70,6 +70,9 @@ function myFunction2() {
   {% endif %}
   {% if wrong_file2 %}
     <p>{{ wrong_file2 }}</p>
+  {% endif %}
+  {% if invalid_model %}
+    <p>Submission rejected: {{ invalid_model }} did not pass the bazel test</p>
   {% endif %}
   <p><a href="/">LPIRC2018 Home</a></p>
 </center>
