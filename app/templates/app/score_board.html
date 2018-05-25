@@ -34,7 +34,15 @@ th, td {
   </tr>
   {% endfor %}
 </table>
+<div align="left">
+<h2 style="line-height: 1.38; margin-top: 18pt; margin-bottom: 6pt; margin-left: 200pt"><span style="font-size: 16pt; font-family: Arial; color: #4a86e8; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">Track 1 metrics</span></h2>
+<h4 style="line-height: 1.38; margin-top: 8pt; margin-bottom: 2pt; margin-left: 200pt"><span style="font-size: 12pt; font-family: Arial; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;"><b>Latency: </b>Latency (ms) is single-threaded, non-batched runtime measured on a single Pixel 2 big core of classifying one image.</span></h4>
+<h4 style="line-height: 1.38; margin-top: 8pt; margin-bottom: 2pt; margin-left: 200pt"><span style="font-size: 12pt; font-family: Arial; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;"><b>Test metric: </b>The main metric is the total number of images corrected classified in a wall-time of 30ms*N, where N is the total number of test images.</span></h4>
+<h4 style="line-height: 1.38; margin-top: 8pt; margin-bottom: 2pt; margin-left: 200pt"><span style="font-size: 12pt; font-family: Arial; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;"><b>Acc on Classified: </b>Acc on Classified is the accuracy (%) computed based only on the images classified within the wall-time.</span></h4>
+<h4 style="line-height: 1.38; margin-top: 8pt; margin-bottom: 2pt; margin-left: 200pt"><span style="font-size: 12pt; font-family: Arial; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;"><b># Classified: </b># Classified is the number of images classified within the wall-time.</span></h4>
+<h4 style="line-height: 1.38; margin-top: 8pt; margin-bottom: 2pt; margin-left: 200pt"><span style="font-size: 12pt; font-family: Arial; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;"><b>Acc/Time: </b>Acc/Time is the accuracy divided by either the total inference time or the wall-time, whichever is longer</span></h4>
 
+</div>
   <p> Current User's run time: {{ name }} </p>
 
  <table style="width:70%">

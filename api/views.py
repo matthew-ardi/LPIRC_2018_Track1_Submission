@@ -165,7 +165,7 @@ def postScore(request):
                 for item in content:
                     body = item
                     content = body['filename']
-                    orgName = ''.join(content.split())[:-6]
+                    orgName = ''.join(content.split())[:-5]
                     with open('hash_to_originalfilename.json','r') as json_data:
                         d = json.load(json_data)
                         orgName = d[content]
