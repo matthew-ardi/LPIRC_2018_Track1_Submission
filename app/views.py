@@ -226,7 +226,6 @@ def simple_upload(request):
         now = datetime.datetime.now(tz)
         name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(myfile.name[:-5], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
 
-
         submissionCounts = 0
 
     #     for i in glob.glob('upload/*'):
@@ -257,43 +256,11 @@ def simple_upload(request):
             logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
             logging.debug('This is the output : ' + str(orig_dir))
 
-            os.chdir("/home/mechttam/tensorflow")
-            retval = os.getcwd()
-            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-            logging.debug('This is the output : ' + str(retval))
 
-            retval = os.system('ls')
-            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-            logging.debug('This is the output : ' + str(retval))
+        if submissionCounts > 3:
+           return render(request, 'app/simple_upload.html', {
+             'wrong_file': "Track 1 Submission Failure: Three submissions per day"})
 
-            os.system('touch WORKSPACE')
-            test_output = os.popen('bazel-bin/tensorflow/contrib/lite/java/ovic/ovic_validator /home/mechttam/Documents/PurdueCAM2/IEEE_lpirc/LPIRC_2018_Track1_Submission/model_validation/'+true_filename).read()
-            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-            logging.debug('This is the test result : ' + test_output)
-
-            output_split = test_output.split()
-            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-            logging.debug('This is the test result : ' + output_split[0])
-
-            if 'Successfully' in test_output:
-                logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-                logging.debug('test passed')
-            elif 'Failed' in test_output:
-                logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-                logging.debug('test failed')
-                return render(request, 'app/simple_upload.html', {
-                    'invalid_model': myfile.name #" did not pass the bazel test"
-                })
-            else:
-                logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-                logging.debug('unknown error')
-        except:
-            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-            logging.debug('unknown error1')
-
-        final_dir = os.chdir(orig_dir)
-        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        logging.debug('This is the output : ' + str(final_dir))
         # file upload process by chunks to save system's memory
         with open('upload/'+name+".lite", 'wb+') as destination:
             for chunk in myfile.chunks():
@@ -476,20 +443,25 @@ def score_board(request):
     m1List = []
     acc_clfList = []
     accList = []
-
-    scores = Score.objects.all().order_by('-acc')
+    n_clfList = []
+    acc_over_timeList = []
+    scores = Score.objects.all().order_by('-acc', 'runtime')
     for item in scores:
         name = "upload/"+item.filename
         if name in glob.glob('upload/*'):
              runtimeList.append(item.runtime)
              acc_clfList.append(item.acc_clf)
              accList.append(item.acc)
+             # n_clfList.append(item.n_clf)
+             # acc_over_timeList.append(item.acc_over_time)
 
 
     userSubmittedTime = []
     userRuntimeScore = []
     userAcc_clfScore = []
     userAccScore = []
+    userN_clfScore = []
+    userAcc_over_timeScore = []
 
 
     fn = user.tfile1.fn
@@ -505,10 +477,14 @@ def score_board(request):
             userRuntimeScore.append(Score.objects.get(filename=item).runtime)
             userAcc_clfScore.append(Score.objects.get(filename=item).acc_clf)
             userAccScore.append(Score.objects.get(filename=item).acc)
+            # userN_clfScore.append(Score.objects.get(filename=item).n_clf)
+            # userAcc_over_timeScore.append(Score.objects.get(filename=item).acc_over_time)
         except:
             userRuntimeScore.append("Not Provided")
             userAcc_clfScore.append("Not Provided")
             userAccScore.append("Not Provided")
+            userN_clfScore.append("Not Provided")
+            userAcc_over_timeScore.append("Not Provided")
 
     l = len(runtimeList)
     if l < 5:
@@ -516,10 +492,12 @@ def score_board(request):
             runtimeList.append("None")
             acc_clfList.append("None")
             accList.append("None")
+            n_clfList.append("None")
+            acc_over_timeList.append("None")
 
     RankList = ["1st","2nd","3rd","4th","5th"]
-    zipScore = zip(userSubmittedTime, userRuntimeScore,userAcc_clfScore,userAccScore)
-    zipRank = zip(RankList, runtimeList,acc_clfList,accList)
+    zipScore = zip(userSubmittedTime, userRuntimeScore,userAcc_clfScore,userAccScore, userN_clfScore, userAcc_over_timeScore)
+    zipRank = zip(RankList, runtimeList,acc_clfList,accList, n_clfList, acc_over_timeList)
 
     # Score.objects.all().delete() #to clear score objects
     return render(request, 'app/score_board.html',

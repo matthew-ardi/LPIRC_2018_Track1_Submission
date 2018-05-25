@@ -165,7 +165,7 @@ def postScore(request):
                 for item in content:
                     body = item
                     content = body['filename']
-                    orgName = ''.join(content.split())[:-5]
+                    orgName = ''.join(content.split())[:-6]
                     with open('hash_to_originalfilename.json','r') as json_data:
                         d = json.load(json_data)
                         orgName = d[content]
@@ -175,8 +175,8 @@ def postScore(request):
                             obj.runtime = body['runtime']
                             obj.acc_clf = body['acc_clf']
                             obj.acc = body['acc']
-                            # obj.n_clf = body['n_clf']
-                            # obj.acc_over_time = body['acc_over_time']
+                            obj.n_clf = body['n_clf']
+                            obj.acc_over_time = body['acc_over_time']
                             obj.save()
                         else:
                             p = Score.objects.create(filename=orgName,runtime=body['runtime'],acc_clf=body['acc_clf'],acc=body['acc'])
