@@ -428,7 +428,7 @@ def score_board(request):
     accList = []
     n_clfList = []
     acc_over_timeList = []
-    scores = Score.objects.all().order_by('-acc')
+    scores = Score.objects.all().order_by('-acc', 'runtime')
     for item in scores:
         name = "upload/"+item.filename
         if name in glob.glob('upload/*'):
