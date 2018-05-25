@@ -426,7 +426,8 @@ def score_board(request):
     m1List = []
     acc_clfList = []
     accList = []
-
+    n_clfList = []
+    acc_over_timeList = []
     scores = Score.objects.all().order_by('-acc')
     for item in scores:
         name = "upload/"+item.filename
@@ -434,12 +435,16 @@ def score_board(request):
              runtimeList.append(item.runtime)
              acc_clfList.append(item.acc_clf)
              accList.append(item.acc)
+             # n_clfList.append(item.n_clf)
+             # acc_over_timeList.append(item.acc_over_time)
 
 
     userSubmittedTime = []
     userRuntimeScore = []
     userAcc_clfScore = []
     userAccScore = []
+    userN_clfScore = []
+    userAcc_over_timeScore = []
 
 
     fn = user.tfile1.fn
@@ -459,6 +464,8 @@ def score_board(request):
             userRuntimeScore.append("Not Provided")
             userAcc_clfScore.append("Not Provided")
             userAccScore.append("Not Provided")
+            userN_clfScore.append("Not Provided")
+            userAcc_over_timeScore.append("Not Provided")
 
     l = len(runtimeList)
     if l < 5:
@@ -466,10 +473,12 @@ def score_board(request):
             runtimeList.append("None")
             acc_clfList.append("None")
             accList.append("None")
+            n_clfList.append("None")
+            acc_over_timeList.append("None")
 
     RankList = ["1st","2nd","3rd","4th","5th"]
-    zipScore = zip(userSubmittedTime, userRuntimeScore,userAcc_clfScore,userAccScore)
-    zipRank = zip(RankList, runtimeList,acc_clfList,accList)
+    zipScore = zip(userSubmittedTime, userRuntimeScore,userAcc_clfScore,userAccScore, userN_clfScore, userAcc_over_timeScore)
+    zipRank = zip(RankList, runtimeList,acc_clfList,accList, n_clfList, acc_over_timeList)
 
     # Score.objects.all().delete() #to clear score objects
     return render(request, 'app/score_board.html',
