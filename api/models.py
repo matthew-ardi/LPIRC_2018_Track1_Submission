@@ -6,3 +6,5 @@ class Score(models.Model):
     runtime = models.FloatField(max_length=10000, null=False)
     acc_clf = models.FloatField(max_length=10000, null=False)
     acc = models.FloatField(max_length=10000, null=False)
+    n_clf = models.FloatField(max_length=10000, null=False)
+    acc_over_time = models.FloatField(max_length=10000, null=False)
