@@ -17,16 +17,20 @@ th, td {
  <table style="width:70%">
    <tr>
     <th></th>
-    <th>Runtime</th> 
-    <th>acc_clf</th>
-    <th>acc</th>
+    <th>Latency</th>
+    <th>Test metric</th>
+    <th>Acc on Classified</th>
+    <th># Classified</th>
+    <th>Acc/Time</th>
   </tr>
-  {% for nameRank, runtimeRank, acc_clfRank, accRank in zipRank %}
+  {% for nameRank, runtimeRank, acc_clfRank, accRank, n_clfRank, acc_over_timeRank in zipRank %}
     <tr>
       <td>{{ nameRank }}</td>
       <td>{{ runtimeRank }}</td>
       <td>{{ acc_clfRank }}</td>
       <td>{{ accRank }}</td>
+      <td>{{ n_clfRank}}</td>
+      <td>{{ acc_over_timeRank}}</td>
   </tr>
   {% endfor %}
 </table>
@@ -35,17 +39,21 @@ th, td {
 
  <table style="width:70%">
    <tr>
-    <th>Submit Time</th> 
-    <th>Runtime</th> 
-    <th>acc_clf</th>
-    <th>acc</th>
+    <th>Submit Time</th>
+    <th>Latency</th>
+    <th>Test metric</th>
+    <th>Acc on Classified</th>
+    <th># Classified</th>
+    <th>Acc/Time</th>
   </tr>
-  {% for time, runtimeScore, acc_clfScore, accScore in zipScore %}
+  {% for time, runtimeScore, acc_clfScore, accScore, n_clfScore, acc_over_timeScore in zipScore %}
     <tr>
       <th>{{ time }}</th>
       <td>{{ runtimeScore }}</td>
-      <td>{{ acc_clfScore }}</td>
       <td>{{ accScore }}</td>
+      <td>{{ acc_clfScore }}</td>
+      <td>{{ n_clfScore }}</td>
+      <td>{{ acc_over_timeScore }}</td>
   </tr>
   {% endfor %}
 </table>
