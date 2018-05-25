@@ -221,45 +221,30 @@ def simple_upload(request):
             'wrong_file': "Track 1 Submission Failure: File name must be the log-in name"
         })
         fs1= FileSystemStorage(location='upload/')
-        fs2 = FileSystemStorage(location='model_validation/')
         tz = pytz.timezone('America/New_York')
         now = datetime.datetime.now(tz)
         name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(myfile.name[:-5], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
 
+
         submissionCounts = 0
 
-    #     for i in glob.glob('upload/*'):
-    #          l = len(str(request.user.username))
-    #          nm = re.search(r'^(\w+)-2018-', i[7:])
-    #          nm = nm.group()
-    #          if nm[:-6] == str(request.user.username):
-    #              day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
-    #              day_now = "{0}-{1}".format(now.month,now.day)
-    #              if (day != []):
-    #                 #return render(request, 'app/simple_upload.html', {
-    #         #'wrong_file': "{} {}".format(day[0],day_now)})
-    #                 if (day[0] == day_now):
-    #                     submissionCounts += 1
-    #
-    #     if submissionCounts > 3:
-    #        return render(request, 'app/simple_upload.html', {
-    # 'wrong_file': "Track 1 Submission Failure: Three submissions per day"})
-        true_filename = name+".lite"
-        try:
-            with open('model_validation/'+name+".lite", 'wb+') as destination:
-                for chunk in myfile.chunks():
-                    destination.write(chunk)
-
-            # Model validation
-
-            orig_dir = os.getcwd()
-            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-            logging.debug('This is the output : ' + str(orig_dir))
-
+        for i in glob.glob('upload/*'):
+             l = len(str(request.user.username))
+             nm = re.search(r'^(\w+)-2018-', i[7:])
+             nm = nm.group()
+             if nm[:-6] == str(request.user.username):
+                 day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
+                 day_now = "{0}-{1}".format(now.month,now.day)
+                 if (day != []):
+                    #return render(request, 'app/simple_upload.html', {
+            #'wrong_file': "{} {}".format(day[0],day_now)})
+                     if (day[0] == day_now):
+                         submissionCounts += 1
 
         if submissionCounts > 3:
            return render(request, 'app/simple_upload.html', {
-             'wrong_file': "Track 1 Submission Failure: Three submissions per day"})
+           'wrong_file': "Track 1 Submission Failure: Three submissions per day"})
+
 
         # file upload process by chunks to save system's memory
         with open('upload/'+name+".lite", 'wb+') as destination:
@@ -415,8 +400,6 @@ def simple_upload(request):
            'uploaded_file_url2': myfile.name
             })
         except:
-            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-            logging.debug('unknown error2')
             return render(request, 'app/simple_upload.html')
 
 
@@ -443,25 +426,20 @@ def score_board(request):
     m1List = []
     acc_clfList = []
     accList = []
-    n_clfList = []
-    acc_over_timeList = []
-    scores = Score.objects.all().order_by('-acc', 'runtime')
+
+    scores = Score.objects.all().order_by('-acc')
     for item in scores:
         name = "upload/"+item.filename
         if name in glob.glob('upload/*'):
              runtimeList.append(item.runtime)
              acc_clfList.append(item.acc_clf)
              accList.append(item.acc)
-             # n_clfList.append(item.n_clf)
-             # acc_over_timeList.append(item.acc_over_time)
 
 
     userSubmittedTime = []
     userRuntimeScore = []
     userAcc_clfScore = []
     userAccScore = []
-    userN_clfScore = []
-    userAcc_over_timeScore = []
 
 
     fn = user.tfile1.fn
@@ -477,14 +455,10 @@ def score_board(request):
             userRuntimeScore.append(Score.objects.get(filename=item).runtime)
             userAcc_clfScore.append(Score.objects.get(filename=item).acc_clf)
             userAccScore.append(Score.objects.get(filename=item).acc)
-            # userN_clfScore.append(Score.objects.get(filename=item).n_clf)
-            # userAcc_over_timeScore.append(Score.objects.get(filename=item).acc_over_time)
         except:
             userRuntimeScore.append("Not Provided")
             userAcc_clfScore.append("Not Provided")
             userAccScore.append("Not Provided")
-            userN_clfScore.append("Not Provided")
-            userAcc_over_timeScore.append("Not Provided")
 
     l = len(runtimeList)
     if l < 5:
@@ -492,12 +466,10 @@ def score_board(request):
             runtimeList.append("None")
             acc_clfList.append("None")
             accList.append("None")
-            n_clfList.append("None")
-            acc_over_timeList.append("None")
 
     RankList = ["1st","2nd","3rd","4th","5th"]
-    zipScore = zip(userSubmittedTime, userRuntimeScore,userAcc_clfScore,userAccScore, userN_clfScore, userAcc_over_timeScore)
-    zipRank = zip(RankList, runtimeList,acc_clfList,accList, n_clfList, acc_over_timeList)
+    zipScore = zip(userSubmittedTime, userRuntimeScore,userAcc_clfScore,userAccScore)
+    zipRank = zip(RankList, runtimeList,acc_clfList,accList)
 
     # Score.objects.all().delete() #to clear score objects
     return render(request, 'app/score_board.html',
