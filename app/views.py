@@ -350,7 +350,7 @@ def simple_upload(request):
 
 
             # file upload process by chunks to save system's memory
-            with open('upload2/'+name+".lite", 'wb+') as destination:
+            with open('upload2/'+name+"." + user_file_name[1], 'wb+') as destination:
                 for chunk in myfile.chunks():
                     destination.write(chunk)
 
