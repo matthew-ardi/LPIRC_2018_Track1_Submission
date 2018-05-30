@@ -212,11 +212,15 @@ def simple_upload(request):
     try:
         if request.method == 'POST' and request.FILES['myfile']:
             myfile = request.FILES['myfile']
-        if myfile.name[-5:] != ".lite":
+
+        user_file_name = str(myfile.name).split('.')
+        # if myfile.name[-5:] != ".lite":
+        if user_file_name[1] != "lite" and user_file_name[1] != "tflite":
             return render(request, 'app/simple_upload.html', {
             'wrong_file': "Track 1 Submission Failure: File format must be .lite"
         })
-        if str(myfile.name[:-5]) != str(request.user.username):
+        # if str(myfile.name[:-5]) != str(request.user.username):
+        if user_file_name[0] != str(request.user.username):
             return render(request, 'app/simple_upload.html', {
             'wrong_file': "Track 1 Submission Failure: File name must be the log-in name"
         })
