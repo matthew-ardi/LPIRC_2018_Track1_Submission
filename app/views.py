@@ -311,13 +311,16 @@ def simple_upload(request):
         try:
             if request.method == 'POST' and request.FILES['myfile2']:
                 myfile = request.FILES['myfile2']
-            if myfile.name[-5:] != ".lite":
-                return render(request, 'app/simple_upload.html', {
 
-               'wrong_file2': "Track 2 Submission Failure: File format must be .lite"
-
-            })
-            if str(myfile.name[:-5]) != str(request.user.username):
+            user_file_name = str(myfile.name).split('.')
+            # if myfile.name[-5:] != ".lite":
+            #     return render(request, 'app/simple_upload.html', {
+            #
+            #    'wrong_file2': "Track 2 Submission Failure: File format must be .lite"
+            #
+            # })
+            # if str(myfile.name[:-5]) != str(request.user.username):
+            if user_file_name[0] != str(request.user.username):
                 return render(request, 'app/simple_upload.html', {
                 'wrong_file2': "Track 2 Submission Failure: File name must be the log-in name!"
             })
@@ -328,21 +331,21 @@ def simple_upload(request):
             now = datetime.datetime.now(tz)
             name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(myfile.name[:-5], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
 
-            for i in glob.glob('upload2/*'):
-                l = len(str(request.user.username))
-                nm = re.search(r'^(\w+)-2018-', i[8:])
-                nm = nm.group()
-                if nm[:-6] == str(request.user.username):
-                    day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
-                    day_now = "{0}-{1}".format(now.month,now.day)
-                    if (day != []):
-                    #return render(request, 'app/simple_upload.html', {
-            #'wrong_file': "{} {}".format(day[0],day_now)})
-
-
-                         if (day[0] == day_now):
-                               return render(request, 'app/simple_upload.html', {
-                               'wrong_file2': "Submission Failure: One submission per day"})
+            # for i in glob.glob('upload2/*'):
+            #     l = len(str(request.user.username))
+            #     nm = re.search(r'^(\w+)-2018-', i[8:])
+            #     nm = nm.group()
+            #     if nm[:-6] == str(request.user.username):
+            #         day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
+            #         day_now = "{0}-{1}".format(now.month,now.day)
+            #         if (day != []):
+            #         #return render(request, 'app/simple_upload.html', {
+            # #'wrong_file': "{} {}".format(day[0],day_now)})
+            #
+            #
+            #              if (day[0] == day_now):
+            #                    return render(request, 'app/simple_upload.html', {
+            #                    'wrong_file2': "Submission Failure: One submission per day"})
 
 
 
@@ -364,8 +367,8 @@ def simple_upload(request):
 
             hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
 
-            hash_of_filename = hash_of_filename + ".lite"
-            nameStore = name + ".lite"
+            hash_of_filename = hash_of_filename + "." + user_file_name[1]
+            nameStore = name + "." + user_file_name[1]
 
             try:
                 with open('hash_to_originalfilename.json', "r") as jsonFile:
@@ -400,7 +403,7 @@ def simple_upload(request):
 
 
             return render(request, 'app/simple_upload.html', {
-           'uploaded_file_url2': myfile.name
+           'uploaded_file_url2': myfile.name + " has been successfully submitted"
             })
         except:
             logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
