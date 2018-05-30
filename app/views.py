@@ -232,22 +232,22 @@ def simple_upload(request):
 
         submissionCounts = 0
 
-    #     for i in glob.glob('upload/*'):
-    #          l = len(str(request.user.username))
-    #          nm = re.search(r'^(\w+)-2018-', i[7:])
-    #          nm = nm.group()
-    #          if nm[:-6] == str(request.user.username):
-    #              day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
-    #              day_now = "{0}-{1}".format(now.month,now.day)
-    #              if (day != []):
-    #                 #return render(request, 'app/simple_upload.html', {
-    #         #'wrong_file': "{} {}".format(day[0],day_now)})
-    #                 if (day[0] == day_now):
-    #                     submissionCounts += 1
-    #
-    #     if submissionCounts > 3:
-    #        return render(request, 'app/simple_upload.html', {
-    # 'wrong_file': "Track 1 Submission Failure: Three submissions per day"})
+        for i in glob.glob('upload/*'):
+             l = len(str(request.user.username))
+             nm = re.search(r'^(\w+)-2018-', i[7:])
+             nm = nm.group()
+             if nm[:-6] == str(request.user.username):
+                 day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
+                 day_now = "{0}-{1}".format(now.month,now.day)
+                 if (day != []):
+                    #return render(request, 'app/simple_upload.html', {
+            #'wrong_file': "{} {}".format(day[0],day_now)})
+                    if (day[0] == day_now):
+                        submissionCounts += 1
+
+        if submissionCounts > 3:
+           return render(request, 'app/simple_upload.html', {
+    'wrong_file': "Track 1 Submission Failure: Three submissions per day"})
 
         # file upload process by chunks to save system's memory
         with open('upload/'+name+".lite", 'wb+') as destination:
