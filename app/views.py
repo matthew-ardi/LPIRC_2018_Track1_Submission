@@ -228,7 +228,7 @@ def simple_upload(request):
         fs2 = FileSystemStorage(location='model_validation/')
         tz = pytz.timezone('America/New_York')
         now = datetime.datetime.now(tz)
-        name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(myfile.name[:-5], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
+        name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(user_file_name[0], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
 
         submissionCounts = 0
 
