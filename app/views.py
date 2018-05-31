@@ -441,10 +441,10 @@ def score_board(request):
         name = "upload/"+item.filename
         if name in glob.glob('upload/*'):
              runtimeList.append(item.runtime)
-             acc_clfList.append(item.acc_clf)
-             accList.append(item.acc)
+             acc_clfList.append(format(float(item.acc_clf), '.5g'))
+             accList.append(format(float(item.acc), '.5g'))
              n_clfList.append(item.n_clf)
-             acc_over_timeList.append(item.acc_over_time)
+             acc_over_timeList.append(format(float(item.acc_over_time), '.5g'))
 
 
     userSubmittedTime = []
@@ -467,10 +467,10 @@ def score_board(request):
             userSubmittedTime.append(day[0][0] + secondPadding)
             try:
                 userRuntimeScore.append(Score.objects.get(filename=item).runtime)
-                userAcc_clfScore.append(Score.objects.get(filename=item).acc_clf)
-                userAccScore.append(Score.objects.get(filename=item).acc)
+                userAcc_clfScore.append(format(float(Score.objects.get(filename=item).acc_clf), '.5g'))
+                userAccScore.append(format(float(Score.objects.get(filename=item).acc), '.5g'))
                 userN_clfScore.append(Score.objects.get(filename=item).n_clf)
-                userAcc_over_timeScore.append(Score.objects.get(filename=item).acc_over_time)
+                userAcc_over_timeScore.append(format(float(Score.objects.get(filename=item).acc_over_time), '.5g'))
             except:
                 userRuntimeScore.append("Not Provided")
                 userAcc_clfScore.append("Not Provided")
