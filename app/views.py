@@ -312,7 +312,7 @@ def simple_upload(request):
             if request.method == 'POST' and request.FILES['myfile2']:
                 myfile = request.FILES['myfile2']
 
-            user_file_name = str(myfile.name).rsplit('.',1)
+            user_file_name = str(myfile.name).split('.')
             # if myfile.name[-5:] != ".lite":
             #     return render(request, 'app/simple_upload.html', {
             #
@@ -329,7 +329,7 @@ def simple_upload(request):
             fs1= FileSystemStorage(location='upload2/')
             tz = pytz.timezone('America/New_York')
             now = datetime.datetime.now(tz)
-            name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(user_file_name[0], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
+            name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(myfile.name[:-5], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
 
             # for i in glob.glob('upload2/*'):
             #     l = len(str(request.user.username))
@@ -441,10 +441,10 @@ def score_board(request):
         name = "upload/"+item.filename
         if name in glob.glob('upload/*'):
              runtimeList.append(item.runtime)
-             acc_clfList.append(item.acc_clf)
-             accList.append(item.acc)
+             acc_clfList.append(format(float(item.acc_clf), '.5g'))
+             accList.append(format(float(item.acc), '.5g'))
              n_clfList.append(item.n_clf)
-             acc_over_timeList.append(item.acc_over_time)
+             acc_over_timeList.append(str(format(float(item.acc_over_time), '.5g')))
 
 
     userSubmittedTime = []
@@ -468,7 +468,7 @@ def score_board(request):
             try:
                 userRuntimeScore.append(Score.objects.get(filename=item).runtime)
                 userAcc_clfScore.append(Score.objects.get(filename=item).acc_clf)
-                userAccScore.append(Score.objects.get(filename=item).acc)
+                userAccScore.append(Score.objects.get(filename=item).acc),
                 userN_clfScore.append(Score.objects.get(filename=item).n_clf)
                 userAcc_over_timeScore.append(Score.objects.get(filename=item).acc_over_time)
             except:
