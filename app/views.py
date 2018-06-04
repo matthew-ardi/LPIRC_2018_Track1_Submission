@@ -436,6 +436,7 @@ def score_board(request):
     accList = []
     n_clfList = []
     acc_over_timeList = []
+    # feedback_message = []
     scores = Score.objects.all().order_by('-acc', 'runtime')
     for item in scores:
         name = "upload/"+item.filename
@@ -453,6 +454,7 @@ def score_board(request):
     userAccScore = []
     userN_clfScore = []
     userAcc_over_timeScore = []
+    userFeedback_message = []
 
     try:
         fn = user.tfile1.fn
@@ -471,12 +473,14 @@ def score_board(request):
                 userAccScore.append(Score.objects.get(filename=item).acc)
                 userN_clfScore.append(Score.objects.get(filename=item).n_clf)
                 userAcc_over_timeScore.append(Score.objects.get(filename=item).acc_over_time)
+                userFeedback_message.append(Score.objects.get(filename=item).message)
             except:
                 userRuntimeScore.append("Not Provided")
                 userAcc_clfScore.append("Not Provided")
                 userAccScore.append("Not Provided")
                 userN_clfScore.append("Not Provided")
                 userAcc_over_timeScore.append("Not Provided")
+                userFeedback_message.append("Not Provided")
     except:
         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
         logging.debug('user has not submitted a file')
@@ -491,7 +495,7 @@ def score_board(request):
             acc_over_timeList.append("None")
 
     RankList = ["1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th","13th","14th","15th","16th","17th","18th","19th","20th"]
-    zipScore = zip(userSubmittedTime, userRuntimeScore,userAcc_clfScore,userAccScore, userN_clfScore, userAcc_over_timeScore)
+    zipScore = zip(userSubmittedTime, userRuntimeScore,userAcc_clfScore,userAccScore, userN_clfScore, userAcc_over_timeScore, userFeedback_message)
     zipRank = zip(RankList, runtimeList,acc_clfList,accList, n_clfList, acc_over_timeList)
 
     # Score.objects.all().delete() #to clear score objects
