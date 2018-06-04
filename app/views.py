@@ -490,7 +490,7 @@ def score_board(request):
             n_clfList.append("None")
             acc_over_timeList.append("None")
 
-    RankList = ["1st","2nd","3rd","4th","5th"]
+    RankList = ["1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th","13th","14th","15th","16th","17th","18th","19th","20th"]
     zipScore = zip(userSubmittedTime, userRuntimeScore,userAcc_clfScore,userAccScore, userN_clfScore, userAcc_over_timeScore)
     zipRank = zip(RankList, runtimeList,acc_clfList,accList, n_clfList, acc_over_timeList)
 
