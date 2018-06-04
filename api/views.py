@@ -179,7 +179,7 @@ def postScore(request):
                             obj.acc_over_time = body['acc_over_time']
                             obj.save()
                         else:
-                            p = Score.objects.create(filename=orgName,runtime=body['runtime'],acc_clf=body['acc_clf'],acc=body['acc'])
+                            p = Score.objects.create(filename=orgName,runtime=body['runtime'],acc_clf=body['acc_clf'],acc=body['acc'], n_clf=body['n_clf'], acc_over_time=body['acc_over_time'])
                             p.save()
                     except Exception as exc:
                         return HttpResponse(exc)
