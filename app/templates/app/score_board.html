@@ -17,15 +17,27 @@ th, td {
   <!-- </div> -->
  <table style="width:70%">
    <tr>
-    <th></th>
+
+    {% if user.is_authenticated %}
+      {% if user.is_staff %}
+        <th>filename</th>
+      {% endif %}
+    {% endif %}
+
+    <th>Rank</th>
     <th>Latency</th>
     <th>Acc on Classified</th>
     <th>Test metric</th>
     <th># Classified</th>
     <th>Acc/Time</th>
   </tr>
-  {% for nameRank, runtimeRank, acc_clfRank, accRank, n_clfRank, acc_over_timeRank in zipRank %}
+  {% for fileRank, nameRank, runtimeRank, acc_clfRank, accRank, n_clfRank, acc_over_timeRank in zipRank %}
     <tr>
+      {% if user.is_authenticated %}
+        {% if user.is_staff %}
+        <td>{{ fileRank }}</td>
+        {% endif %}
+      {% endif %}
       <td>{{ nameRank }}</td>
       <td>{{ runtimeRank }}</td>
       <td>{{ acc_clfRank }}</td>

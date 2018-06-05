@@ -430,6 +430,7 @@ def admin_email(request):
 def score_board(request):
     user = request.user
     usernameLength = len(str(request.user.username))
+    filenameList=[]
     runtimeList=[]
     m1List = []
     acc_clfList = []
@@ -441,6 +442,7 @@ def score_board(request):
     for item in scores:
         name = "upload/"+item.filename
         if name in glob.glob('upload/*'):
+             filenameList.append(item.filename)
              runtimeList.append(item.runtime)
              acc_clfList.append(item.acc_clf)
              accList.append(item.acc)
@@ -496,7 +498,7 @@ def score_board(request):
 
     RankList = ["1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th","13th","14th","15th","16th","17th","18th","19th","20th"]
     zipScore = zip(userSubmittedTime, userRuntimeScore,userAcc_clfScore,userAccScore, userN_clfScore, userAcc_over_timeScore, userFeedback_message)
-    zipRank = zip(RankList, runtimeList,acc_clfList,accList, n_clfList, acc_over_timeList)
+    zipRank = zip(filenameList, RankList, runtimeList,acc_clfList,accList, n_clfList, acc_over_timeList)
 
     # Score.objects.all().delete() #to clear score objects
     return render(request, 'app/score_board.html',
