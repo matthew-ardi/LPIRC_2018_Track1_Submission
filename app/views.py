@@ -249,6 +249,8 @@ def simple_upload(request):
     #        return render(request, 'app/simple_upload.html', {
     # 'wrong_file': "Track 1 Submission Failure: Three submissions per day"})
         true_filename = name+".lite"
+        model_validation_dir = '/home/bofu/lpirc-testing/LPIRC_2018_Track1_Submission/model_validation/'
+        tensorflow_dir = '/home/bofu/tensorflow'
         try:
             with open('model_validation/'+name+".lite", 'wb+') as destination:
                 for chunk in myfile.chunks():
@@ -260,7 +262,7 @@ def simple_upload(request):
             logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
             logging.debug('This is the output : ' + str(orig_dir))
 
-            os.chdir('/home/matthew/tensorflow')
+            os.chdir(tensorflow_dir)
             retval = os.getcwd()
             logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
             logging.debug('This is the output : ' + str(retval))
@@ -270,7 +272,7 @@ def simple_upload(request):
             logging.debug('This is the output : ' + str(retval))
 
             os.system('touch WORKSPACE')
-            test_output = os.popen('bazel-bin/tensorflow/contrib/lite/java/ovic/ovic_validator /home/matthew/Documents/PurdueCAM2/IEEE_lpirc/track1_dev/LPIRC_2018_Track1_Submission/model_validation/'+true_filename).read()
+            test_output = os.popen('bazel-bin/tensorflow/contrib/lite/java/ovic/ovic_validator '+ model_validation_dir + true_filename).read()
             logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
             logging.debug('This is the test result : ' + str(test_output))
 
@@ -303,7 +305,7 @@ def simple_upload(request):
         logging.debug('final_dir = ' + final_dir)
 
         try:
-            os.remove('/home/matthew/Documents/PurdueCAM2/IEEE_lpirc/track1_dev/LPIRC_2018_Track1_Submission/model_validation/'+true_filename)
+            os.remove(model_validation_dir+true_filename)
         except OSError as e:
             logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
             logging.debug('Failed with: ' + e.strerror)
