@@ -4,6 +4,7 @@ import shutil
 import json
 import logging
 import subprocess
+import ast
 
 from api.models import Score
 from os import listdir
@@ -160,7 +161,8 @@ def postScore(request):
             try:
                 d=[]
                 body_unicode = request.body.decode('utf-8')
-                body = json.loads(body_unicode)
+                # body = json.loads(body_unicode)
+                body = ast.literal_eval(body_unicode)
                 content = body['results']
                 for item in content:
                     body = item
@@ -177,9 +179,10 @@ def postScore(request):
                             obj.acc = body['acc']
                             obj.n_clf = body['n_clf']
                             obj.acc_over_time = body['acc_over_time']
+                            obj.message = body['message']    
                             obj.save()
                         else:
-                            p = Score.objects.create(filename=orgName,runtime=body['runtime'],acc_clf=body['acc_clf'],acc=body['acc'], n_clf=body['n_clf'], acc_over_time=body['acc_over_time'])
+                            p = Score.objects.create(filename=orgName,runtime=body['runtime'],acc_clf=body['acc_clf'],acc=body['acc'], n_clf=body['n_clf'], acc_over_time=body['acc_over_time'], message=body['message'])
                             p.save()
                     except Exception as exc:
                         return HttpResponse(exc)

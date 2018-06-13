@@ -11,20 +11,33 @@ th, td {
 <center style="border: 1px solid DodgerBlue">
   <p></p>
   <title>Rank</title>
-
-  <p>Rank:</p>
-
+  <!-- <div align="left"> -->
+  <h3>Public Ranked Leaderboard</h3>
+  <h5><span style="font-size: 12pt; font-family: Arial; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">Disclaimer: "The test metric below is computed on the ImageNet validation set. The final ranking will be computed on a holdout set, so the final standings may be different."</h5>
+  <!-- </div> -->
  <table style="width:70%">
    <tr>
-    <th></th>
+
+    {% if user.is_authenticated %}
+      {% if user.is_staff %}
+        <th>filename</th>
+      {% endif %}
+    {% endif %}
+
+    <th>Rank</th>
     <th>Latency</th>
     <th>Acc on Classified</th>
     <th>Test metric</th>
     <th># Classified</th>
     <th>Acc/Time</th>
   </tr>
-  {% for nameRank, runtimeRank, acc_clfRank, accRank, n_clfRank, acc_over_timeRank in zipRank %}
+  {% for fileRank, nameRank, runtimeRank, acc_clfRank, accRank, n_clfRank, acc_over_timeRank in zipRank %}
     <tr>
+      {% if user.is_authenticated %}
+        {% if user.is_staff %}
+        <td>{{ fileRank }}</td>
+        {% endif %}
+      {% endif %}
       <td>{{ nameRank }}</td>
       <td>{{ runtimeRank }}</td>
       <td>{{ acc_clfRank }}</td>
@@ -54,8 +67,9 @@ th, td {
     <th>Test metric</th>
     <th># Classified</th>
     <th>Acc/Time</th>
+    <th>Feedback message</th>
   </tr>
-  {% for time, runtimeScore, acc_clfScore, accScore, n_clfScore, acc_over_timeScore in zipScore %}
+  {% for time, runtimeScore, acc_clfScore, accScore, n_clfScore, acc_over_timeScore, message in zipScore %}
     <tr>
       <th>{{ time }}</th>
       <td>{{ runtimeScore }}</td>
@@ -63,6 +77,7 @@ th, td {
       <td>{{ accScore}}</td>
       <td>{{ n_clfScore }}</td>
       <td>{{ acc_over_timeScore }}</td>
+      <td>{{ message }}</td>
   </tr>
   {% endfor %}
 

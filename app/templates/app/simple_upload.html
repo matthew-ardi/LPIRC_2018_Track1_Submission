@@ -91,7 +91,10 @@ function myFunction2() {
     <p>{{ wrong_file2 }}</p>
   {% endif %}
   {% if invalid_model %}
-    <p>Submission rejected: {{ invalid_model }} did not pass the bazel test</p>
+    <p>Submission rejected: {{ invalid_model }} did not pass the <a href="https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/lite/java/ovic#run-tests" tager="blank">bazel test</a></p>
+  {% endif %}
+  {% if error_message %}
+    <p>Failed to submit file: {{ error_message }}</p>
   {% endif %}
   <p><a href="/">LPIRC2018 Home</a></p>
 </center>

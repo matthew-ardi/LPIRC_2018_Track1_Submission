@@ -8,3 +8,4 @@ class Score(models.Model):
     acc = models.FloatField(max_length=10000, null=False)
     n_clf = models.FloatField(max_length=10000, null=True)
     acc_over_time = models.FloatField(max_length=10000, null=True)
+    message = models.CharField(max_length=10000, default="Not Provided")
