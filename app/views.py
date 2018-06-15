@@ -249,7 +249,7 @@ def simple_upload(request):
     #        return render(request, 'app/simple_upload.html', {
     # 'wrong_file': "Track 1 Submission Failure: Three submissions per day"})
         true_filename = name+".lite"
-        model_validation_dir = '/home/bofu/lpirc-testing/LPIRC_2018_Track1_Submission/model_validation/'
+        model_validation_dir = '/home/bofu/lpirc/main_dir/initial_dir/LPIRC_2018_Track1_Submission/model_validation/'
         tensorflow_dir = '/home/bofu/tensorflow'
         try:
             with open('model_validation/'+name+".lite", 'wb+') as destination:

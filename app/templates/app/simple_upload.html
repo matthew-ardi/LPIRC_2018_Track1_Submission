@@ -28,6 +28,9 @@
   <div>
   Track2: <input type="checkbox" id="myCheck2"  onclick="myFunction2()">
   </div>
+  <div>
+    <p>Track 1 and Track 2 submission are closed</p>
+  </div>
 
 <div id="text" style="display:none">
     <form method="post" enctype="multipart/form-data">
@@ -57,7 +60,7 @@ function myFunction() {
     }
     var text = document.getElementById("text");
     if (checkBox.checked == true){
-        text.style.display = "block";
+        text.style.display = "none";
     } else {
        text.style.display = "none";
     }
@@ -71,7 +74,7 @@ function myFunction2() {
     //document.getElementById("mycheck").checked = false;
     var text = document.getElementById("text2");
     if (checkBox.checked == true){
-        text.style.display = "block";
+        text.style.display = "none";
     } else {
        text.style.display = "none";
     }
