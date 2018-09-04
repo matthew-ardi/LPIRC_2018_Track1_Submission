@@ -1,4 +1,6 @@
 {% block content %}
+
+{% if user.is_staff %}
 <style>
 table, th, td {
     border: 1px solid black;
@@ -10,11 +12,6 @@ th, td {
 </style>
 <center style="border: 1px solid DodgerBlue">
   <p></p>
-  {% if user.is_authenticated %}
-    {% if user.get_username == "terrydlca" %}
-    <h2>IMPORTANT MESSAGE FOR YOU: Please send your valid email address to <a href="mailto:lpirc@ecn.purdue.edu">lpirc@ecn.purdue.edu</a>. LPIRC organizer tried contacting you through your registered email address to inform your final result but the email bounced due to invalid email address.</h2>
-    {% endif %}
-  {% endif %}
   <title>Rank</title>
   <!-- <div align="left"> -->
   <h3>Public Ranked Leaderboard</h3>
@@ -91,4 +88,7 @@ th, td {
 
   <p><a href="/">LPIRC2018 Home</a></p>
 </center>
+{% else %}
+<h1> you have no access to this page</h1>
+{% endif %}
 {% endblock %}

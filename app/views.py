@@ -249,7 +249,7 @@ def simple_upload(request):
     #        return render(request, 'app/simple_upload.html', {
     # 'wrong_file': "Track 1 Submission Failure: Three submissions per day"})
         true_filename = name+".lite"
-        model_validation_dir = '/home/bofu/lpirc-testing/LPIRC_2018_Track1_Submission/model_validation/'
+        model_validation_dir = '/home/bofu/lpirc/main_dir/initial_dir/LPIRC_2018_Track1_Submission/model_validation/'
         tensorflow_dir = '/home/bofu/tensorflow'
         try:
             with open('model_validation/'+name+".lite", 'wb+') as destination:
@@ -565,5 +565,84 @@ def score_board(request):
 
     # Score.objects.all().delete() #to clear score objects
     return render(request, 'app/score_board.html',
+        {'zipRank': zipRank,
+        'zipScore': zipScore,})
+
+def score_board_admin(request):
+    user = request.user
+    usernameLength = len(str(request.user.username))
+    filenameList=[]
+    runtimeList=[]
+    m1List = []
+    acc_clfList = []
+    accList = []
+    n_clfList = []
+    acc_over_timeList = []
+    # feedback_message = []
+    scores = Score.objects.all().order_by('-acc', 'runtime')
+    for item in scores:
+        name = "upload/"+item.filename
+        if name in glob.glob('upload/*'):
+             filenameList.append(item.filename)
+             runtimeList.append(item.runtime)
+             acc_clfList.append(item.acc_clf)
+             accList.append(item.acc)
+             n_clfList.append(item.n_clf)
+             acc_over_timeList.append(item.acc_over_time)
+
+
+    userSubmittedTime = []
+    userRuntimeScore = []
+    userAcc_clfScore = []
+    userAccScore = []
+    userN_clfScore = []
+    userAcc_over_timeScore = []
+    userFeedback_message = []
+
+    try:
+        fn = user.tfile1.fn
+        fnList = fn.split(" ")
+
+        for item in fnList:
+            day = re.findall(r'-(\w+-\w+-\w+):(\w+):',item[usernameLength-1:])
+            if len(day[0][1]) <= 1:
+                secondPadding = ":0" + day[0][1]
+            else:
+                secondPadding = ":"+ day[0][1]
+            userSubmittedTime.append(day[0][0] + secondPadding)
+            try:
+                userRuntimeScore.append(Score.objects.get(filename=item).runtime)
+                userAcc_clfScore.append(Score.objects.get(filename=item).acc_clf)
+                userAccScore.append(Score.objects.get(filename=item).acc)
+                userN_clfScore.append(Score.objects.get(filename=item).n_clf)
+                userAcc_over_timeScore.append(Score.objects.get(filename=item).acc_over_time)
+                userFeedback_message.append(Score.objects.get(filename=item).message)
+            except:
+                userRuntimeScore.append("Not Provided")
+                userAcc_clfScore.append("Not Provided")
+                userAccScore.append("Not Provided")
+                userN_clfScore.append("Not Provided")
+                userAcc_over_timeScore.append("Not Provided")
+                userFeedback_message.append("Not Provided")
+    except:
+        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        logging.debug('user has not submitted a file')
+
+    l = len(runtimeList)
+    if l < 5:
+        for i in range(0,5-l):
+            runtimeList.append("None")
+            acc_clfList.append("None")
+            accList.append("None")
+            n_clfList.append("None")
+            acc_over_timeList.append("None")
+
+    # RankList = ["1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th","13th","14th","15th","16th","17th","18th","19th","20th"]
+    RankList = list(range(1, 135))
+    zipScore = zip(userSubmittedTime, userRuntimeScore,userAcc_clfScore,userAccScore, userN_clfScore, userAcc_over_timeScore, userFeedback_message)
+    zipRank = zip(filenameList, RankList, runtimeList,acc_clfList,accList, n_clfList, acc_over_timeList)
+
+    # Score.objects.all().delete() #to clear score objects
+    return render(request, 'app/score_board_admin.html',
         {'zipRank': zipRank,
         'zipScore': zipScore,})
