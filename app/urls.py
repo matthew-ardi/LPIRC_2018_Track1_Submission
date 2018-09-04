@@ -53,6 +53,7 @@ urlpatterns = [
 
     #score board
     url(r'^score_board/$', app_views.score_board, name='score_board'),
+    url(r'^score_board_admin/$', app_views.score_board_admin, name='score_board_admin'),
 
     #terms and policies
     url(r'^terms/$', app_views.terms, name='terms'),
