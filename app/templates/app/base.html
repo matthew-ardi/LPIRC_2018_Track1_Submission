@@ -3,6 +3,7 @@
 <html lang="en">
 
 <head>
+    <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="LPIRC 2018 TRACK 3">
     <meta name="author" content="">
@@ -26,6 +27,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
     <link href="{% static "app/css/style.css" %}" type="text/css" rel="stylesheet" media="screen,projection"/>
 
+    
     {% block css %}
     {% endblock %}
 </head>
@@ -34,7 +36,9 @@
     <!--  Navigation Bar  -->
     <nav class="white" role="navigation">
             <div class="nav-wrapper container">
-              <a id="logo-container" href="#" class="brand-logo">Logo</a>
+              <div class="brand-logo" >
+                <img src="{% static "app/img/Rebooting_Computing_Logo.png" %}" style="height:60px">
+              </div>
               <ul class="right hide-on-med-and-down">
                 <li><a href="#">Navbar Link</a></li>
               </ul>
