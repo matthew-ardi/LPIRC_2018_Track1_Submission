@@ -83,8 +83,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'djng',             # dependency for django-angular
-    'easy_thumbnails',  # optional, if ImageField is used
 ]
 
 MIDDLEWARE = [
@@ -189,12 +187,9 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'app/static/app'),
-    ('node_modules', os.path.join(BASE_DIR, 'node_modules')),
 )
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
 MEDIA_URL = '/submissions/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "submissions/")
 
-# Django Angular config
-FORM_RENDERER = 'djng.forms.renderers.DjangoAngularTemplates'
