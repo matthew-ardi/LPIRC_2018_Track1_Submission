@@ -60,7 +60,7 @@
 
     <!--  Navigation Bar section -->
       <!-- navbar first row -->
-    <nav class="white z-depth-5" role="navigation">
+    <nav class="white" role="navigation">
             <div class="nav-wrapper container" >
               <div class="brand-logo center" >
                 <img src="{% static "app/img/Rebooting_Computing_Logo.png" %}" style="height:60px">
@@ -77,6 +77,9 @@
               </ul>
               <ul class="right hide-on-med-and-down">
                   <li><a class="waves-effect waves-light btn modal-trigger" href="#login_modal">Login</a></li>
+                  {% if user.is_authenticated %}
+                  <li><a class="waves-effect waves-light btn modal-trigger" href="/logout/">Logout</a></li>
+                  {% endif %}
               </ul>
         
               <ul id="nav-mobile" class="sidenav">
@@ -131,7 +134,7 @@
 {% endblock %}
 
 <!-- Modal Structure -->
-<div id="login_modal" class="modal">
+<div id="login_modal" class="modal" style="width: 600px;">
     <div class="modal-content center">
       <a class="waves-effect waves-light btn grey darken-3 social github" id="github_login" href="{% url 'social:begin' 'github' %}" style="width: 300px;">
         <i class="fa fa-github"></i> Sign in with github</a>
@@ -141,10 +144,27 @@
         Sign in with Google
       </a>
 
+      <form method="post" class="form-signin center" style="width: 300px; margin: auto;">
+          {% csrf_token %}
+          {% for field in form %}
 
-    </div>
-    <div class="modal-footer">
-      <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+              <div class="input-field col s6">
+                  <label>{{ field.label_tag }}</label>
+                  {{ field }}
+                </div>
+          {% endfor %}
+
+          <div align="center">
+              <button type="submit" class="btn">Sign in</button>
+              {% if form.non_field_errors %}
+              <ul class='form-errors'>
+                  {% for error in form.non_field_errors %}
+                  <li>{{ error }}</li>
+                  {% endfor %}
+              </ul>
+              {% endif %}
+              </form>
+          </div>
     </div>
   </div>
 {% block modal %}
