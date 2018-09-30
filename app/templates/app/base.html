@@ -34,13 +34,33 @@
 <body>
     {% block nav %}
     <!--  Navigation Bar  -->
-    <nav class="white z-depth-2" role="navigation">
+    <ul id="track1_drop" class="dropdown-content">
+        <li><a href="/track1_info">Description</a></li>
+      </ul>
+    <ul id="track2_drop" class="dropdown-content">
+         <li><a href="https://drive.google.com/file/d/0B-KLxmcZ3GW9RWZzajJQaklJWTFzQ2JCdm9lRV9RV25WXzVF/view" target="_blank">
+          Description</a></li>
+         <li><a href="/track2_info">Paper 1</a></li>
+         <li><a href="/track2_info">Paper 2</a></li>
+         <li><a href="/track2_info">SDK</a></li>
+       </ul>
+      <ul id="track3_drop" class="dropdown-content">
+        <li><a href="/track3_info">Paper 1</a></li>
+        <li><a href="/track3_info">Paper 2</a></li>
+      </ul>
+    <ul id="FAQ_drop" class="dropdown-content">
+        <li><a href="/track3_info">General</a></li>
+      </ul>
+    <nav class="white z-depth-5" role="navigation">
             <div class="nav-wrapper container">
               <div class="brand-logo" >
                 <img src="{% static "app/img/Rebooting_Computing_Logo.png" %}" style="height:60px">
               </div>
               <ul class="right hide-on-med-and-down">
-                <li><a href="#">Navbar Link</a></li>
+                <li><a a class="dropdown-trigger" href="#!" data-target="track1_drop">Track 1 <i class="material-icons right">arrow_drop_down</i></a></li>
+                <li><a class="dropdown-trigger" href="#!" data-target="track2_drop">Track 2 <i class="material-icons right">arrow_drop_down</i></a></li>
+                <li><a href="/general_faq/" target="blank">FAQ</a></li>
+                <li><a href="#">Login</a></li>
               </ul>
         
               <ul id="nav-mobile" class="sidenav">
@@ -88,6 +108,7 @@
         <div class="footer-copyright">
           <div class="container">
           Made by <a class="brown-text text-lighten-3" href="http://materializecss.com">Materialize</a>
+          || designed by <a class="brown-text text-lighten-3" href="https://github.com/matthew-ardi">Matthew Ardi</a>
           </div>
         </div>
       </footer>
@@ -100,7 +121,9 @@
 <script src="{% static "app/js/init.css" %}"></script>        
 
 
-
+<script>
+$(".dropdown-trigger").dropdown();
+</script>
 {% block scripts %}
 {% endblock %}
 </body>

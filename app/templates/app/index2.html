@@ -4,6 +4,9 @@
 {% load static %}
 
 {% block css %}
+<style>
+
+</style>
 {% endblock %}
 
 
@@ -39,21 +42,12 @@
     </div>
   </div>
 
-  <div id="index-banner" class="parallax-container" style="height:600px;">
+  <div id="index-banner" class="parallax-container " style="height:600px;">
     <div class="section no-pad-bot">
       <div class="container">
-        <br><br>
-        <h1 class="header center indigo-text text-lighten-2">Welcome to LPIRC Submission Panel</h1>
-        <div class="row center">
-          <h5 class="header col s12 light">A modern responsive front-end framework based on Material Design</h5>
-        </div>
-        <div class="row center">
-          <a href="http://materializecss.com/getting-started.html" id="download-button" class="btn-large waves-effect waves-light indigo lighten-1">Get Started</a>
-        </div>
-        <br><br>
-
       </div>
     </div>
+    <a class="btn-floating btn-large waves-effect waves-light black z-depth-3 pulse tooltipped" data-position="left" data-tooltip="Qualcomm Edge AI - Track 1 Winner" style="float: right; margin-right: 15px;"><i class="material-icons">info_outline</i></a>
     <div class="parallax"><img src="{% static "app/img/winner_track1.jpg" %}" alt="Unsplashed background img 1"></div>
   </div>
 
@@ -97,14 +91,13 @@
   </div>
 
 
-  <div class="parallax-container valign-wrapper">
+  <div class="parallax-container" style="height:600px;">
     <div class="section no-pad-bot">
-      <div class="container">
-        <div class="row center">
-          <h5 class="header col s12 light">A modern responsive front-end framework based on Material Design</h5>
-        </div>
-      </div>
+        <div class="container">
+          </div>
     </div>
+    <a class="btn-floating btn-large waves-effect waves-light black z-depth-3 pulse tooltipped" data-position="left" data-tooltip="ETRI and KPST - Track 3 Winner" style="float: right; margin-right: 15px;"><i class="material-icons">info_outline</i></a>
+    <a class="btn-floating btn-large waves-effect waves-light black z-depth-3 pulse tooltipped" data-position="right" data-tooltip="Seoul National University - Track 2 Winner" style="float: left; margin-left: 15px;"><i class="material-icons">info_outline</i></a>
     <div class="parallax"><img src="{% static "app/img/track2-3.jpg" %}" alt="Unsplashed background img 2"></div>
   </div>
 
@@ -123,14 +116,13 @@
   </div>
 
 
-  <div class="parallax-container valign-wrapper">
+  <div class="parallax-container">
     <div class="section no-pad-bot">
       <div class="container">
-        <div class="row center">
-          <h5 class="header col s12 light">A modern responsive front-end framework based on Material Design</h5>
-        </div>
       </div>
     </div>
+    <a class="btn-floating btn-large waves-effect waves-light black z-depth-3 tooltipped" data-position="left" data-tooltip="Attendees listen to presentations about creating energy-efficient computer vision technologies" style="float: right; margin-right: 15px;"><i class="material-icons">info_outline</i></a>
+    
     <div class="parallax"><img src="{% static "app/img/panorama.jpg" %}" alt="Unsplashed background img 3"></div>
   </div>
 
@@ -140,5 +132,8 @@
 $(document).ready(function(){
   $('.parallax').parallax();
 });
+$(document).ready(function(){
+    $('.tooltipped').tooltip();
+  });
 </script>
 {% endblock %}
