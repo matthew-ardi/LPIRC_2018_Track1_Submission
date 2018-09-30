@@ -10,3 +10,4 @@ Selenium>=3.4.1
 pyvirtualdisplay>=0.2.1
 google-api-python-client
 djangorestframework
+wagtail>=2.2.2

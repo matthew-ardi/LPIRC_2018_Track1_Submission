@@ -16,8 +16,8 @@ def update_user_registeruser(sender, instance, created, **kwargs):
     instance.registeruser.save()
 
 class Tfile1(models.Model):
-	user = models.OneToOneField(User)
+	user = models.OneToOneField(User, on_delete=models.DO_NOTHING)
 	fn = models.CharField(max_length=1000)
 class Tfile2(models.Model):
-	user = models.OneToOneField(User)
+	user = models.OneToOneField(User, on_delete=models.DO_NOTHING)
 	fn = models.CharField(max_length=1000)
