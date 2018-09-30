@@ -23,17 +23,20 @@
 
     <!-- CSS  -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Kodchasan" rel="stylesheet">
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
     <link href="{% static "app/css/style.css" %}" type="text/css" rel="stylesheet" media="screen,projection"/>
 
+    <style>
     
+    </style>
     {% block css %}
     {% endblock %}
 </head>
 <body>
-    {% block nav %}
-    <!--  Navigation Bar  -->
+
+    <!-- dropdown menu to be called by Navigation Bar section, data-target, based on id -->
     <ul id="track1_drop" class="dropdown-content">
         <li><a href="/track1_info">Description</a></li>
       </ul>
@@ -51,16 +54,27 @@
     <ul id="FAQ_drop" class="dropdown-content">
         <li><a href="/track3_info">General</a></li>
       </ul>
+
+
+    <!--  Navigation Bar section -->
+      <!-- navbar first row -->
     <nav class="white z-depth-5" role="navigation">
-            <div class="nav-wrapper container">
-              <div class="brand-logo" >
+            <div class="nav-wrapper container" >
+              <div class="brand-logo center" >
                 <img src="{% static "app/img/Rebooting_Computing_Logo.png" %}" style="height:60px">
               </div>
-              <ul class="right hide-on-med-and-down">
+            </div>
+      </nav>
+        <!-- navbar second row -->
+      <nav class="nav-center white z-depth-5" role="navigation">
+            <div class="nav-wrapper container">
+              <ul class="hide-on-med-and-down">
                 <li><a a class="dropdown-trigger" href="#!" data-target="track1_drop">Track 1 <i class="material-icons right">arrow_drop_down</i></a></li>
                 <li><a class="dropdown-trigger" href="#!" data-target="track2_drop">Track 2 <i class="material-icons right">arrow_drop_down</i></a></li>
                 <li><a href="/general_faq/" target="blank">FAQ</a></li>
-                <li><a href="#">Login</a></li>
+              </ul>
+              <ul class="right hide-on-med-and-down">
+                  <li><a class="waves-effect waves-light btn modal-trigger" href="#login_modal">Login</a></li>
               </ul>
         
               <ul id="nav-mobile" class="sidenav">
@@ -69,7 +83,7 @@
               <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
             </div>
           </nav>
-    {% endblock %}
+
 
 {% block content %}{% endblock %}
 
@@ -114,6 +128,19 @@
       </footer>
 {% endblock %}
 
+<!-- Modal Structure -->
+<div id="login_modal" class="modal">
+    <div class="modal-content">
+      <h4>Modal Header</h4>
+      <p>A bunch of text</p>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+    </div>
+  </div>
+{% block modal %}
+{% endblock %}
+
 <!--JavaScript at end of body for optimized loading-->
 <!-- Compiled and minified JavaScript -->
 <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
@@ -123,6 +150,9 @@
 
 <script>
 $(".dropdown-trigger").dropdown();
+$(document).ready(function(){
+    $('.modal').modal();
+  });
 </script>
 {% block scripts %}
 {% endblock %}
