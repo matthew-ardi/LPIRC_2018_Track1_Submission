@@ -1,104 +1,183 @@
+{% extends "app/base.html" %}
+
+{% block title %}LPIRC 2018{% endblock %}
+{% load static %}
+
+{% block css %}
+<style>
+
+</style>
+{% endblock %}
+
 {% block content %}
-<center style="border: 1px solid DodgerBlue">
-  <p></p>
-  <title>Submit</title>
-  <h1>The orientation of submission</h1>
-  <div align="left">
-    <p>
-      Note: you will see a message saying your submission was successful. If no message or error message was displayed,
-      it means the submission failed and we did not receive your file. for more information, please contact <a href="mailto:lpirc@ecn.purdue.edu">lpirc@ecn.purdue.edu<a>
-    </p>
-    <p>
-      Track 1 restriction:
-      <li>File format has to be either .lite or .tflite </li>
-      <li>Maximum of 3 submissions per day. </li>
-      <br>
-      Track 2:
-      <li>It is recommended that you submit all files in a zip folder. </li>
-      <li>Participants must use Caffe2 and submit executable Python files.</li>
-      <li>Please include instruction on how to run the code in a Readme file. </li>
-      <br>
-      Track 1 and Track 2 restriction:
-      <li>Filename must match your account username</li>
-    </p>
-</div>
-  <div>
-  Track1: <input type="checkbox" id="myCheck"  onclick="myFunction()">
+<br>
+<br>
+<div class="container">
+  <div class="container">
+    <div class="card z-depth-3 center">
+      <div class="card-content">
+
+        <p></p>
+        <title>Submit</title>
+        <h1>The orientation of submission</h1>
+        <div align="left">
+          <p>
+            Note: you will see a message saying your submission was successful. If no message or error message was
+            displayed,
+            it means the submission failed and we did not receive your file. for more information, please contact <a
+              href="mailto:lpirc@ecn.purdue.edu">lpirc@ecn.purdue.edu</a>
+          </p>
+          <p>
+          </p>
+        </div>
+
+        <ul class="collapsible">
+          <li>
+            <div class="collapsible-header"><i class="material-icons">info</i>Track 1 restriction</div>
+            <div class="collapsible-body"><span>File format has to be either .lite or .tflite. Maximum of 3 submissions
+                per day. </span></div>
+          </li>
+          <li>
+            <div class="collapsible-header"><i class="material-icons">info</i>Track 2 restriction</div>
+            <div class="collapsible-body"><span>It is recommended that you submit all files in a zip folder.
+                Participants must use Caffe2 and submit executable Python files.
+                Please include instruction on how to run the code in a Readme file. </span></div>
+          </li>
+          <li>
+            <div class="collapsible-header"><i class="material-icons">info</i>Track 1 and Track 2 restriction</div>
+            <div class="collapsible-body"><span>Filename must match your account username</span></div>
+          </li>
+        </ul>
+
+        <!-- <div>
+          <form action="#">
+            <p>
+              <label>
+                <input name="group1" type="radio" class="filled-in" id="myCheck" onclick="myFunction()">
+                <span style="color: black;">Track 1</span>
+              </label>
+            </p>
+            <p>
+              <label>
+                <input name="group1" type="radio" class="filled-in" id="myCheck2" onclick="myFunction2()">
+                <span style="color: black;">Track 2</span>
+              </label>
+            </p>
+            </form>
+        </div> -->
+
+        <div>
+          <p>Track 1 and Track 2 submission are closed</p>
+        </div>
+
+        <div id="text" style="display:none">
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="card z-depth-3 center">
+              <div class="card-content">
+                <input type="file" name="myfile">
+                <button class="btn-floating btn-large waves-effect waves-light pulse" type="submit" name="action">Submit
+                  <i class="material-icons right">cloud_upload</i>
+                </button>
+              </div>
+            </div>
+          </form>
+
+        </div>
+        <div id="text2" style="display:none">
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="card z-depth-3 center">
+              <div class="card-content">
+                <input type="file" name="myfile2">
+                <button class="btn-floating btn-large waves-effect waves-light pulse" type="submit" name="action">
+                  <i class="material-icons right">cloud_upload</i>
+                </button>
+              </div>
+            </div>
+
+          </form>
+
+        </div>
+
+
+
+        {% if uploaded_file_url %}
+        <p>Track 1 File uploaded: {{ uploaded_file_url }}</p>
+        {% endif %}
+        {% if wrong_file %}
+        <p>{{ wrong_file }}</p>
+        {% endif %}
+
+        {% if uploaded_file_url2 %}
+        <p>Track 2 File uploaded: {{ uploaded_file_url2 }}</p>
+        {% endif %}
+        {% if wrong_file2 %}
+        <p>{{ wrong_file2 }}</p>
+        {% endif %}
+        {% if invalid_model %}
+        <p>Submission rejected: {{ invalid_model }} did not pass the <a href="https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/lite/java/ovic#run-tests"
+            tager="blank">bazel test</a></p>
+        {% endif %}
+        {% if error_message %}
+        <p>Failed to submit file: {{ error_message }}</p>
+        {% endif %}
+      </div>
+    </div>
   </div>
-  <div>
-  Track2: <input type="checkbox" id="myCheck2"  onclick="myFunction2()">
-  </div>
-  <div>
-    <p>Track 1 and Track 2 submission are closed</p>
-  </div>
-
-<div id="text" style="display:none">
-    <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <input type="file" name="myfile">
-    <button type="submit">Upload</button>
-  </form>
-
 </div>
-<div id="text2" style="display:none">
-    <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <input type="file" name="myfile2">
-    <button type="submit">Upload</button>
-  </form>
+{% endblock %}
 
-</div>
-
-
+{% block scripts %}
 <script>
-function myFunction() {
+  $(document).ready(function () {
+    $('select').formSelect();
+  });
+
+  $(document).ready(function () {
+    $('.collapsible').collapsible();
+  });
+
+  function myFunction() {
     var checkBox = document.getElementById("myCheck");
-    //document.getElementById("mycheck2").checked = false;
+    // document.getElementById("mycheck2").checked = false;
     var elm = document.getElementById('myCheck2');
     if (elm.checked == true) {
       elm.click();
     }
     var text = document.getElementById("text");
-    if (checkBox.checked == true){
-        text.style.display = "none";
+    var text2 = document.getElementById("text2");
+    if (checkBox.checked == true) {
+      // text.style.display = "block";
+      // text2.style.display = "none";
     } else {
-       text.style.display = "none";
+      text.style.display = "none";
     }
-}
-function myFunction2() {
+  }
+  function myFunction2() {
     var checkBox = document.getElementById("myCheck2");
     var elm = document.getElementById('myCheck');
     if (elm.checked == true) {
       elm.click();
     }
-    //document.getElementById("mycheck").checked = false;
-    var text = document.getElementById("text2");
-    if (checkBox.checked == true){
-        text.style.display = "none";
+    // document.getElementById("mycheck").checked = false;
+    var text2 = document.getElementById("text2");
+    var text2 = document.getElementById("text2");
+    if (checkBox.checked == true) {
+      // text2.style.display = "block";
+      // text.style.display = "none";
     } else {
-       text.style.display = "none";
+      text2.style.display = "none";
     }
-}
-</script>
-  {% if uploaded_file_url %}
-    <p>Track 1 File uploaded: {{ uploaded_file_url }}</p>
-  {% endif %}
-  {% if wrong_file %}
-    <p>{{ wrong_file }}</p>
-  {% endif %}
+  }
 
-  {% if uploaded_file_url2 %}
-    <p>Track 2 File uploaded: {{ uploaded_file_url2 }}</p>
-  {% endif %}
-  {% if wrong_file2 %}
-    <p>{{ wrong_file2 }}</p>
-  {% endif %}
-  {% if invalid_model %}
-    <p>Submission rejected: {{ invalid_model }} did not pass the <a href="https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/lite/java/ovic#run-tests" tager="blank">bazel test</a></p>
-  {% endif %}
-  {% if error_message %}
-    <p>Failed to submit file: {{ error_message }}</p>
-  {% endif %}
-  <p><a href="/">LPIRC2018 Home</a></p>
-</center>
+  function myFunction3() {
+    var selected = document.getElementById("selected_track");
+    if (selected.selectedIndex == "2") {
+
+    }
+
+  }
+
+</script>
 {% endblock %}

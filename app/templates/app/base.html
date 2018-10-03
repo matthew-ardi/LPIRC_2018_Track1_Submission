@@ -32,6 +32,15 @@
 
     <style>
     
+    /* to stick footer to the bottom */
+    body {
+     display: flex;
+     min-height: 100vh;
+     flex-direction: column;
+    }
+    main {
+        flex: 1 0 auto;
+    }
     </style>
     {% block css %}
     {% endblock %}
@@ -62,24 +71,23 @@
       <!-- navbar first row -->
     <nav class="white" role="navigation">
             <div class="nav-wrapper container" >
-              <div class="brand-logo center" >
-                <img src="{% static "app/img/Rebooting_Computing_Logo.png" %}" style="height:60px">
+              <div class="brand-logo left" >
+                <a href="/" ><img src="{% static "app/img/Rebooting_Computing_Logo.png" %}" style="height:60px"></a>
               </div>
-            </div>
-      </nav>
-        <!-- navbar second row -->
-      <nav class="nav-center white z-depth-5" role="navigation">
-            <div class="nav-wrapper container">
-              <ul class="hide-on-med-and-down">
+              <ul class="right hide-on-med-and-down">
                 <li><a a class="dropdown-trigger" href="#!" data-target="track1_drop">Track 1 <i class="material-icons right">arrow_drop_down</i></a></li>
                 <li><a class="dropdown-trigger" href="#!" data-target="track2_drop">Track 2 <i class="material-icons right">arrow_drop_down</i></a></li>
+                <li><a href="/simple_upload/">Submission</a></li>
                 <li><a href="/general_faq/" target="blank">FAQ</a></li>
+                
+                {% if user.is_authenticated %}
+                <li><a class="waves-effect waves-light btn modal-trigger" href="/logout/">Logout</a></li>
+                {% else %}
+                <li><a class="waves-effect waves-light btn modal-trigger" href="#login_modal">Login</a></li>
+                {% endif %}
               </ul>
               <ul class="right hide-on-med-and-down">
-                  <li><a class="waves-effect waves-light btn modal-trigger" href="#login_modal">Login</a></li>
-                  {% if user.is_authenticated %}
-                  <li><a class="waves-effect waves-light btn modal-trigger" href="/logout/">Logout</a></li>
-                  {% endif %}
+                  
               </ul>
         
               <ul id="nav-mobile" class="sidenav">
@@ -89,9 +97,9 @@
             </div>
           </nav>
 
-
+<main>
 {% block content %}{% endblock %}
-
+</main>
 
 <!--  Footer  -->
 {% block footer %}
@@ -136,14 +144,15 @@
 <!-- Modal Structure -->
 <div id="login_modal" class="modal" style="width: 600px;">
     <div class="modal-content center">
-      <a class="waves-effect waves-light btn grey darken-3 social github" id="github_login" href="{% url 'social:begin' 'github' %}" style="width: 300px;">
+      <a class="waves-effect waves-light btn grey darken-3 social github z-depth-3" id="github_login" href="{% url 'social:begin' 'github' %}" style="width: 300px;">
         <i class="fa fa-github"></i> Sign in with github</a>
       <br><br>
-      <a class="waves-effect waves-light btn white black-text" href="{% url 'social:begin' 'google-oauth2' %}" style="color: black; width: 300px;">
+      <a class="waves-effect waves-light btn white black-text z-depth-3" href="{% url 'social:begin' 'google-oauth2' %}" style="color: black; width: 300px;">
         <img width="20px" Logo" src="https://cdn4.iconfinder.com/data/icons/new-google-logo-2015/400/new-google-favicon-512.png"/>
         Sign in with Google
       </a>
-
+      <br>
+      <br>
       <form method="post" class="form-signin center" style="width: 300px; margin: auto;">
           {% csrf_token %}
           {% for field in form %}
@@ -169,7 +178,16 @@
   </div>
 {% block modal %}
 {% endblock %}
-
+<!-- Modal Structure -->
+<div id="get_started" class="modal" style="width: 600px;">
+  <div class="modal-content center">
+      {% if user.is_authenticated %}
+        <h5>Welcome</h5>
+      {% else %}
+        <h5>Please log in to your account</h5>
+        {% endif %}
+    </div>
+</div>
 <!--JavaScript at end of body for optimized loading-->
 <!-- Compiled and minified JavaScript -->
 <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
