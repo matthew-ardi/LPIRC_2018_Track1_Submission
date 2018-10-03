@@ -81,7 +81,7 @@
                 <li><a href="/general_faq/" target="blank">FAQ</a></li>
                 
                 {% if user.is_authenticated %}
-                <li><a class="waves-effect waves-light btn modal-trigger" href="/logout/">Logout</a></li>
+                <li><a class="waves-effect waves-light btn modal-trigger" href="/logout/"><i class="material-icons right">person</i> Logout</a></li>
                 {% else %}
                 <li><a class="waves-effect waves-light btn modal-trigger" href="#login_modal">Login</a></li>
                 {% endif %}
@@ -164,7 +164,9 @@
           {% endfor %}
 
           <div align="center">
-              <button type="submit" class="btn">Sign in</button>
+              <button type="submit" class="btn waves-effect waves-light">Sign in
+                <i class="material-icons right">person_pin</i>
+              </button>
               {% if form.non_field_errors %}
               <ul class='form-errors'>
                   {% for error in form.non_field_errors %}
@@ -174,10 +176,17 @@
               {% endif %}
               </form>
           </div>
+          <br>
+          <button type="submit" class="btn waves-effect waves-light" onclick="window.location.href='/register'">Sign Up
+            <i class="material-icons right">person_add</i>  
+          </button>
     </div>
   </div>
 {% block modal %}
 {% endblock %}
+
+<!-- Modal structure for registration -->
+
 <!-- Modal Structure -->
 <div id="get_started" class="modal" style="width: 600px;">
   <div class="modal-content center">
