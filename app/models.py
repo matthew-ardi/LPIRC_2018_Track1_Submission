@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.contrib import admin, messages
 
 # import for wagtail
 from modelcluster.fields import ParentalKey
@@ -17,6 +18,19 @@ class RegisterUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     email_confirmed = models.BooleanField(default=False)
     contract_signed = models.BooleanField(default=False)
+
+
+class FooterBio(models.Model):
+
+    def clean(self):
+        if not self.pk and MyModel.objects.filter(user=self.user, is_active=True).exists():
+            raise ValidationError('How about no?')
+
+    title = models.CharField(verbose_name='Footer Bio', max_length = 25, blank = False)
+    content = models.CharField(verbose_name='Footer Content', max_length = 3000, blank = False)
+
+    def __str__(self):
+        return "{0}".format(self.title)
     
 @receiver(post_save, sender=User)
 def update_user_registeruser(sender, instance, created, **kwargs):
@@ -30,6 +44,7 @@ class Tfile1(models.Model):
 class Tfile2(models.Model):
 	user = models.OneToOneField(User, on_delete=models.DO_NOTHING)
 	fn = models.CharField(max_length=1000)
+
 
 
 # Wagtail models
@@ -84,3 +99,5 @@ class BlogPageRelatedLink(Orderable):
         FieldPanel('name'),
         FieldPanel('url'),
     ]
+
+admin.site.register(FooterBio)
