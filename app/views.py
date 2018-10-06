@@ -228,7 +228,7 @@ def simple_upload(request):
             'wrong_file': "Track 1 Submission Failure: File name must be the log-in name"
         })
         fs1= FileSystemStorage(location='upload/')
-        fs2 = FileSystemStorage(location='model_validation/')
+        fs2 = FileSystemStorage(location='round2/model_validation/')
         tz = pytz.timezone('America/New_York')
         now = datetime.datetime.now(tz)
         name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(user_file_name[0], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
@@ -255,7 +255,7 @@ def simple_upload(request):
         model_validation_dir = '/home/bofu/lpirc/main_dir/initial_dir/LPIRC_2018_Track1_Submission/model_validation/'
         tensorflow_dir = '/home/bofu/tensorflow'
         try:
-            with open('model_validation/'+name+".lite", 'wb+') as destination:
+            with open('round2/model_validation/'+name+".lite", 'wb+') as destination:
                 for chunk in myfile.chunks():
                     destination.write(chunk)
 
@@ -316,11 +316,11 @@ def simple_upload(request):
             logging.debug('Error code: ' + e.code)
 
         # file upload process by chunks to save system's memory
-        with open('upload/'+name+".lite", 'wb+') as destination:
+        with open('round2/upload_round2/'+name+".lite", 'wb+') as destination:
             for chunk in myfile.chunks():
                 destination.write(chunk)
 
-        fs = FileSystemStorage(location='submissions_track1/')
+        fs = FileSystemStorage(location='round2/submissions_track1_round2/')
         hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
         hash_of_filename = hash_of_filename + ".lite"
         nameStore = name + ".lite"
@@ -347,7 +347,7 @@ def simple_upload(request):
 
 
         # file upload process by chunks to save system's memory
-        with open('submissions_track1/'+hash_of_filename, 'wb+') as destination:
+        with open('round2/submissions_track1_round2/'+hash_of_filename, 'wb+') as destination:
             for chunk in myfile.chunks():
                 destination.write(chunk)
 
@@ -390,9 +390,9 @@ def simple_upload(request):
                 return render(request, 'app/simple_upload.html', {
                 'wrong_file2': "Track 2 Submission Failure: File name must be the log-in name!"
             })
-            fs = FileSystemStorage(location='submissions_track2/')
+            fs = FileSystemStorage(location='round2/submissions_track2_round2/')
 
-            fs1= FileSystemStorage(location='upload2/')
+            fs1= FileSystemStorage(location='round2/upload2_round2/')
             tz = pytz.timezone('America/New_York')
             now = datetime.datetime.now(tz)
             name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(user_file_name[0], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
@@ -416,7 +416,7 @@ def simple_upload(request):
 
 
             # file upload process by chunks to save system's memory
-            with open('upload2/'+name+"." + user_file_name[1], 'wb+') as destination:
+            with open('round2/upload2_round2/'+name+"." + user_file_name[1], 'wb+') as destination:
                 for chunk in myfile.chunks():
                     destination.write(chunk)
 

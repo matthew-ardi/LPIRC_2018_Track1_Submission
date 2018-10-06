@@ -50,6 +50,11 @@
     <!-- dropdown menu to be called by Navigation Bar section, data-target, based on id -->
     <ul id="track1_drop" class="dropdown-content">
         <li><a href="/track1_info">Description</a></li>
+        {% if user.is_authenticated %}
+        <li><a href="/score_board/">Scores</a></li>
+        {% else %}
+        <li><a class="modal-trigger" href="#please_login">Scores</a></li>
+        {% endif %}
       </ul>
     <ul id="track2_drop" class="dropdown-content">
          <li><a href="https://drive.google.com/file/d/0B-KLxmcZ3GW9RWZzajJQaklJWTFzQ2JCdm9lRV9RV25WXzVF/view" target="_blank">
@@ -77,8 +82,10 @@
               <ul class="right hide-on-med-and-down">
                 <li><a a class="dropdown-trigger" href="#!" data-target="track1_drop">Track 1 <i class="material-icons right">arrow_drop_down</i></a></li>
                 <li><a class="dropdown-trigger" href="#!" data-target="track2_drop">Track 2 <i class="material-icons right">arrow_drop_down</i></a></li>
+                {% if user.is_authenticated %}
                 <li><a href="/simple_upload/">Submission</a></li>
-                <li><a href="/general_faq/" target="blank">FAQ</a></li>
+                {% endif %}
+                <li><a href="/general_faq/">FAQ</a></li>
                 
                 {% if user.is_authenticated %}
                 <li><a class="waves-effect waves-light btn modal-trigger" href="/logout/"><i class="material-icons right">person</i> Logout</a></li>
@@ -113,9 +120,9 @@
     
             </div>
             <div class="col l3 s12">
-              <h5 class="white-text">Settings</h5>
+              <h5 class="white-text">Resources</h5>
               <ul>
-                <li><a class="white-text" href="#!">Link 1</a></li>
+                <li><a class="white-text" href="https://rebootingcomputing.ieee.org/lpirc">IEEE Rebooting Computing</a></li>
                 <li><a class="white-text" href="#!">Link 2</a></li>
                 <li><a class="white-text" href="#!">Link 3</a></li>
                 <li><a class="white-text" href="#!">Link 4</a></li>
@@ -124,7 +131,7 @@
             <div class="col l3 s12">
               <h5 class="white-text">Connect</h5>
               <ul>
-                <li><a class="white-text" href="#!">Link 1</a></li>
+                <li><a class="white-text" href="mailto:lpirc@ecn.purdue.edu">Contact Us</a></li>
                 <li><a class="white-text" href="#!">Link 2</a></li>
                 <li><a class="white-text" href="#!">Link 3</a></li>
                 <li><a class="white-text" href="#!">Link 4</a></li>
@@ -188,13 +195,9 @@
 <!-- Modal structure for registration -->
 
 <!-- Modal Structure -->
-<div id="get_started" class="modal" style="width: 600px;">
+<div id="please_login" class="modal" style="width: 600px;">
   <div class="modal-content center">
-      {% if user.is_authenticated %}
-        <h5>Welcome</h5>
-      {% else %}
         <h5>Please log in to your account</h5>
-        {% endif %}
     </div>
 </div>
 <!--JavaScript at end of body for optimized loading-->
