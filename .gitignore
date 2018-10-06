@@ -21,6 +21,13 @@ upload/
 upload2/
 hash_to_originalfilename.json
 
+# https keys
+lpirc.csr
+lpirc.key
+
+# api posting record
+post.bash
+
 # C extensions
 *.so
 
