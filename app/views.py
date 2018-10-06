@@ -38,6 +38,9 @@ import ast
 #def index(request):
 #    return render(request, 'app/index.html')
 
+def index2(request):
+    return render(request, 'app/index2.html')
+
 def redirect_login(request):
     return render(request, 'app/redirect_login.html')
 

@@ -1,3 +1,20 @@
+{% extends "app/base.html" %}
+
+{% block title %}LPIRC 2018{% endblock %}
+{% load static %}
+
+{% block css %}
+<style>
+
+</style>
+{% endblock %}
+
+{% block content %}
+<br>
+<br>
+<div class="container">
+        <div class="card z-depth-3">
+                <div class="card-content">
 <p style="line-height: 1.38; margin-top: 0pt; margin-bottom: 3pt; text-align: center;"><span style="font-size: 18pt; font-family: Arial; color: #4a86e8; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">LPIRC CVPR 2018 Track 1 Description</span></p>
 <p style="line-height: 1.38; margin-top: 0pt; margin-bottom: 0pt; text-align: center;"><span style="font-size: 10pt; font-family: Arial; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">Latest Update: 06/06/2018</span></p>
 <p>&nbsp;</p>
@@ -11,7 +28,7 @@
 <p style="line-height: 1.38; margin-top: 0pt; margin-bottom: 0pt;"><span style="font-size: 11pt; font-family: Arial; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">The models must expect input tensors with dimensions [batch size x input height x input width x channel count], where the batch size must be 1 and the channel count must be 3. </span></p>
 <p style="line-height: 1.38; margin-top: 0pt; margin-bottom: 0pt;"><span style="font-size: 11pt; font-family: Arial; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">The participants can convert their Tensorflow model into a TensorflowLite model using the following command:</span></p>
 <table style="border: none; border-collapse: collapse;">
-<tbody>
+
 <tr style="height: 0pt;">
 <td style="vertical-align: top; background-color: #fafafa; padding: 5pt 5pt 5pt 5pt; border: solid #e0e0e0 1pt;">
 <p style="line-height: 1.38; margin-top: 0pt; margin-bottom: 0pt;"><span style="font-size: 10pt; font-family: Consolas; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">third_party</span><span style="font-size: 10pt; font-family: Consolas; color: #616161; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">/</span><span style="font-size: 10pt; font-family: Consolas; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">tensorflow</span><span style="font-size: 10pt; font-family: Consolas; color: #616161; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">/</span><span style="font-size: 10pt; font-family: Consolas; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">contrib</span><span style="font-size: 10pt; font-family: Consolas; color: #616161; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">/</span><span style="font-size: 10pt; font-family: Consolas; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">lite</span><span style="font-size: 10pt; font-family: Consolas; color: #616161; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">/</span><span style="font-size: 10pt; font-family: Consolas; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">toco</span><span style="font-size: 10pt; font-family: Consolas; color: #616161; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">/</span><span style="font-size: 10pt; font-family: Consolas; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">toco </span><span style="font-size: 10pt; font-family: Consolas; color: #616161; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">\</span><span style="font-size: 10pt; font-family: Consolas; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;"> &nbsp;</span></p>
@@ -22,7 +39,7 @@
 <p style="line-height: 1.38; margin-top: 0pt; margin-bottom: 0pt;"><span style="font-size: 10pt; font-family: Consolas; color: #616161; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">--</span><span style="font-size: 10pt; font-family: Consolas; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">mean_value</span><span style="font-size: 10pt; font-family: Consolas; color: #616161; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">=</span><span style="font-size: 10pt; font-family: Consolas; color: #0f9d58; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">"${mean_value}"</span><span style="font-size: 10pt; font-family: Consolas; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;"> &nbsp;</span><span style="font-size: 10pt; font-family: Consolas; color: #616161; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">--</span><span style="font-size: 10pt; font-family: Consolas; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">std_value</span><span style="font-size: 10pt; font-family: Consolas; color: #616161; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">=</span><span style="font-size: 10pt; font-family: Consolas; color: #0f9d58; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">"${std_value}"</span></p>
 </td>
 </tr>
-</tbody>
+
 </table>
 <p style="line-height: 1.38; margin-top: 0pt; margin-bottom: 0pt;"><span style="font-size: 11pt; font-family: Arial; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">where </span><span style="font-size: 11pt; font-family: Arial; color: #0f9d58; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">local_frozen</span><span style="font-size: 11pt; font-family: Arial; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;"> is the frozen graph definition;</span></p>
 <p style="line-height: 1.38; margin-top: 0pt; margin-bottom: 0pt;"><span style="font-size: 11pt; font-family: Arial; color: #0f9d58; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">inference_type</span><span style="font-size: 11pt; font-family: Arial; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;"> is either FLOAT or QUANTIZED_UINT8;</span></p>
@@ -71,7 +88,7 @@
 
 <h2 style="line-height: 1.38; margin-top: 18pt; margin-bottom: 6pt;"><span style="font-size: 16pt; font-family: Arial; color: #4a86e8; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">Timeline</span></h2>
 <!-- <p>&nbsp;</p> -->
-<table style="border: none; border-collapse: collapse;">
+<table>
 <tbody>
 <tr style="height: 0pt;">
 <td style="vertical-align: top; padding: 5pt 5pt 5pt 5pt; border: solid #000000 1pt;">
@@ -115,4 +132,8 @@
 </tr>
 </tbody>
 </table>
-<p><br /><br /><br /></p>
+
+</div>
+</div>
+</div>
+{% endblock %}

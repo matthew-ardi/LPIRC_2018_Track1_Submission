@@ -19,7 +19,9 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     #url(r'^$', app_views.index, name="index"),
-    url(r'^$', auth_views.login, {'template_name': 'app/index.html'}, name='index'),
+    url(r'^$', auth_views.login, {'template_name': 'app/index2.html'}, name='index'),
+    url(r'^index1', auth_views.login, {'template_name': 'app/index1.html'}, name='index'),
+    url(r'^index2/$', auth_views.login, {'template_name': 'app/index.html'}, name='index2'),
     url(r'^register/$', app_views.register, name='register'),
     #url(r'^login/$', auth_views.login, {'template_name': 'app/login.html'}, name='login'),
     url(r'^redirect_login/$', app_views.redirect_login, name='redirect_login'),

@@ -1,41 +1,216 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
-<!--
-                                                                                 -+yhdhy+`
-                                                                                 mmhyhNMMm`
-            `-+shdddhy+:`        `syyyys.         .oyyyys+`          `+syyyyo`   .`   sMMM.
-          `omNMMMMMMMMMMd        yMMMMMMh         oMMMMMMMh`         hMMMMMMM:       .mMMy
-         -dMMMMdo:--:+ymN       /MMMmMMMM+        oMMMMmMMMo        oMMMdMMMM:     `+mMN+`
-        .mMMMM+`       ..      .NMMM:yMMMN-       oMMMN:MMMM:      :NMMm-MMMM:   `/dMNs.
-        sMMMMs                 hMMMs `mMMMd`      oMMMN oMMMm.    .mMMM:.MMMM:  `hMMNs////:
-        mMMMM-                +MMMm`  /MMMMo      oMMMN `dMMMh    hMMMo .MMMM:  .dmmmmmmmmy     Hey Doc!
-        NMMMM.               -NMMM:    yMMMM:     oMMMN  -NMMM+  oMMMd` .MMMM:   ``````````
-        dMMMM/              `dMMMmoooooyMMMMm`    oMMMN   +MMMN-:MMMN-  .MMMM:
-        +MMMMm.         `   sMMMMMMMMMMMMMMMMs    oMMMN    hMMMmmMMM+   .MMMM:
-         yMMMMmo-.```.:sh` :MMMMo::::::::hMMMM/   oMMMN    .NMMMMMMy    .MMMM:
-         `omMMMMMmmdmNMMN``mMMMh         .NMMMN.  oMMMN     +MMMMMm`    .MMMM:
-           ./ymmNNNNNmds: /mNmm.          +mNNmo  +mNmd      ymNNm:     .mmNm:
-               `..-..`     ```             ````    ```        ```         ```
--->
-
-
 <head>
+    <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="LPIRC 2018 TRACK 3">
     <meta name="author" content="">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-social/5.1.1/bootstrap-social.css">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
+
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.3.3/dist/semantic.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.3.3/dist/semantic.min.js"></script> -->
+
+    <!-- CSS  -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Kodchasan" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="{% static "app/css/style.css" %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+
+    <style>
+    
+    /* to stick footer to the bottom */
+    body {
+     display: flex;
+     min-height: 100vh;
+     flex-direction: column;
+    }
+    main {
+        flex: 1 0 auto;
+    }
+    </style>
     {% block css %}
     {% endblock %}
 </head>
 <body>
+
+    <!-- dropdown menu to be called by Navigation Bar section, data-target, based on id -->
+    <ul id="track1_drop" class="dropdown-content">
+        <li><a href="/track1_info">Description</a></li>
+      </ul>
+    <ul id="track2_drop" class="dropdown-content">
+         <li><a href="https://drive.google.com/file/d/0B-KLxmcZ3GW9RWZzajJQaklJWTFzQ2JCdm9lRV9RV25WXzVF/view" target="_blank">
+          Description</a></li>
+         <li><a href="https://engineering.purdue.edu/HELPS/Publications/papers/2017ASPDAC.pdf">Paper 1</a></li>
+         <li><a href="https://drive.google.com/open?id=1K12CJ9m2OcRUAYN_We9ISZ-TJ0nZBdU2">Paper 2</a></li>
+         <li><a href="https://github.com/ieeelpirc/2018Track2">SDK</a></li>
+       </ul>
+      <ul id="track3_drop" class="dropdown-content">
+        <li><a href="/track3_info">Paper 1</a></li>
+        <li><a href="/track3_info">Paper 2</a></li>
+      </ul>
+    <ul id="FAQ_drop" class="dropdown-content">
+        <li><a href="/track3_info">General</a></li>
+      </ul>
+
+
+    <!--  Navigation Bar section -->
+      <!-- navbar first row -->
+    <nav class="white" role="navigation">
+            <div class="nav-wrapper container" >
+              <div class="brand-logo left" >
+                <a href="/" ><img src="{% static "app/img/Rebooting_Computing_Logo.png" %}" style="height:60px"></a>
+              </div>
+              <ul class="right hide-on-med-and-down">
+                <li><a a class="dropdown-trigger" href="#!" data-target="track1_drop">Track 1 <i class="material-icons right">arrow_drop_down</i></a></li>
+                <li><a class="dropdown-trigger" href="#!" data-target="track2_drop">Track 2 <i class="material-icons right">arrow_drop_down</i></a></li>
+                <li><a href="/simple_upload/">Submission</a></li>
+                <li><a href="/general_faq/" target="blank">FAQ</a></li>
+                
+                {% if user.is_authenticated %}
+                <li><a class="waves-effect waves-light btn modal-trigger" href="/logout/"><i class="material-icons right">person</i> Logout</a></li>
+                {% else %}
+                <li><a class="waves-effect waves-light btn modal-trigger" href="#login_modal">Login</a></li>
+                {% endif %}
+              </ul>
+              <ul class="right hide-on-med-and-down">
+                  
+              </ul>
+        
+              <ul id="nav-mobile" class="sidenav">
+                <li><a href="#">Navbar Link</a></li>
+              </ul>
+              <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+            </div>
+          </nav>
+
+<main>
 {% block content %}{% endblock %}
+</main>
+
+<!--  Footer  -->
+{% block footer %}
+<footer class="page-footer indigo">
+        <div class="container">
+          <div class="row">
+            <div class="col l6 s12">
+              <h5 class="white-text">Low Power Image Recognition Challenge</h5>
+              <p class="grey-text text-lighten-4">The Low-Power Image Recognition Challenge is an annual competition started in 2015.</p>
+    
+    
+            </div>
+            <div class="col l3 s12">
+              <h5 class="white-text">Settings</h5>
+              <ul>
+                <li><a class="white-text" href="#!">Link 1</a></li>
+                <li><a class="white-text" href="#!">Link 2</a></li>
+                <li><a class="white-text" href="#!">Link 3</a></li>
+                <li><a class="white-text" href="#!">Link 4</a></li>
+              </ul>
+            </div>
+            <div class="col l3 s12">
+              <h5 class="white-text">Connect</h5>
+              <ul>
+                <li><a class="white-text" href="#!">Link 1</a></li>
+                <li><a class="white-text" href="#!">Link 2</a></li>
+                <li><a class="white-text" href="#!">Link 3</a></li>
+                <li><a class="white-text" href="#!">Link 4</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="footer-copyright">
+          <div class="container">
+          Made by <a class="brown-text text-lighten-3" href="http://materializecss.com">Materialize</a>
+          || designed by <a class="brown-text text-lighten-3" href="https://github.com/matthew-ardi">Matthew Ardi</a>
+          </div>
+        </div>
+      </footer>
+{% endblock %}
+
+<!-- Modal Structure -->
+<div id="login_modal" class="modal" style="width: 600px;">
+    <div class="modal-content center">
+      <a class="waves-effect waves-light btn grey darken-3 social github z-depth-3" id="github_login" href="{% url 'social:begin' 'github' %}" style="width: 300px;">
+        <i class="fa fa-github"></i> Sign in with github</a>
+      <br><br>
+      <a class="waves-effect waves-light btn white black-text z-depth-3" href="{% url 'social:begin' 'google-oauth2' %}" style="color: black; width: 300px;">
+        <img width="20px" Logo" src="https://cdn4.iconfinder.com/data/icons/new-google-logo-2015/400/new-google-favicon-512.png"/>
+        Sign in with Google
+      </a>
+      <br>
+      <br>
+      <form method="post" class="form-signin center" style="width: 300px; margin: auto;">
+          {% csrf_token %}
+          {% for field in form %}
+
+              <div class="input-field col s6">
+                  <label>{{ field.label_tag }}</label>
+                  {{ field }}
+                </div>
+          {% endfor %}
+
+          <div align="center">
+              <button type="submit" class="btn waves-effect waves-light">Sign in
+                <i class="material-icons right">person_pin</i>
+              </button>
+              {% if form.non_field_errors %}
+              <ul class='form-errors'>
+                  {% for error in form.non_field_errors %}
+                  <li>{{ error }}</li>
+                  {% endfor %}
+              </ul>
+              {% endif %}
+              </form>
+          </div>
+          <br>
+          <button type="submit" class="btn waves-effect waves-light" onclick="window.location.href='/register'">Sign Up
+            <i class="material-icons right">person_add</i>  
+          </button>
+    </div>
+  </div>
+{% block modal %}
+{% endblock %}
+
+<!-- Modal structure for registration -->
+
+<!-- Modal Structure -->
+<div id="get_started" class="modal" style="width: 600px;">
+  <div class="modal-content center">
+      {% if user.is_authenticated %}
+        <h5>Welcome</h5>
+      {% else %}
+        <h5>Please log in to your account</h5>
+        {% endif %}
+    </div>
+</div>
+<!--JavaScript at end of body for optimized loading-->
+<!-- Compiled and minified JavaScript -->
+<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script src="{% static "app/js/init.css" %}"></script>        
+
+
+<script>
+$(".dropdown-trigger").dropdown();
+$(document).ready(function(){
+    $('.modal').modal();
+  });
+</script>
+{% block scripts %}
+{% endblock %}
 </body>
 </html>
