@@ -65,10 +65,7 @@ except KeyError as e:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False if PRODUCTION else True
 
-ALLOWED_HOSTS = [
-    'https:lpirc.ecn.purdue.edu',
-    'https://lpirc-2018-staging.herokuapp.com/'
-]
+ALLOWED_HOSTS = ['*']
 
 # Setup for proxy
 USE_X_FORWARDED_HOST=True
