@@ -115,5 +115,3 @@ class BlogPageRelatedLink(Orderable):
 
 admin.site.register(FooterBio)
 admin.site.register(Tfile1)
-admin.site.register(Sponsor)
-admin.site.register(Organizer)

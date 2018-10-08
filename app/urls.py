@@ -16,6 +16,7 @@ Including another URLconf
 from django.conf.urls import url, include
 from . import views as app_views
 from django.contrib.auth import views as auth_views
+from .models import Sponsor
 
 urlpatterns = [
     #url(r'^$', app_views.index, name="index"),

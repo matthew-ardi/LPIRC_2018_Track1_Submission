@@ -7,6 +7,7 @@ from django.contrib.auth.admin import UserAdmin  # Important, dont remove
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from django.http import HttpResponse
+from app.models import Sponsor, Organizer
 import csv
 
 
@@ -92,7 +93,26 @@ class UserAdmin(admin.ModelAdmin):
             return list()
         return super(UserAdmin, self).get_inline_instances(request, obj)
 
+class SponsorAdmin(admin.ModelAdmin):
+    list_display = (
+        'title',
+        'image_link'
+    )
+
+    def image_link(self, obj):
+        return obj.image_link
+
+class OrganizerAdmin(admin.ModelAdmin):
+    list_display = (
+        'title',
+        'image_link'
+    )
+
+    def image_link(self, obj):
+        return obj.image_link
+
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
-
+admin.site.register(Sponsor, SponsorAdmin)
+admin.site.register(Organizer, OrganizerAdmin)
 
