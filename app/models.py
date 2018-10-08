@@ -39,13 +39,26 @@ def update_user_registeruser(sender, instance, created, **kwargs):
     instance.registeruser.save()
 
 class Tfile1(models.Model):
-	user = models.OneToOneField(User, on_delete=models.DO_NOTHING)
-	fn = models.CharField(max_length=1000)
+    user = models.OneToOneField(User, on_delete=models.DO_NOTHING)
+    fn = models.CharField(max_length=1000)
+    def __str__(self):
+        return "{0}".format(self.user)
+
 class Tfile2(models.Model):
 	user = models.OneToOneField(User, on_delete=models.DO_NOTHING)
 	fn = models.CharField(max_length=1000)
 
+class Sponsor(models.Model):
+    title = models.CharField(verbose_name='Footer Bio', max_length = 25, blank = False)
+    image_link = models.CharField(verbose_name='image link', max_length = 2000, blank = False) 
+    def __str__(self):
+        return "{0}".format(self.title)
 
+class Organizer(models.Model):
+    title = models.CharField(verbose_name='Footer Bio', max_length = 25, blank = False)
+    image_link = models.CharField(verbose_name='image link', max_length = 2000, blank = False) 
+    def __str__(self):
+        return "{0}".format(self.title)
 
 # Wagtail models
 class BlogPage(Page):
@@ -101,3 +114,6 @@ class BlogPageRelatedLink(Orderable):
     ]
 
 admin.site.register(FooterBio)
+admin.site.register(Tfile1)
+admin.site.register(Sponsor)
+admin.site.register(Organizer)
