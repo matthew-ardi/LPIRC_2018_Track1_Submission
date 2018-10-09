@@ -50,13 +50,15 @@ class Tfile2(models.Model):
 
 class Sponsor(models.Model):
     title = models.CharField(verbose_name='Footer Bio', max_length = 25, blank = False)
-    image_link = models.CharField(verbose_name='image link', max_length = 2000, blank = False) 
+    image_link = models.CharField(verbose_name='image link', max_length = 2000, blank = False)
+    redirect_link = models.CharField(verbose_name='image link', max_length = 2000, blank = True) 
     def __str__(self):
         return "{0}".format(self.title)
 
 class Organizer(models.Model):
     title = models.CharField(verbose_name='Footer Bio', max_length = 25, blank = False)
     image_link = models.CharField(verbose_name='image link', max_length = 2000, blank = False) 
+    redirect_link = models.CharField(verbose_name='image link', max_length = 2000, blank = True) 
     def __str__(self):
         return "{0}".format(self.title)
 
