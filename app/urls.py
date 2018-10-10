@@ -16,10 +16,18 @@ Including another URLconf
 from django.conf.urls import url, include
 from . import views as app_views
 from django.contrib.auth import views as auth_views
+from .models import Sponsor, Organizer
+
+sponsors = Sponsor.objects.all()
+organizers = Organizer.objects.all()
+
 
 urlpatterns = [
     #url(r'^$', app_views.index, name="index"),
-    url(r'^$', auth_views.login, {'template_name': 'app/index2.html'}, name='index'),
+    url(r'^$', auth_views.LoginView.as_view(template_name="app/index2.html", extra_context={
+        'sponsors_list': sponsors,
+        'organizers_list': organizers
+    }), name='index'),
     url(r'^index1', auth_views.login, {'template_name': 'app/index1.html'}, name='index'),
     url(r'^index2/$', auth_views.login, {'template_name': 'app/index.html'}, name='index2'),
     url(r'^register/$', app_views.register, name='register'),

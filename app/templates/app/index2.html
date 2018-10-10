@@ -12,37 +12,40 @@
 
 {% block content %}
 <div id="index-banner" class="parallax-container" style="height:1000px;">
-    <div class="parallax"><img src="{% static "app/img/winner_track1.jpg" %}" alt="Unsplashed background img 1"></div>
-    <div class="section no-pad-bot">
-      <div class="container">
+  <div class="parallax"><img src="{% static 'app/img/winner_track1.jpg' %}" alt="Unsplashed background img 1"></div>
+  <div class="section no-pad-bot">
+    <div class="container">
 
-          <div class="card z-depth-5" style="height: 50%; width:100%; margin-left: auto; margin-right: auto;" >
+      <div class="card z-depth-5" style="height: 50%; width:100%; margin-left: auto; margin-right: auto;">
         <div class="section">
 
           <!--   Icon Section   -->
           <div class="row">
-              <div class="container">
-                  <br><br>
-                  <h4 class="header center indigo-text text-lighten-2" style="font-family: 'Kodchasan', sans-serif;">Low Power Image Recognition Challenge 2018</h4>
-                  <div class="row center">
-                    <p class="header col s12 light black-text" style="font-family: 'Kodchasan', sans-serif;">Welcome to the submission portal</p>
-                  </div>
-                  <div class="row center">
-                    {% if user.is_authenticated %}
-                    <a id="download-button" class="btn-large waves-effect waves-light" href="/simple_upload">Get Started</a>
-                    {% else %}
-                    <a id="download-button" class="btn-large waves-effect waves-light modal-trigger" href="#please_login">Get Started</a>
-                    {% endif %}
-                  </div>
-                  <br><br>
-          
-                </div>
+            <div class="container">
+              <br><br>
+              <h4 class="header center indigo-text text-lighten-2" style="font-family: 'Kodchasan', sans-serif;">Low
+                Power Image Recognition Challenge 2018</h4>
+              <div class="row center">
+                <p class="header col s12 light black-text" style="font-family: 'Kodchasan', sans-serif;">Welcome to the
+                  submission portal</p>
+              </div>
+              <div class="row center">
+                {% if user.is_authenticated %}
+                <a id="download-button" class="btn-large waves-effect waves-light" href="/simple_upload">Get Started</a>
+                {% else %}
+                <a id="download-button" class="btn-large waves-effect waves-light modal-trigger" href="#please_login">Get
+                  Started</a>
+                {% endif %}
+              </div>
+              <br><br>
+
             </div>
+          </div>
 
         </div>
-        </div>
-        <!-- image source: http://ichef.bbci.co.uk/images/ic/1600xn/p03gywjs.jpg -->
-        <!-- <div class="parallax"><img src="{% static "app/img/tech.jpg" %}" alt="Unsplashed background img 1"></div> -->
+      </div>
+      <!-- image source: http://ichef.bbci.co.uk/images/ic/1600xn/p03gywjs.jpg -->
+      <!-- <div class="parallax"><img src="{% static "app/img/tech.jpg" %}" alt="Unsplashed background img 1"></div> -->
       <!-- </div>
     </div>
   </div>
@@ -52,15 +55,16 @@
       <div class="container">
       </div>
     </div> -->
-    <a class="btn-floating btn-large waves-effect waves-light black z-depth-3 pulse tooltipped" data-position="left" data-tooltip="Qualcomm Edge AI - Track 1 Winner" style="float: right; margin-right: 15px;"><i class="material-icons">info_outline</i></a>
-    
+      <a class="btn-floating btn-large waves-effect waves-light black z-depth-3 pulse tooltipped" data-position="left"
+        data-tooltip="Qualcomm Edge AI - Track 1 Winner" style="float: right; margin-right: 15px;"><i class="material-icons">info_outline</i></a>
+
+    </div>
   </div>
 </div>
 </div>
-</div>
 
-  <div class="container">
-      <div class="card z-depth-5">
+<div class="container">
+  <div class="card z-depth-5">
     <div class="section">
 
       <!--   Icon Section   -->
@@ -71,7 +75,7 @@
             <h5 class="center">Track 1</h5>
 
             <p class="light center">Evaluates accuracy and execution time using TensorFlow models.</p>
-            <img src="{% static "app/img/tensorflow-logo.png" %}" style="height:60px">
+            <img src="{% static 'app/img/tensorflow-logo.png' %}" style="height:60px">
           </div>
         </div>
 
@@ -80,10 +84,10 @@
             <h2 class="center brown-text"><i class="material-icons">developer_board</i></h2>
             <h5 class="center">Track 2</h5>
 
-            <p class="light center">Evaluates energy consumption using the Caffe2 deep learning 
-                framework (software) running on NVIDIA Jetson TX2 (hardware).</p>
-                <img src="{% static "app/img/caffe2.png" %}" style="height:60px">
-                <img src="{% static "app/img/tx2.png" %}" style="height:60px">
+            <p class="light center">Evaluates energy consumption using the Caffe2 deep learning
+              framework (software) running on NVIDIA Jetson TX2 (hardware).</p>
+            <img src="{% static 'app/img/caffe2.png' %}" style="height:60px">
+            <img src="{% static 'app/img/tx2.png' %}" style="height:60px">
           </div>
         </div>
 
@@ -92,52 +96,81 @@
             <h2 class="center brown-text"><i class="material-icons">settings</i></h2>
             <h5 class="center">Additional Info</h5>
 
-            <p class="light center">We have provided detailed documentation as well as specific code examples ...</p>
+            <p class="light center">We have provided detailed documentation.</p>
           </div>
         </div>
       </div>
 
     </div>
+  </div>
+</div>
+
+
+<div class="parallax-container" style="height:600px;">
+  <div class="section no-pad-bot">
+    <div class="container">
     </div>
   </div>
+  <a class="btn-floating btn-large waves-effect waves-light black z-depth-3 pulse tooltipped" data-position="left"
+    data-tooltip="ETRI and KPST - Track 3 Winner" style="float: right; margin-right: 15px;"><i class="material-icons">info_outline</i></a>
+  <a class="btn-floating btn-large waves-effect waves-light black z-depth-3 pulse tooltipped" data-position="right"
+    data-tooltip="Seoul National University - Track 2 Winner" style="float: left; margin-left: 15px;"><i class="material-icons">info_outline</i></a>
+  <div class="parallax"><img src="{% static 'app/img/track2-3.jpg' %}" alt="Unsplashed background img 2"></div>
+</div>
 
+<div class="container">
+  <div class="section">
 
-  <div class="parallax-container" style="height:600px;">
-    <div class="section no-pad-bot">
-        <div class="container">
-          </div>
-    </div>
-    <a class="btn-floating btn-large waves-effect waves-light black z-depth-3 pulse tooltipped" data-position="left" data-tooltip="ETRI and KPST - Track 3 Winner" style="float: right; margin-right: 15px;"><i class="material-icons">info_outline</i></a>
-    <a class="btn-floating btn-large waves-effect waves-light black z-depth-3 pulse tooltipped" data-position="right" data-tooltip="Seoul National University - Track 2 Winner" style="float: left; margin-left: 15px;"><i class="material-icons">info_outline</i></a>
-    <div class="parallax"><img src="{% static "app/img/track2-3.jpg" %}" alt="Unsplashed background img 2"></div>
-  </div>
-
-  <div class="container">
-    <div class="section">
-
-      <div class="row">
-        <div class="col s12 center">
-          <h3><i class="mdi-content-send brown-text"></i></h3>
-          <h4>Sponsors</h4>
-          <h4>Organizers</h4>
-          <!-- <p class="left-align light">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam scelerisque id nunc nec volutpat. Etiam pellentesque tristique arcu, non consequat magna fermentum ac. Cras ut ultricies eros. Maecenas eros justo, ullamcorper a sapien id, viverra ultrices eros. Morbi sem neque, posuere et pretium eget, bibendum sollicitudin lacus. Aliquam eleifend sollicitudin diam, eu mattis nisl maximus sed. Nulla imperdiet semper molestie. Morbi massa odio, condimentum sed ipsum ac, gravida ultrices erat. Nullam eget dignissim mauris, non tristique erat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;</p> -->
-
+    <div class="row ">
+      <div class="col s12 center">
+        <h3><i class="mdi-content-send brown-text"></i></h3>
+        <h4>Sponsors</h4>
+        {% for sponsor in sponsors_list %}
+        <div class="col s3 center">
+          {% if sponsor.redirect_link %}
+          <a href="{{ sponsor.redirect_link }}">
+            {% endif %}
+            <img src="{{ sponsor.image_link }}" style="height:90px;">
+            {% if sponsor.redirect_link %}
+          </a>
+          {% endif %}
         </div>
-      </div>
+        {% endfor %}
 
-    </div>
-  </div>
-
-
-  <div class="parallax-container">
-    <div class="section no-pad-bot">
-      <div class="container">
       </div>
     </div>
-    <a class="btn-floating btn-large waves-effect waves-light black z-depth-3 tooltipped" data-position="left" data-tooltip="Attendees listen to presentations about creating energy-efficient computer vision technologies" style="float: right; margin-right: 15px;"><i class="material-icons">info_outline</i></a>
-    
-    <div class="parallax"><img src="{% static "app/img/panorama.jpg" %}" alt="Unsplashed background img 3"></div>
+    <div class="row">
+      <div class="col s12 center">
+        <h4>Organizers</h4>
+        {% for organizer in organizers_list %}
+        <div class="col s4 center">
+          {% if organizer.redirect_link %}
+          <a href="{{ organizer.redirect_link }}">
+            {% endif %}
+            <img src="{{ organizer.image_link }}" style="height:90px;">
+            {% if sponsor.redirect_link %}
+          </a>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
   </div>
+</div>
+
+
+<div class="parallax-container">
+  <div class="section no-pad-bot">
+    <div class="container">
+    </div>
+  </div>
+  <a class="btn-floating btn-large waves-effect waves-light black z-depth-3 tooltipped" data-position="left"
+    data-tooltip="Attendees listen to presentations about creating energy-efficient computer vision technologies" style="float: right; margin-right: 15px;"><i
+      class="material-icons">info_outline</i></a>
+
+  <div class="parallax"><img src="{% static 'app/img/panorama.jpg' %}" alt="Unsplashed background img 3"></div>
+</div>
 
 {% endblock %}
 
@@ -147,10 +180,10 @@
 
 {% block scripts %}
 <script>
-$(document).ready(function(){
-  $('.parallax').parallax();
-});
-$(document).ready(function(){
+  $(document).ready(function () {
+    $('.parallax').parallax();
+  });
+  $(document).ready(function () {
     $('.tooltipped').tooltip();
   });
 </script>
