@@ -14,7 +14,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url, include
+from django.conf import settings
 from . import views as app_views
+from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from .models import Sponsor, Organizer
 
@@ -73,4 +75,7 @@ urlpatterns = [
     url(r'^track2_info/$', app_views.track2_info, name='track2_info'),
     url(r'^general_faq/$', app_views.general_faq, name='general_faq'),
     url(r'^track2/$', app_views.track2, name='track2'),
-]
+
+    #wagtail
+    url(r'^article_page/$', app_views.article_page, name='article_page'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

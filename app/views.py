@@ -649,3 +649,6 @@ def score_board_admin(request):
     return render(request, 'app/score_board_admin.html',
         {'zipRank': zipRank,
         'zipScore': zipScore,})
+
+def article_page(request):
+    return render(request, 'app/article_page.html')

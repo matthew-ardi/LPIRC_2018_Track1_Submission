@@ -8,10 +8,12 @@ from django.contrib import admin, messages
 from modelcluster.fields import ParentalKey
 
 from wagtail.core.models import Page, Orderable
-from wagtail.core.fields import RichTextField
-from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel, InlinePanel
+from wagtail.core.fields import RichTextField, StreamField
+from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel, InlinePanel, StreamFieldPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
+from wagtail.core import blocks
+from wagtail.images.blocks import ImageChooserBlock
 
 # Create your models here.
 class RegisterUser(models.Model):
@@ -67,6 +69,7 @@ class BlogPage(Page):
 
     # Database fields
 
+    author = models.CharField(max_length=255)
     body = RichTextField()
     date = models.DateField("Post date")
     feed_image = models.ForeignKey(
@@ -76,6 +79,11 @@ class BlogPage(Page):
         on_delete=models.SET_NULL,
         related_name='+'
     )
+    body = StreamField([
+        ('heading', blocks.CharBlock(classname="full title")),
+        ('paragraph', blocks.RichTextBlock()),
+        ('image', ImageChooserBlock()),
+    ])
 
 
     # Search index configuration
@@ -89,9 +97,9 @@ class BlogPage(Page):
     # Editor panels configuration
 
     content_panels = Page.content_panels + [
+        FieldPanel('author'),
         FieldPanel('date'),
-        FieldPanel('body', classname="full"),
-        InlinePanel('related_links', label="Related links"),
+        StreamFieldPanel('body'),
     ]
 
     promote_panels = [
@@ -113,6 +121,36 @@ class BlogPageRelatedLink(Orderable):
     panels = [
         FieldPanel('name'),
         FieldPanel('url'),
+    ]
+
+class ArticlePageIndex(Page):
+    content_panels = [
+        FieldPanel('title'),
+    ]
+
+class ArticlePage(Page):
+    feature_image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+    body = RichTextField(blank=True)
+    excerpt = models.TextField(blank=True)
+    thumbnail_image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+    content_panels = [
+        FieldPanel('title'),
+        FieldPanel('body', classname="full"),
+        FieldPanel('excerpt'),
+        ImageChooserPanel('feature_image'),
+        ImageChooserPanel('thumbnail_image'),
     ]
 
 admin.site.register(FooterBio)
