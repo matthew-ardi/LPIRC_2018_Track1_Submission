@@ -19,8 +19,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #BASE_DIR = './'
 track1_submissions_folder = "/submissions_track1/"
 track2_submissions_folder = "/upload2/"
-ROUND2_TRACK1_SUB_FOLDER_CLASSIFICATION = "/round2/submissions_track1/classification"
-ROUND2_TRACK1_SUB_FOLDER_DETECTION = "/round2/submissions_track1/detection"
+ROUND2_TRACK1_SUB_FOLDER_CLASSIFICATION = "/round2/submissions_track1/classification/"
+ROUND2_TRACK1_SUB_FOLDER_DETECTION = "/round2/submissions_track1/detection/"
 
 # function to send compressed directory of submitted files
 # a sample GET request:
@@ -96,7 +96,7 @@ def list_files2(request):
     response['WWW-Authenticate'] = 'Basic realm="restricted area"'
     return response
 
-def r2_get_track1_classification(request):
+def r2_list_track1_classification(request):
     # checking for basic http_auth
     if 'HTTP_AUTHORIZATION' in request.META:
         [user, password] = request.META['HTTP_AUTHORIZATION'].split(" ")
@@ -116,7 +116,7 @@ def r2_get_track1_classification(request):
     response['WWW-Authenticate'] = 'Basic realm="restricted area"'
     return response
 
-def r2_get_track1_detection(request):
+def r2_list_track1_detection(request):
     # checking for basic http_auth
     if 'HTTP_AUTHORIZATION' in request.META:
         [user, password] = request.META['HTTP_AUTHORIZATION'].split(" ")
@@ -139,7 +139,7 @@ def r2_get_track1_detection(request):
 
 # function to send a required submitted file
 # a sample GET request:
-# curl -H "Authorization: username password" http://lpirc.ecn.purdue.edu/submissions/get_file/filename --output submission.tfile
+# curl -H "Authorization: username password" http://lpirc.ecn.purdue.edu/submissions/<function name - check urls.py>/filename --output submission.tfile
 def get_file1(request, requested_file):
 
     # checking for basic http_auth
@@ -191,6 +191,62 @@ def get_file2(request, requested_file):
     response.status_code = 401
     response['WWW-Authenticate'] = 'Basic realm="restricted area"'
     return response
+
+# function to send a required submitted file
+# a sample GET request:
+# curl -H "Authorization: username password" http://lpirc.ecn.purdue.edu/submissions/<function name - check urls.py>/filename --output submission.tfile
+def get_file1_r2_classification(request, requested_file):
+
+    # checking for basic http_auth
+    if 'HTTP_AUTHORIZATION' in request.META:
+        [user, password] = request.META['HTTP_AUTHORIZATION'].split(" ")
+
+        if user == os.environ['ALLOWED_USER'] and password == os.environ['ALLOWED_USER_PASSWORD'] \
+        and request.method == 'GET':
+            try:
+                #grab requested file from in-memory, make response with correct MIME-type
+                returnFile = BASE_DIR + ROUND2_TRACK1_SUB_FOLDER_CLASSIFICATION + requested_file
+                response = HttpResponse(open(returnFile, 'rb').read(),\
+                                                     content_type='application/tfile')
+                response['Content-Disposition'] = 'attachment; filename=requested_file'
+            except Exception:
+                response = HttpResponse("The file does not exist")
+                response.status_code = 401
+                response['WWW-Authenticate'] = 'Basic realm="restricted area"'
+            return response
+
+    #default permission denied 401 response
+    response = HttpResponse("")
+    response.status_code = 401
+    response['WWW-Authenticate'] = 'Basic realm="restricted area"'
+    return response
+
+def get_file1_r2_detection(request, requested_file):
+
+    # checking for basic http_auth
+    if 'HTTP_AUTHORIZATION' in request.META:
+        [user, password] = request.META['HTTP_AUTHORIZATION'].split(" ")
+
+        if user == os.environ['ALLOWED_USER'] and password == os.environ['ALLOWED_USER_PASSWORD'] \
+        and request.method == 'GET':
+            try:
+                #grab requested file from in-memory, make response with correct MIME-type
+                returnFile = BASE_DIR + ROUND2_TRACK1_SUB_FOLDER_DETECTION + requested_file
+                response = HttpResponse(open(returnFile, 'rb').read(),\
+                                                     content_type='application/tfile')
+                response['Content-Disposition'] = 'attachment; filename=requested_file'
+            except Exception:
+                response = HttpResponse("The file does not exist")
+                response.status_code = 401
+                response['WWW-Authenticate'] = 'Basic realm="restricted area"'
+            return response
+
+    #default permission denied 401 response
+    response = HttpResponse("")
+    response.status_code = 401
+    response['WWW-Authenticate'] = 'Basic realm="restricted area"'
+    return response
+
 
 # function to post scores by JSON format
 # a sample POST request:
