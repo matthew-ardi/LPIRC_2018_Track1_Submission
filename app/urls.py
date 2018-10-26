@@ -28,7 +28,10 @@ urlpatterns = [
         'sponsors_list': sponsors,
         'organizers_list': organizers
     }), name='index'),
-    url(r'^index1', auth_views.login, {'template_name': 'app/index1.html'}, name='index'),
+    url(r'^index1', auth_views.LoginView.as_view(template_name="app/index2.html", extra_context={
+        'sponsors_list': sponsors,
+        'organizers_list': organizers
+    }), name='index'),
     url(r'^index2/$', auth_views.login, {'template_name': 'app/index.html'}, name='index2'),
     url(r'^register/$', app_views.register, name='register'),
     #url(r'^login/$', auth_views.login, {'template_name': 'app/login.html'}, name='login'),
