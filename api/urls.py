@@ -17,5 +17,9 @@ urlpatterns = [
     url(r'^postScore/$', api_views.postScore),
     url(r'^getScore/(?P<requested_file>[\s\S]+)$', api_views.getScore),
 
+    # API for round 2 - track 1 (Google Collaboration)
+    url(r'^r2_get_track1_classification/$', api_views.r2_get_track1_classification),
+    url(r'^r2_get_track1_detection/$', api_views.r2_get_track1_detection),
+
 ]
 

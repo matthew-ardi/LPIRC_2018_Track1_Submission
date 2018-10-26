@@ -19,6 +19,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #BASE_DIR = './'
 track1_submissions_folder = "/submissions_track1/"
 track2_submissions_folder = "/upload2/"
+ROUND2_TRACK1_SUB_FOLDER_CLASSIFICATION = "/round2/submissions_track1/classification"
+ROUND2_TRACK1_SUB_FOLDER_DETECTION = "/round2/submissions_track1/detection"
 
 # function to send compressed directory of submitted files
 # a sample GET request:
@@ -93,6 +95,47 @@ def list_files2(request):
     response.status_code = 401
     response['WWW-Authenticate'] = 'Basic realm="restricted area"'
     return response
+
+def r2_get_track1_classification(request):
+    # checking for basic http_auth
+    if 'HTTP_AUTHORIZATION' in request.META:
+        [user, password] = request.META['HTTP_AUTHORIZATION'].split(" ")
+
+        if user == os.environ['ALLOWED_USER'] and password == os.environ['ALLOWED_USER_PASSWORD'] \
+        and request.method == 'GET':
+
+            submission_folder = BASE_DIR + ROUND2_TRACK1_SUB_FOLDER_CLASSIFICATION
+            files = [f for f in listdir(submission_folder) if isfile(join(submission_folder, f))]
+            response = HttpResponse(json.dumps(files), content_type ="application/json")
+            response.status_code = 200
+            return response
+
+    #default permission denied 401 response
+    response = HttpResponse("")
+    response.status_code = 401
+    response['WWW-Authenticate'] = 'Basic realm="restricted area"'
+    return response
+
+def r2_get_track1_detection(request):
+    # checking for basic http_auth
+    if 'HTTP_AUTHORIZATION' in request.META:
+        [user, password] = request.META['HTTP_AUTHORIZATION'].split(" ")
+
+        if user == os.environ['ALLOWED_USER'] and password == os.environ['ALLOWED_USER_PASSWORD'] \
+        and request.method == 'GET':
+
+            submission_folder = BASE_DIR + ROUND2_TRACK1_SUB_FOLDER_DETECTION
+            files = [f for f in listdir(submission_folder) if isfile(join(submission_folder, f))]
+            response = HttpResponse(json.dumps(files), content_type ="application/json")
+            response.status_code = 200
+            return response
+
+    #default permission denied 401 response
+    response = HttpResponse("")
+    response.status_code = 401
+    response['WWW-Authenticate'] = 'Basic realm="restricted area"'
+    return response
+
 
 # function to send a required submitted file
 # a sample GET request:
