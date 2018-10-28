@@ -33,6 +33,23 @@ from hashlib import sha224 as hashfunction
 import logging
 import ast
 
+# Write directories for file submission destination here
+HASHED_TO_ORIGINAL = "hash_to_originalfilename.json"
+TRACK1_HASHED_DIR = "submissions_track1/"
+TRACK2_HASHED_DIR = "submissions_track2/"
+TRACK1_ORIGINAL_DIR = "upload/"
+TRACK2_ORIGINAL_DIR = "upload2/"
+ROUND2_TRACK1_HTO = "round2/track1_hash_to_originalfilename.json"
+ROUND2_TRACK2_HTO = "round2/track2_hash_to_originalfilename.json"
+ROUND2_TRACK1_HASHED_CLASSIFICATION = "round2/submissions_track1/classification/"
+ROUND2_TRACK1_HASHED_DETECTION = "round2/submissions_track1/detection/"
+ROUND2_TRACK1_ORIGINAL_CLASSIFICATION = "round2/track1_original/classification/"
+ROUND2_TRACK1_ORIGINAL_DETECTION = "round2/track1_original/detection/"
+ROUND2_TRACK2_HASHED_DIR = "round2/submissions_track2/"
+ROUND2_TRACK2_ORIGINAL_DIR = "round2/track2_original/"
+TRACK1_HTML_FILE_NAME_1 = "track1_classification_file"
+TRACK1_HTML_FILE_NAME_2 = "track1_detection_file"
+TRACK2_HTML_INPUT_NAME = "myfile2"
 
 # Home page
 #def index(request):
@@ -213,22 +230,31 @@ def simple_upload(request):
         #return redirect('index')
 
     try:
-        if request.method == 'POST' and request.FILES['myfile']:
-            myfile = request.FILES['myfile']
+        if request.method == 'POST':
+            if request.FILES[TRACK1_HTML_FILE_NAME_1]:
+                classification_file = request.FILES[TRACK1_HTML_FILE_NAME_1]
+            try:
+                if request.FILES[TRACK1_HTML_FILE_NAME_2]:
+                    detection_file = request.FILES[TRACK1_HTML_FILE_NAME_2]
 
-        user_file_name = str(myfile.name).rsplit('.',1)
-        # # if myfile.name[-5:] != ".lite":
+            except:
+                logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+                logging.debug("error getting detection file")
+
+        user_file_name = str(classification_file.name).rsplit('.',1)
+
+        # submission files format restriction
         if user_file_name[1] != "lite" and user_file_name[1] != "tflite":
             return render(request, 'app/simple_upload.html', {
             'wrong_file': "Track 1 Submission Failure: File format must be .lite"
         })
-        # # if str(myfile.name[:-5]) != str(request.user.username):
+ 
         if user_file_name[0] != str(request.user.username):
             return render(request, 'app/simple_upload.html', {
             'wrong_file': "Track 1 Submission Failure: File name must be the log-in name"
         })
-        fs1= FileSystemStorage(location='upload/')
-        fs2 = FileSystemStorage(location='round2/model_validation/')
+
+        # getting date and time for records
         tz = pytz.timezone('America/New_York')
         now = datetime.datetime.now(tz)
         name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(user_file_name[0], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
@@ -256,7 +282,7 @@ def simple_upload(request):
         tensorflow_dir = '/home/bofu/tensorflow'
         try:
             with open('round2/model_validation/'+name+".lite", 'wb+') as destination:
-                for chunk in myfile.chunks():
+                for chunk in classification_file.chunks():
                     destination.write(chunk)
 
             # Model validation
@@ -290,7 +316,7 @@ def simple_upload(request):
                 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
                 logging.debug('test failed')
                 return render(request, 'app/simple_upload.html', {
-                    'invalid_model': myfile.name #" did not pass the bazel test"
+                    'invalid_model': classification_file.name #" did not pass the bazel test"
                 })
             else:
                 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -315,30 +341,33 @@ def simple_upload(request):
             logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
             logging.debug('Error code: ' + e.code)
 
+        # ORIGINAL FILE UPLOAD
         # file upload process by chunks to save system's memory
-        with open('round2/upload_round2/'+name+".lite", 'wb+') as destination:
-            for chunk in myfile.chunks():
+        # save classification with original name
+        with open(ROUND2_TRACK1_ORIGINAL_CLASSIFICATION + name +".lite", 'wb+') as destination:
+            for chunk in classification_file.chunks():
                 destination.write(chunk)
 
-        fs = FileSystemStorage(location='round2/submissions_track1_round2/')
+        with open(ROUND2_TRACK1_ORIGINAL_DETECTION + name +".lite", 'wb+') as destination:
+            for chunk in detection_file.chunks():
+                destination.write(chunk)
+
+        # hash file name
         hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
         hash_of_filename = hash_of_filename + ".lite"
         nameStore = name + ".lite"
 
-
-
-
         try:
-            with open('hash_to_originalfilename.json', "r") as jsonFile:
+            with open(ROUND2_TRACK1_HTO, "r") as jsonFile:
                 jsonFile.close()
 
         except Exception as exc:
 
-            with open('hash_to_originalfilename.json', "w") as jsonFile:
+            with open(ROUND2_TRACK1_HTO, "w") as jsonFile:
                 json.dump({}, jsonFile, indent=2)
                 jsonFile.close()
 
-        with open('hash_to_originalfilename.json', "r+") as jsonFile:
+        with open(ROUND2_TRACK1_HTO, "r+") as jsonFile:
             data = json.load(jsonFile)
             data[hash_of_filename] = nameStore
             jsonFile.seek(0)
@@ -347,8 +376,12 @@ def simple_upload(request):
 
 
         # file upload process by chunks to save system's memory
-        with open('round2/submissions_track1_round2/'+hash_of_filename, 'wb+') as destination:
-            for chunk in myfile.chunks():
+        with open(ROUND2_TRACK1_HASHED_CLASSIFICATION + hash_of_filename, 'wb+') as destination:
+            for chunk in classification_file.chunks():
+                destination.write(chunk)
+
+        with open(ROUND2_TRACK1_HASHED_DETECTION + hash_of_filename, 'wb+') as destination:
+            for chunk in detection_file.chunks():
                 destination.write(chunk)
 
 
@@ -370,13 +403,13 @@ def simple_upload(request):
             })
 
         return render(request, 'app/simple_upload.html', {
-            'uploaded_file_url': myfile.name + " has been successfully submitted"
+            'uploaded_file_url': classification_file.name + " and " + detection_file.name + " has been successfully submitted"
         })
 
     except:
         try:
-            if request.method == 'POST' and request.FILES['myfile2']:
-                myfile = request.FILES['myfile2']
+            if request.method == 'POST' and request.FILES[TRACK2_HTML_INPUT_NAME]:
+                myfile = request.FILES[TRACK2_HTML_INPUT_NAME]
 
             user_file_name = str(myfile.name).rsplit('.',1)
             # if myfile.name[-5:] != ".lite":
@@ -390,9 +423,7 @@ def simple_upload(request):
                 return render(request, 'app/simple_upload.html', {
                 'wrong_file2': "Track 2 Submission Failure: File name must be the log-in name!"
             })
-            fs = FileSystemStorage(location='round2/submissions_track2_round2/')
 
-            fs1= FileSystemStorage(location='round2/upload2_round2/')
             tz = pytz.timezone('America/New_York')
             now = datetime.datetime.now(tz)
             name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(user_file_name[0], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
@@ -416,7 +447,7 @@ def simple_upload(request):
 
 
             # file upload process by chunks to save system's memory
-            with open('round2/upload2_round2/'+name+"." + user_file_name[1], 'wb+') as destination:
+            with open(ROUND2_TRACK2_ORIGINAL_DIR + name +"." + user_file_name[1], 'wb+') as destination:
                 for chunk in myfile.chunks():
                     destination.write(chunk)
 
@@ -432,21 +463,20 @@ def simple_upload(request):
 
 
             hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
-
             hash_of_filename = hash_of_filename + "." + user_file_name[1]
             nameStore = name + "." + user_file_name[1]
 
             try:
-                with open('hash_to_originalfilename.json', "r") as jsonFile:
+                with open(ROUND2_TRACK2_HTO, "r") as jsonFile:
                     jsonFile.close()
 
             except Exception as exc:
 
-                with open('hash_to_originalfilename.json', "w") as jsonFile:
+                with open(ROUND2_TRACK2_HTO, "w") as jsonFile:
                     json.dump({}, jsonFile, indent=2)
                     jsonFile.close()
 
-            with open('hash_to_originalfilename.json', "r+") as jsonFile:
+            with open(ROUND2_TRACK2_HTO, "r+") as jsonFile:
                 data = json.load(jsonFile)
                 data[hash_of_filename] = nameStore
                 jsonFile.seek(0)
@@ -455,7 +485,7 @@ def simple_upload(request):
 
 
             # file upload process by chunks to save system's memory
-            with open('submissions_track2/'+hash_of_filename, 'wb+') as destination:
+            with open(ROUND2_TRACK2_HASHED_DIR + hash_of_filename, 'wb+') as destination:
                 for chunk in myfile.chunks():
                     destination.write(chunk)
 
