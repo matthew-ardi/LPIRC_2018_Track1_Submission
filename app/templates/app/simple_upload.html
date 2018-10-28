@@ -67,7 +67,7 @@
         </div>
 
         <div>
-          <p>Track 1 and Track 2 submission are closed</p>
+          <p>Submission will open 1 - 15 November, 2018</p>
         </div>
 
         <div id="text" style="display:none">
@@ -75,14 +75,18 @@
             {% csrf_token %}
             <div class="card z-depth-3 center">
               <div class="card-content">
-                <input type="file" name="myfile">
+                <span>Classification:</span>&nbsp;&nbsp;
+                <input type="file" name="track1_classification_file">
+                <br><br>
+                <span>Detection:</span>&nbsp;&nbsp;
+                <input type="file" name="track1_detection_file">
+                <br><br>
                 <button class="btn-floating btn-large waves-effect waves-light pulse" type="submit" name="action">
                   <i class="material-icons right">cloud_upload</i>
                 </button>
               </div>
             </div>
           </form>
-
         </div>
         <div id="text2" style="display:none">
           <form method="post" enctype="multipart/form-data">
@@ -90,6 +94,7 @@
             <div class="card z-depth-3 center">
               <div class="card-content">
                 <input type="file" name="myfile2">
+                <br><br>
                 <button class="btn-floating btn-large waves-effect waves-light pulse" type="submit" name="action">
                   <i class="material-icons right">cloud_upload</i>
                 </button>

@@ -20,6 +20,7 @@ model_validation/
 upload/
 upload2/
 hash_to_originalfilename.json
+round2/
 
 # https keys
 lpirc.csr
