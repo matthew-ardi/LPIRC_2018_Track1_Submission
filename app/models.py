@@ -44,6 +44,12 @@ class Tfile1(models.Model):
     def __str__(self):
         return "{0}".format(self.user)
 
+class Tfile1_r2(models.Model):
+    user = models.OneToOneField(User, on_delete=models.DO_NOTHING)
+    fn = models.CharField(max_length=1000)
+    def __str__(self):
+        return "{0}".format(self.user)
+
 class Tfile2(models.Model):
 	user = models.OneToOneField(User, on_delete=models.DO_NOTHING)
 	fn = models.CharField(max_length=1000)

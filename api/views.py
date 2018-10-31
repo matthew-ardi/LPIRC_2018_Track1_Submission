@@ -6,7 +6,7 @@ import logging
 import subprocess
 import ast
 
-from api.models import Score
+from api.models import Score, Score_r2
 from os import listdir
 from os.path import isfile, join
 from django.views.decorators.csrf import csrf_exempt
@@ -21,6 +21,7 @@ track1_submissions_folder = "/submissions_track1/"
 track2_submissions_folder = "/upload2/"
 ROUND2_TRACK1_SUB_FOLDER_CLASSIFICATION = "/round2/submissions_track1/classification/"
 ROUND2_TRACK1_SUB_FOLDER_DETECTION = "/round2/submissions_track1/detection/"
+ROUND2_TRACK1_HTO = "round2/track1_hash_to_originalfilename.json"
 
 # function to send compressed directory of submitted files
 # a sample GET request:
@@ -282,6 +283,56 @@ def postScore(request):
                             obj.save()
                         else:
                             p = Score.objects.create(filename=orgName,runtime=body['runtime'],acc_clf=body['acc_clf'],acc=body['acc'], n_clf=body['n_clf'], acc_over_time=body['acc_over_time'], message=body['message'])
+                            p.save()
+                    except Exception as exc:
+                        return HttpResponse(exc)
+
+
+
+                response = HttpResponse('Post Successful')
+                response.status_code = 200
+                return response
+            except Exception as exc:
+                return HttpResponse(exc)
+
+    response = HttpResponse('Post Unsuccessful')
+    response.status_code = 401
+    return render(request, 'api/action_fail.html')
+
+# function to post scores by JSON format - round 2 LPIRC (Nov 1 - 15, 2018)
+# a sample POST request:
+# curl -X POST -H "Content-Type: application/json" -d '{"filename": "<hash of foo_bar_baz5>.lite","runtime": 123,"metric2": 234,"metric3": 567}' http://127.0.0.1:8000/submissions/postScore/
+#@login_required
+@csrf_exempt
+def postScore_r2(request):
+    if request.method == 'POST':
+        #user = request.user
+        #if request.user.username == 'alanbition':#os.environ['REFEREE']:
+            try:
+                d=[]
+                body_unicode = request.body.decode('utf-8')
+                # body = json.loads(body_unicode)
+                body = ast.literal_eval(body_unicode)
+                content = body['results']
+                for item in content:
+                    body = item
+                    content = body['filename']
+                    orgName = ''.join(content.split())[:-5]
+                    with open(ROUND2_TRACK1_HTO,'r') as json_data:
+                        d = json.load(json_data)
+                        orgName = d[content]
+                    try:
+                        if Score_r2.objects.filter(filename=orgName).exists():
+                            obj = Score_r2.objects.get(filename=orgName)
+                            obj.runtime = body['runtime']
+                            obj.acc_clf = body['acc_clf']
+                            obj.acc = body['acc']
+                            obj.n_clf = body['n_clf']
+                            obj.acc_over_time = body['acc_over_time']
+                            obj.message = body['message']    
+                            obj.save()
+                        else:
+                            p = Score_r2.objects.create(filename=orgName,runtime=body['runtime'],acc_clf=body['acc_clf'],acc=body['acc'], n_clf=body['n_clf'], acc_over_time=body['acc_over_time'], message=body['message'])
                             p.save()
                     except Exception as exc:
                         return HttpResponse(exc)

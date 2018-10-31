@@ -17,11 +17,12 @@ urlpatterns = [
     # url(r'^postScore/$', api_views.postScore),
     url(r'^getScore/(?P<requested_file>[\s\S]+)$', api_views.getScore),
 
-    # API for round 2 - track 1 (Google Collaboration)
+    # API for round 2 - track 1 (Google Collaboration - November 1 - 15, 2018)
     url(r'^r2_list_track1_classification/$', api_views.r2_list_track1_classification),
     url(r'^r2_list_track1_detection/$', api_views.r2_list_track1_detection),
     url(r'^get_file1_r2_classification/(?P<requested_file>[\s\S]+)$', api_views.get_file1_r2_classification),
     url(r'^get_file1_r2_detection/(?P<requested_file>[\s\S]+)$', api_views.get_file1_r2_detection),
+    url(r'^postScore_r2/$', api_views.postScore_r2),
 
 ]
 

@@ -9,3 +9,12 @@ class Score(models.Model):
     n_clf = models.FloatField(max_length=10000, null=True)
     acc_over_time = models.FloatField(max_length=10000, null=True)
     message = models.CharField(max_length=10000, default="Not Provided")
+
+class Score_r2(models.Model):
+    filename = models.CharField(max_length=100, unique=True)
+    runtime = models.FloatField(max_length=10000, null=False)
+    acc_clf = models.FloatField(max_length=10000, null=False)
+    acc = models.FloatField(max_length=10000, null=False)
+    n_clf = models.FloatField(max_length=10000, null=True)
+    acc_over_time = models.FloatField(max_length=10000, null=True)
+    message = models.CharField(max_length=10000, default="Not Provided")
