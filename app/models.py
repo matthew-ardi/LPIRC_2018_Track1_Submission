@@ -123,3 +123,4 @@ class BlogPageRelatedLink(Orderable):
 
 admin.site.register(FooterBio)
 admin.site.register(Tfile1)
+admin.site.register(Tfile1_r2)

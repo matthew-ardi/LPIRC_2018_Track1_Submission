@@ -48,6 +48,8 @@ ROUND2_TRACK1_ORIGINAL_DETECTION = "round2/track1_original/detection/"
 ROUND2_TRACK1_INVALID_MODEL = "round2/invalid_model/"
 ROUND2_TRACK2_HASHED_DIR = "round2/submissions_track2/"
 ROUND2_TRACK2_ORIGINAL_DIR = "round2/track2_original/"
+
+# HTML names - identifier
 TRACK1_HTML_FILE_NAME_1 = "track1_classification_file"
 TRACK1_HTML_FILE_NAME_2 = "track1_detection_file"
 TRACK2_HTML_INPUT_NAME = "myfile2"
@@ -234,6 +236,7 @@ def simple_upload(request):
         if request.method == 'POST':
             if request.FILES[TRACK1_HTML_FILE_NAME_1]:
                 classification_file = request.FILES[TRACK1_HTML_FILE_NAME_1]
+
             try:
                 if request.FILES[TRACK1_HTML_FILE_NAME_2]:
                     detection_file = request.FILES[TRACK1_HTML_FILE_NAME_2]
@@ -353,6 +356,7 @@ def simple_upload(request):
             for chunk in detection_file.chunks():
                 destination.write(chunk)
 
+        
         # hash file name
         hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
         hash_of_filename = hash_of_filename + ".lite"
@@ -636,7 +640,7 @@ def score_board_r2(request):
     userFeedback_message = []
 
     try:
-        fn = user.tfile1.fn
+        fn = user.tfile1_r2.fn
         fnList = fn.split(" ")
 
         for item in fnList:
