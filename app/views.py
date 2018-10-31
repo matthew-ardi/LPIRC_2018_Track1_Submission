@@ -57,6 +57,13 @@ TRACK2_HTML_INPUT_NAME = "myfile2"
 # Home page
 #def index(request):
 #    return render(request, 'app/index.html')
+def makedirs(path):
+    try:
+        os.makedirs(path)
+    except OSError as e:
+        if e.errno == 17:
+            # Dir already exists. No biggie.
+            pass
 
 def index2(request):
     return render(request, 'app/index2.html')
@@ -285,6 +292,7 @@ def simple_upload(request):
         # model_validation_dir = '/home/bofu/lpirc/main_dir/initial_dir/LPIRC_2018_Track1_Submission/model_validation/'
         # tensorflow_dir = '/home/bofu/tensorflow'
         # try:
+        #   makedirs(ROUND2_TRACK1_INVALID_MODEL)
         #     with open(ROUND2_TRACK1_INVALID_MODEL+name+".lite", 'wb+') as destination:
         #         for chunk in classification_file.chunks():
         #             destination.write(chunk)
@@ -348,10 +356,12 @@ def simple_upload(request):
         # ORIGINAL FILE UPLOAD
         # file upload process by chunks to save system's memory
         # save classification with original name
+
+        makedirs(ROUND2_TRACK1_ORIGINAL_CLASSIFICATION)
         with open(ROUND2_TRACK1_ORIGINAL_CLASSIFICATION + name +".lite", 'wb+') as destination:
             for chunk in classification_file.chunks():
                 destination.write(chunk)
-
+        makedirs(ROUND2_TRACK1_ORIGINAL_DETECTION)
         with open(ROUND2_TRACK1_ORIGINAL_DETECTION + name +".lite", 'wb+') as destination:
             for chunk in detection_file.chunks():
                 destination.write(chunk)
@@ -367,7 +377,6 @@ def simple_upload(request):
                 jsonFile.close()
 
         except Exception as exc:
-
             with open(ROUND2_TRACK1_HTO, "w") as jsonFile:
                 json.dump({}, jsonFile, indent=2)
                 jsonFile.close()
@@ -381,10 +390,12 @@ def simple_upload(request):
 
 
         # file upload process by chunks to save system's memory
+        makedirs(ROUND2_TRACK1_HASHED_CLASSIFICATION)
         with open(ROUND2_TRACK1_HASHED_CLASSIFICATION + hash_of_filename, 'wb+') as destination:
             for chunk in classification_file.chunks():
                 destination.write(chunk)
 
+        makedirs(ROUND2_TRACK1_HASHED_DETECTION)
         with open(ROUND2_TRACK1_HASHED_DETECTION + hash_of_filename, 'wb+') as destination:
             for chunk in detection_file.chunks():
                 destination.write(chunk)
@@ -453,6 +464,7 @@ def simple_upload(request):
 
 
             # file upload process by chunks to save system's memory
+            makedirs(ROUND2_TRACK2_ORIGINAL_DIR)
             with open(ROUND2_TRACK2_ORIGINAL_DIR + name +"." + user_file_name[1], 'wb+') as destination:
                 for chunk in myfile.chunks():
                     destination.write(chunk)
@@ -477,7 +489,6 @@ def simple_upload(request):
                     jsonFile.close()
 
             except Exception as exc:
-
                 with open(ROUND2_TRACK2_HTO, "w") as jsonFile:
                     json.dump({}, jsonFile, indent=2)
                     jsonFile.close()
@@ -491,6 +502,7 @@ def simple_upload(request):
 
 
             # file upload process by chunks to save system's memory
+            makedirs(ROUND2_TRACK2_HASHED_DIR)
             with open(ROUND2_TRACK2_HASHED_DIR + hash_of_filename, 'wb+') as destination:
                 for chunk in myfile.chunks():
                     destination.write(chunk)
