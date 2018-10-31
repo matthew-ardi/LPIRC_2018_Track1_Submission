@@ -22,14 +22,7 @@ upload2/
 hash_to_originalfilename.json
 
 # submissions directory for round 2 (Nov 1 - 15, 2018)
-round2/invalid_model/*
-!round2/invalid_model/.gitkeep
-round2/submissions_track1/classification/*
-!round2/submissions_track1/classification/.gitkeep
-round2/submissions_track1/detection/*
-!round2/submissions_track1/detection/.gitkeep
-round2/submissions_track2/*
-!round2/submissions_track2/.gitkeep
+
 
 
 
