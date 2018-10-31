@@ -20,6 +20,7 @@
         <p></p>
         <title>Submit</title>
         <h1>The orientation of submission</h1>
+        <h3>LPIRC-II (November 1 - 15)</h3>
         <div align="left">
           <p>
             Note: you will see a message saying your submission was successful. If no message or error message was
@@ -34,8 +35,11 @@
         <ul class="collapsible">
           <li>
             <div class="collapsible-header"><i class="material-icons">info</i>Track 1 restriction</div>
-            <div class="collapsible-body"><span>File format has to be either .lite or .tflite. Maximum of 3 submissions
-                per day. </span></div>
+            <div class="collapsible-body"><span>File format has to be either .lite or .tflite. Maximum of 2 submissions
+                per day. 
+                <br>
+                Classification model must pass <a href="https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/lite/java/ovic#run-tests"
+                target="blank">bazel test</a></span></div>
           </li>
           <li>
             <div class="collapsible-header"><i class="material-icons">info</i>Track 2 restriction</div>
@@ -45,7 +49,7 @@
           </li>
           <li>
             <div class="collapsible-header"><i class="material-icons">info</i>Track 1 and Track 2 restriction</div>
-            <div class="collapsible-body"><span>Filename must match your account username</span></div>
+            <div class="collapsible-body"><span>Both Classification and Detection file name must be the account username <br>(for example: username.lite or username.tflite). </span></div>
           </li>
         </ul>
 
@@ -127,7 +131,7 @@
         {% endif %}
         {% if invalid_model %}
         <p>Submission rejected: {{ invalid_model }} did not pass the <a href="https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/lite/java/ovic#run-tests"
-            tager="blank">bazel test</a></p>
+            target="blank">bazel test</a></p>
         {% endif %}
         {% if error_message %}
         <p>Failed to submit file: {{ error_message }}</p>

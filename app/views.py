@@ -264,12 +264,12 @@ def simple_upload(request):
  
         if user_file_name[0] != str(request.user.username):
             return render(request, 'app/simple_upload.html', {
-            'wrong_file': "Track 1 Submission Failure: File name must be the log-in name"
+            'wrong_file': "Track 1 Submission Failure: Classification File name must be the log-in name"
         })
 
         if user_detect_name[0] != str(request.user.username):
             return render(request, 'app/simple_upload.html', {
-            'wrong_file': "Track 1 Submission Failure: File name must be the log-in name"
+            'wrong_file': "Track 1 Submission Failure: Detection File name must be the log-in name"
         })
 
         # getting date and time for records
@@ -340,7 +340,7 @@ def simple_upload(request):
                 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
                 logging.debug('test failed')
                 return render(request, 'app/simple_upload.html', {
-                    'invalid_model': classification_file.name #" did not pass the bazel test"
+                    'invalid_model': classification_file.name #" Classification model did not pass the bazel test"
                 })
             else:
                 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
