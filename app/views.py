@@ -296,75 +296,75 @@ def simple_upload(request):
     #        return render(request, 'app/simple_upload.html', {
     # 'wrong_file': "Track 1 Submission Failure: Three submissions per day"})
         true_filename = name+".lite"
-        model_validation_dir = ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION
-        tensorflow_dir = '/home/bofu/tensorflow'
-        try:
-            makedirs(ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION)
-            makedirs(ROUND2_TRACK1_INVALID_MODEL_DETECTION)
-            with open(ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION+name+".lite", 'wb+') as destination:
-                for chunk in classification_file.chunks():
-                    destination.write(chunk)
+        # model_validation_dir = ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION
+        # tensorflow_dir = '/home/bofu/tensorflow'
+        # try:
+        #     makedirs(ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION)
+        #     makedirs(ROUND2_TRACK1_INVALID_MODEL_DETECTION)
+        #     with open(ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION+name+".lite", 'wb+') as destination:
+        #         for chunk in classification_file.chunks():
+        #             destination.write(chunk)
 
-            with open(ROUND2_TRACK1_INVALID_MODEL_DETECTION+name+".lite", 'wb+') as destination:
-                for chunk in detection_file.chunks():
-                    destination.write(chunk)
+        #     with open(ROUND2_TRACK1_INVALID_MODEL_DETECTION+name+".lite", 'wb+') as destination:
+        #         for chunk in detection_file.chunks():
+        #             destination.write(chunk)
 
-            # Model validation
+        #     # Model validation
 
-            orig_dir = os.getcwd()
-            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-            logging.debug('This is the output : ' + str(orig_dir))
+        #     orig_dir = os.getcwd()
+        #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        #     logging.debug('This is the output : ' + str(orig_dir))
 
-            os.chdir(tensorflow_dir)
-            retval = os.getcwd()
-            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-            logging.debug('This is the output : ' + str(retval))
+        #     os.chdir(tensorflow_dir)
+        #     retval = os.getcwd()
+        #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        #     logging.debug('This is the output : ' + str(retval))
 
-            retval = os.system('ls')
-            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-            logging.debug('This is the output : ' + str(retval))
+        #     retval = os.system('ls')
+        #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        #     logging.debug('This is the output : ' + str(retval))
 
-            os.system('touch WORKSPACE')
-            test_output_classification = os.popen('bazel-bin/tensorflow/contrib/lite/java/ovic/ovic_validator '+ orig_dir + '/' + ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION + true_filename).read()
-            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-            logging.debug('This is the classification test result : ' + str(test_output_classification))
+        #     os.system('touch WORKSPACE')
+        #     test_output_classification = os.popen('bazel-bin/tensorflow/contrib/lite/java/ovic/ovic_validator '+ orig_dir + '/' + ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION + true_filename).read()
+        #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        #     logging.debug('This is the classification test result : ' + str(test_output_classification))
 
-            output_split = test_output_classification.split()
-            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-            logging.debug('This is the test result : ' + output_split[0])
-            os.chdir(orig_dir)
-            if 'Successfully' in test_output_classification:
-                logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-                logging.debug('test passed')
-            elif 'Failed' in test_output_classification:
-                logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-                logging.debug('test failed')
-                return render(request, 'app/simple_upload.html', {
-                    'invalid_model': classification_file.name #" Classification model did not pass the bazel test"
-                })
-            else:
-                logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-                logging.debug('unknown error')
-                return render(request, 'app/simple_upload.html', {
-                    'error_message': 'Error in process of validation'
-                })
-        except:
-            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-            logging.debug('unknown error1')
+        #     output_split = test_output_classification.split()
+        #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        #     logging.debug('This is the test result : ' + output_split[0])
+        #     os.chdir(orig_dir)
+        #     if 'Successfully' in test_output_classification:
+        #         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        #         logging.debug('test passed')
+        #     elif 'Failed' in test_output_classification:
+        #         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        #         logging.debug('test failed')
+        #         return render(request, 'app/simple_upload.html', {
+        #             'invalid_model': classification_file.name #" Classification model did not pass the bazel test"
+        #         })
+        #     else:
+        #         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        #         logging.debug('unknown error')
+        #         return render(request, 'app/simple_upload.html', {
+        #             'error_message': 'Error in process of validation'
+        #         })
+        # except:
+        #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        #     logging.debug('unknown error1')
 
-        final_dir = os.getcwd()
+        # final_dir = os.getcwd()
 
-        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        logging.debug('final_dir = ' + final_dir)
+        # logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        # logging.debug('final_dir = ' + final_dir)
 
-        try:
-            os.remove(ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION+true_filename)
-            os.remove(ROUND2_TRACK1_INVALID_MODEL_DETECTION+true_filename)
-        except OSError as e:
-            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-            logging.debug('Failed with: ' + e.strerror)
-            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-            logging.debug('Error code: ' + e.code)
+        # try:
+        #     os.remove(ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION+true_filename)
+        #     os.remove(ROUND2_TRACK1_INVALID_MODEL_DETECTION+true_filename)
+        # except OSError as e:
+        #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        #     logging.debug('Failed with: ' + e.strerror)
+        #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        #     logging.debug('Error code: ' + e.code)
 
         # ORIGINAL FILE UPLOAD
         # file upload process by chunks to save system's memory
