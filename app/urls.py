@@ -76,4 +76,10 @@ urlpatterns = [
     url(r'^track2_info/$', app_views.track2_info, name='track2_info'),
     url(r'^general_faq/$', app_views.general_faq, name='general_faq'),
     url(r'^track2/$', app_views.track2, name='track2'),
+
+
+    #
+    # Round 2 lpirc (Nov 1 - 15, 2018)
+    #
+    url(r'^score_board_r2/$', app_views.score_board_r2, name='score_board_r2'),
 ]
