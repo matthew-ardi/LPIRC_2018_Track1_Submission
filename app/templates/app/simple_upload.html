@@ -23,7 +23,7 @@
         <h3>LPIRC-II (November 1 - 15)</h3>
         <div align="left">
           <p>
-            Note: you will see a message saying your submission was successful. If no message or error message was
+            Note: you will see a message indicating your submission was successful. If no message or error message was
             displayed,
             it means the submission failed and we did not receive your file. for more information, please contact <a
               href="mailto:lpirc@ecn.purdue.edu">lpirc@ecn.purdue.edu</a>
@@ -71,12 +71,19 @@
             </form>
         </div>
         {% else %}
-        <p>You have not signed the contract. Please check for contracts sent by the organizer team. </p>
-        <p> Ifyou have not received one, please contact <a href="mailto:lpirc@ecn.purdue.edu">lpirc@ecn.purdue.edu</a></p>
+        <div class="container">
+            <div class="card z-depth-3 center">
+              <div class="card-content">
+        <p>You have not signed the legal documents sent by the organizers to your email.</p><p> 
+          If you created your account recently, please allow 24 hours for the organizers to send you the legal documents.</p>
+        <p>If you have signed the documents, the documents are being reviewed by the organizers.</p>
+          <p>If you have not received the documents after 24 hours of registration, please contact <a href="mailto:lpirc@ecn.purdue.edu">lpirc@ecn.purdue.edu</a></p>
         {% endif %}
-
+          </div>
+          </div>
+          </div>
         <div>
-          <p>Submission will open 1 - 15 November, 2018</p>
+          <p>Submission is currently open. Submission will close on November 15, 2018</p>
         </div>
 
         <div id="text" style="display:none">
@@ -130,7 +137,7 @@
         <p>{{ wrong_file2 }}</p>
         {% endif %}
         {% if invalid_model %}
-        <p>Submission rejected: {{ invalid_model }} did not pass the <a href="https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/lite/java/ovic#run-tests"
+        <p>Submission rejected: {{ invalid_model }} did not pass the <a href="https://github.com/tensorflow/tensorflow/tree/master/tensorflow/lite/java/ovic"
             target="blank">bazel test</a></p>
         {% endif %}
         {% if error_message %}
