@@ -242,16 +242,30 @@ def simple_upload(request):
 
     try:
         if request.method == 'POST':
-            if request.FILES[TRACK1_HTML_FILE_NAME_1]:
-                classification_file = request.FILES[TRACK1_HTML_FILE_NAME_1]
+            try:
+                if request.FILES[TRACK1_HTML_FILE_NAME_1]:
+                    classification_file = request.FILES[TRACK1_HTML_FILE_NAME_1]
+                else:
+                    return render(request, 'app/simple_upload.html', {
+                    'wrong_file': "Track 1 Submission Failure: Missing classification model."
+                })
+            except:
+                return render(request, 'app/simple_upload.html', {
+                    'wrong_file': "Track 1 Submission Failure: Missing classification model."
+                })
 
             try:
                 if request.FILES[TRACK1_HTML_FILE_NAME_2]:
                     detection_file = request.FILES[TRACK1_HTML_FILE_NAME_2]
+                else:
+                    return render(request, 'app/simple_upload.html', {
+                    'wrong_file': "Track 1 Submission Failure: Missing detection model."
+                })
 
             except:
-                logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-                logging.debug("error getting detection file")
+                return render(request, 'app/simple_upload.html', {
+                    'wrong_file': "Track 1 Submission Failure: Missing detection model"
+                })
 
         user_file_name = str(classification_file.name).rsplit('.',1)
         user_detect_name = str(detection_file.name).rsplit('.',1)
@@ -259,7 +273,7 @@ def simple_upload(request):
         # submission files format restriction
         if user_file_name[1] != "lite" and user_file_name[1] != "tflite":
             return render(request, 'app/simple_upload.html', {
-            'wrong_file': "Track 1 Submission Failure: File format must be .lite"
+            'wrong_file': "Track 1 Submission Failure: File format must be .lite or .tflite"
         })
  
         if user_file_name[0] != str(request.user.username):
@@ -270,6 +284,11 @@ def simple_upload(request):
         if user_detect_name[0] != str(request.user.username):
             return render(request, 'app/simple_upload.html', {
             'wrong_file': "Track 1 Submission Failure: Detection File name must be the log-in name"
+        })
+
+        if user_detect_name[1] != "lite" and user_detect_name[1] != "tflite":
+            return render(request, 'app/simple_upload.html', {
+            'wrong_file': "Track 1 Submission Failure: File format must be .lite or .tflite"
         })
 
         # getting date and time for records
