@@ -11,7 +11,7 @@
 
         <p></p>
         <title>Submit</title>
-        <h1>The orientation of submission</h1>
+        <h1>The Submission Portal</h1>
         <h3>LPIRC-II (November 1 - 15)</h3>
         <div align="left">
           <p>
@@ -45,6 +45,10 @@
         </ul>
 
         {% if user.registeruser.contract_signed == True %}
+        <div>
+          <span class="new badge black" data-badge-caption="{{user.get_username}}">Your username: </span>
+        </div>
+        <br>
         <div>
           <form action="#">
             <p>
