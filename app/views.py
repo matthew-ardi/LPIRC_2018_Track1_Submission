@@ -242,225 +242,225 @@ def simple_upload(request):
 
     try:
         if request.method == 'POST':
+            classification_file_exist = False
+            detection_file_exist = False
+            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            logging.debug('post detected ')
             try:
                 if request.FILES[TRACK1_HTML_FILE_NAME_1]:
                     classification_file = request.FILES[TRACK1_HTML_FILE_NAME_1]
-                else:
-                    return render(request, 'app/simple_upload.html', {
-                    'wrong_file': "Track 1 Submission Failure: Missing classification model."
-                })
+                    classification_file_exist = True
             except:
-                return render(request, 'app/simple_upload.html', {
-                    'wrong_file': "Track 1 Submission Failure: Missing classification model."
-                })
+                pass
 
             try:
                 if request.FILES[TRACK1_HTML_FILE_NAME_2]:
                     detection_file = request.FILES[TRACK1_HTML_FILE_NAME_2]
-                else:
-                    return render(request, 'app/simple_upload.html', {
-                    'wrong_file': "Track 1 Submission Failure: Missing detection model."
-                })
+                    detection_file_exist = True
+                    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+                    logging.debug('detection only ')
 
             except:
+                pass
+
+            if classification_file_exist != True and detection_file_exist != True:
+                raise Exception()
+
+            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            logging.debug('request files done ')
+            if classification_file_exist is not True and detection_file_exist is not True:
                 return render(request, 'app/simple_upload.html', {
-                    'wrong_file': "Track 1 Submission Failure: Missing detection model"
+                        'wrong_file': "Track 1 Submission Failure: no files detected"
+                    })
+
+            if classification_file_exist is True:
+                user_file_name = str(classification_file.name).rpartition('.')
+
+                # submission files format restriction
+                if "lite" not in user_file_name and "tflite" not in user_file_name:
+                    return render(request, 'app/simple_upload.html', {
+                    'wrong_file': "Track 1 Submission Failure: File format must be .lite or .tflite"
+                })
+            
+            if detection_file_exist is True:
+                user_detect_name = str(detection_file.name).rpartition('.')
+
+                # submission files format restriction
+                if "lite" not in user_detect_name and "tflite" not in user_detect_name:
+                    return render(request, 'app/simple_upload.html', {
+                    'wrong_file': "Track 1 Submission Failure: File format must be .lite or .tflite"
                 })
 
-        user_file_name = str(classification_file.name).rsplit('.',1)
-        user_detect_name = str(detection_file.name).rsplit('.',1)
+            # getting date and time for records
+            tz = pytz.timezone('America/New_York')
+            now = datetime.datetime.now(tz)
+            name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(str(request.user.username), now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
 
-        # submission files format restriction
-        if user_file_name[1] != "lite" and user_file_name[1] != "tflite":
-            return render(request, 'app/simple_upload.html', {
-            'wrong_file': "Track 1 Submission Failure: File format must be .lite or .tflite"
-        })
- 
-        if user_file_name[0] != str(request.user.username):
-            return render(request, 'app/simple_upload.html', {
-            'wrong_file': "Track 1 Submission Failure: Classification File name must be the log-in name"
-        })
+            submissionCounts = 0
 
-        if user_detect_name[0] != str(request.user.username):
-            return render(request, 'app/simple_upload.html', {
-            'wrong_file': "Track 1 Submission Failure: Detection File name must be the log-in name"
-        })
+        #     for i in glob.glob('upload/*'):
+        #          l = len(str(request.user.username))
+        #          nm = re.search(r'^(\w+)-2018-', i[7:])
+        #          nm = nm.group()
+        #          if nm[:-6] == str(request.user.username):
+        #              day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
+        #              day_now = "{0}-{1}".format(now.month,now.day)
+        #              if (day != []):
+        #                 #return render(request, 'app/simple_upload.html', {
+        #         #'wrong_file': "{} {}".format(day[0],day_now)})
+        #                 if (day[0] == day_now):
+        #                     submissionCounts += 1
+        #
+        #     if submissionCounts > 3:
+        #        return render(request, 'app/simple_upload.html', {
+        # 'wrong_file': "Track 1 Submission Failure: Three submissions per day"})
+            true_filename = name+".lite"
+            # model_validation_dir = ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION
+            # tensorflow_dir = '/home/bofu/tensorflow'
+            # try:
+            #     makedirs(ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION)
+            #     makedirs(ROUND2_TRACK1_INVALID_MODEL_DETECTION)
+            #     with open(ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION+name+".lite", 'wb+') as destination:
+            #         for chunk in classification_file.chunks():
+            #             destination.write(chunk)
 
-        if user_detect_name[1] != "lite" and user_detect_name[1] != "tflite":
-            return render(request, 'app/simple_upload.html', {
-            'wrong_file': "Track 1 Submission Failure: File format must be .lite or .tflite"
-        })
+            #     with open(ROUND2_TRACK1_INVALID_MODEL_DETECTION+name+".lite", 'wb+') as destination:
+            #         for chunk in detection_file.chunks():
+            #             destination.write(chunk)
 
-        # getting date and time for records
-        tz = pytz.timezone('America/New_York')
-        now = datetime.datetime.now(tz)
-        name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(user_file_name[0], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
+            #     # Model validation
 
-        submissionCounts = 0
+            #     orig_dir = os.getcwd()
+            #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            #     logging.debug('This is the output : ' + str(orig_dir))
 
-    #     for i in glob.glob('upload/*'):
-    #          l = len(str(request.user.username))
-    #          nm = re.search(r'^(\w+)-2018-', i[7:])
-    #          nm = nm.group()
-    #          if nm[:-6] == str(request.user.username):
-    #              day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
-    #              day_now = "{0}-{1}".format(now.month,now.day)
-    #              if (day != []):
-    #                 #return render(request, 'app/simple_upload.html', {
-    #         #'wrong_file': "{} {}".format(day[0],day_now)})
-    #                 if (day[0] == day_now):
-    #                     submissionCounts += 1
-    #
-    #     if submissionCounts > 3:
-    #        return render(request, 'app/simple_upload.html', {
-    # 'wrong_file': "Track 1 Submission Failure: Three submissions per day"})
-        true_filename = name+".lite"
-        # model_validation_dir = ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION
-        # tensorflow_dir = '/home/bofu/tensorflow'
-        # try:
-        #     makedirs(ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION)
-        #     makedirs(ROUND2_TRACK1_INVALID_MODEL_DETECTION)
-        #     with open(ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION+name+".lite", 'wb+') as destination:
-        #         for chunk in classification_file.chunks():
-        #             destination.write(chunk)
+            #     os.chdir(tensorflow_dir)
+            #     retval = os.getcwd()
+            #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            #     logging.debug('This is the output : ' + str(retval))
 
-        #     with open(ROUND2_TRACK1_INVALID_MODEL_DETECTION+name+".lite", 'wb+') as destination:
-        #         for chunk in detection_file.chunks():
-        #             destination.write(chunk)
+            #     retval = os.system('ls')
+            #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            #     logging.debug('This is the output : ' + str(retval))
 
-        #     # Model validation
+            #     os.system('touch WORKSPACE')
+            #     test_output_classification = os.popen('bazel-bin/tensorflow/contrib/lite/java/ovic/ovic_validator '+ orig_dir + '/' + ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION + true_filename).read()
+            #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            #     logging.debug('This is the classification test result : ' + str(test_output_classification))
 
-        #     orig_dir = os.getcwd()
-        #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        #     logging.debug('This is the output : ' + str(orig_dir))
+            #     output_split = test_output_classification.split()
+            #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            #     logging.debug('This is the test result : ' + output_split[0])
+            #     os.chdir(orig_dir)
+            #     if 'Successfully' in test_output_classification:
+            #         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            #         logging.debug('test passed')
+            #     elif 'Failed' in test_output_classification:
+            #         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            #         logging.debug('test failed')
+            #         return render(request, 'app/simple_upload.html', {
+            #             'invalid_model': classification_file.name #" Classification model did not pass the bazel test"
+            #         })
+            #     else:
+            #         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            #         logging.debug('unknown error')
+            #         return render(request, 'app/simple_upload.html', {
+            #             'error_message': 'Error in process of validation'
+            #         })
+            # except:
+            #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            #     logging.debug('unknown error1')
 
-        #     os.chdir(tensorflow_dir)
-        #     retval = os.getcwd()
-        #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        #     logging.debug('This is the output : ' + str(retval))
+            # final_dir = os.getcwd()
 
-        #     retval = os.system('ls')
-        #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        #     logging.debug('This is the output : ' + str(retval))
+            # logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            # logging.debug('final_dir = ' + final_dir)
 
-        #     os.system('touch WORKSPACE')
-        #     test_output_classification = os.popen('bazel-bin/tensorflow/contrib/lite/java/ovic/ovic_validator '+ orig_dir + '/' + ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION + true_filename).read()
-        #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        #     logging.debug('This is the classification test result : ' + str(test_output_classification))
+            # try:
+            #     os.remove(ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION+true_filename)
+            #     os.remove(ROUND2_TRACK1_INVALID_MODEL_DETECTION+true_filename)
+            # except OSError as e:
+            #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            #     logging.debug('Failed with: ' + e.strerror)
+            #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            #     logging.debug('Error code: ' + e.code)
 
-        #     output_split = test_output_classification.split()
-        #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        #     logging.debug('This is the test result : ' + output_split[0])
-        #     os.chdir(orig_dir)
-        #     if 'Successfully' in test_output_classification:
-        #         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        #         logging.debug('test passed')
-        #     elif 'Failed' in test_output_classification:
-        #         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        #         logging.debug('test failed')
-        #         return render(request, 'app/simple_upload.html', {
-        #             'invalid_model': classification_file.name #" Classification model did not pass the bazel test"
-        #         })
-        #     else:
-        #         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        #         logging.debug('unknown error')
-        #         return render(request, 'app/simple_upload.html', {
-        #             'error_message': 'Error in process of validation'
-        #         })
-        # except:
-        #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        #     logging.debug('unknown error1')
+            # ORIGINAL FILE UPLOAD
+            # file upload process by chunks to save system's memory
+            # save classification with original name
 
-        # final_dir = os.getcwd()
+            if classification_file_exist is True:
+                makedirs(ROUND2_TRACK1_ORIGINAL_CLASSIFICATION)
+                with open(ROUND2_TRACK1_ORIGINAL_CLASSIFICATION + name +".lite", 'wb+') as destination:
+                    for chunk in classification_file.chunks():
+                        destination.write(chunk)
+            
+            if detection_file_exist is True:
+                makedirs(ROUND2_TRACK1_ORIGINAL_DETECTION)
+                with open(ROUND2_TRACK1_ORIGINAL_DETECTION + name +".lite", 'wb+') as destination:
+                    for chunk in detection_file.chunks():
+                        destination.write(chunk)
 
-        # logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        # logging.debug('final_dir = ' + final_dir)
+            
+            # hash file name - classification model
+            hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
+            hash_of_filename = hash_of_filename + ".lite"
+            nameStore = name + ".lite"
 
-        # try:
-        #     os.remove(ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION+true_filename)
-        #     os.remove(ROUND2_TRACK1_INVALID_MODEL_DETECTION+true_filename)
-        # except OSError as e:
-        #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        #     logging.debug('Failed with: ' + e.strerror)
-        #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        #     logging.debug('Error code: ' + e.code)
+            try:
+                with open(ROUND2_TRACK1_HTO, "r") as jsonFile:
+                    jsonFile.close()
 
-        # ORIGINAL FILE UPLOAD
-        # file upload process by chunks to save system's memory
-        # save classification with original name
+            except Exception as exc:
+                with open(ROUND2_TRACK1_HTO, "w") as jsonFile:
+                    json.dump({}, jsonFile, indent=2)
+                    jsonFile.close()
 
-        makedirs(ROUND2_TRACK1_ORIGINAL_CLASSIFICATION)
-        with open(ROUND2_TRACK1_ORIGINAL_CLASSIFICATION + name +".lite", 'wb+') as destination:
-            for chunk in classification_file.chunks():
-                destination.write(chunk)
-        makedirs(ROUND2_TRACK1_ORIGINAL_DETECTION)
-        with open(ROUND2_TRACK1_ORIGINAL_DETECTION + name +".lite", 'wb+') as destination:
-            for chunk in detection_file.chunks():
-                destination.write(chunk)
-
-        
-        # hash file name
-        hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
-        hash_of_filename = hash_of_filename + ".lite"
-        nameStore = name + ".lite"
-
-        try:
-            with open(ROUND2_TRACK1_HTO, "r") as jsonFile:
-                jsonFile.close()
-
-        except Exception as exc:
-            with open(ROUND2_TRACK1_HTO, "w") as jsonFile:
-                json.dump({}, jsonFile, indent=2)
-                jsonFile.close()
-
-        with open(ROUND2_TRACK1_HTO, "r+") as jsonFile:
-            data = json.load(jsonFile)
-            data[hash_of_filename] = nameStore
-            jsonFile.seek(0)
-            json.dump(data, jsonFile, indent=2)
-            jsonFile.truncate()
+            with open(ROUND2_TRACK1_HTO, "r+") as jsonFile:
+                data = json.load(jsonFile)
+                data[hash_of_filename] = nameStore
+                jsonFile.seek(0)
+                json.dump(data, jsonFile, indent=2)
+                jsonFile.truncate()
 
 
-        # file upload process by chunks to save system's memory
-        makedirs(ROUND2_TRACK1_HASHED_CLASSIFICATION)
-        with open(ROUND2_TRACK1_HASHED_CLASSIFICATION + hash_of_filename, 'wb+') as destination:
-            for chunk in classification_file.chunks():
-                destination.write(chunk)
+            # file upload process by chunks to save system's memory
+            if classification_file_exist is True:
+                makedirs(ROUND2_TRACK1_HASHED_CLASSIFICATION)
+                with open(ROUND2_TRACK1_HASHED_CLASSIFICATION + hash_of_filename, 'wb+') as destination:
+                    for chunk in classification_file.chunks():
+                        destination.write(chunk)
 
-        makedirs(ROUND2_TRACK1_HASHED_DETECTION)
-        with open(ROUND2_TRACK1_HASHED_DETECTION + hash_of_filename, 'wb+') as destination:
-            for chunk in detection_file.chunks():
-                destination.write(chunk)
+            if detection_file_exist is True:
+                makedirs(ROUND2_TRACK1_HASHED_DETECTION)
+                with open(ROUND2_TRACK1_HASHED_DETECTION + hash_of_filename, 'wb+') as destination:
+                    for chunk in detection_file.chunks():
+                        destination.write(chunk)
 
-
-        try:
-            newFileName = name+".lite"
-            # filenameModel, created = Tfile1.objects.get_or_create(        # round 1 June 2018
-            filenameModel, created = Tfile1_r2.objects.get_or_create(       # round 2 November 1 - 15, 2018
-                user = user,
-                defaults={"fn":newFileName}
-            )
-            if not created:
-                nameString = filenameModel.fn
-                nameString = nameString+" "+newFileName
-                filenameModel.fn = nameString
-            filenameModel.save()
-
-        except Exception as ex:
-            return render(request, 'app/simple_upload.html', {
-                'wrong_file': ex
+            if classification_file_exist is True and detection_file_exist is True:
+                return render(request, 'app/simple_upload.html', {
+                    'uploaded_file_url': "Your classification and detection models have been successfully submitted"
+                })
+            elif classification_file_exist is True:
+                return render(request, 'app/simple_upload.html', {
+                    'uploaded_file_url': "your classification model has been successfully submitted"
+                })
+            elif detection_file_exist is True:
+                return render(request, 'app/simple_upload.html', {
+                    'uploaded_file_url': "your detection model has been successfully submitted"
+                })
+            else:
+                return render(request, 'app/simple_upload.html', {
+                    'wrong_file': "Track 1 Submission Failure[1742]"
             })
-
-        return render(request, 'app/simple_upload.html', {
-            'uploaded_file_url': classification_file.name + " and " + detection_file.name + " has been successfully submitted"
-        })
-
+        else:
+            return render(request, 'app/simple_upload.html')
     except:
         try:
             if request.method == 'POST' and request.FILES[TRACK2_HTML_INPUT_NAME]:
                 myfile = request.FILES[TRACK2_HTML_INPUT_NAME]
 
-            user_file_name = str(myfile.name).rsplit('.',1)
+            user_file_name = str(myfile.name).rpartition('.')
             # if myfile.name[-5:] != ".lite":
             #     return render(request, 'app/simple_upload.html', {
             #
@@ -468,14 +468,10 @@ def simple_upload(request):
             #
             # })
             # if str(myfile.name[:-5]) != str(request.user.username):
-            if user_file_name[0] != str(request.user.username):
-                return render(request, 'app/simple_upload.html', {
-                'wrong_file2': "Track 2 Submission Failure: File name must be the log-in name!"
-            })
 
             tz = pytz.timezone('America/New_York')
             now = datetime.datetime.now(tz)
-            name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(user_file_name[0], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
+            name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(str(request.user.username), now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
 
             # for i in glob.glob('upload2/*'):
             #     l = len(str(request.user.username))
@@ -497,7 +493,7 @@ def simple_upload(request):
 
             # file upload process by chunks to save system's memory
             makedirs(ROUND2_TRACK2_ORIGINAL_DIR)
-            with open(ROUND2_TRACK2_ORIGINAL_DIR + name +"." + user_file_name[1], 'wb+') as destination:
+            with open(ROUND2_TRACK2_ORIGINAL_DIR + name +".lite", 'wb+') as destination:
                 for chunk in myfile.chunks():
                     destination.write(chunk)
 
@@ -513,8 +509,8 @@ def simple_upload(request):
 
 
             hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
-            hash_of_filename = hash_of_filename + "." + user_file_name[1]
-            nameStore = name + "." + user_file_name[1]
+            hash_of_filename = hash_of_filename + ".lite"
+            nameStore = name + ".lite"
 
             try:
                 with open(ROUND2_TRACK2_HTO, "r") as jsonFile:
