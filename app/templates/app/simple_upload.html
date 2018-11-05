@@ -1,15 +1,7 @@
-
-{% extends "app/base.html" %}
-
-{% block title %}LPIRC 2018{% endblock %}
-{% load static %}
-
-{% block css %}
+{% extends "app/base.html" %} {% block title %}LPIRC 2018{% endblock %} {% load static %} {% block css %}
 <style>
 </style>
-{% endblock %}
-
-{% block content %}
+{% endblock %} {% block content %}
 <br>
 <br>
 <div class="container">
@@ -19,12 +11,14 @@
 
         <p></p>
         <title>Submit</title>
+          
         <h1>The orientation of submission</h1>
+        <h3>LPIRC-II (November 1 - 30)</h3>
+
         <div align="left">
           <p>
-            Note: you will see a message saying your submission was successful. If no message or error message was
-            displayed,
-            it means the submission failed and we did not receive your file. for more information, please contact <a
+            Note: you will see a message indicating your submission was successful. If no message or error message was displayed, it
+            means the submission failed and we did not receive your file. for more information, please contact <a
               href="mailto:lpirc@ecn.purdue.edu">lpirc@ecn.purdue.edu</a>
           </p>
           <p>
@@ -34,21 +28,32 @@
         <ul class="collapsible">
           <li>
             <div class="collapsible-header"><i class="material-icons">info</i>Track 1 restriction</div>
-            <div class="collapsible-body"><span>File format has to be either .lite or .tflite. Maximum of 3 submissions
-                per day. </span></div>
+            <div class="collapsible-body"><span>
+                <br> Classification and Detection models must pass <a href="https://github.com/tensorflow/tensorflow/tree/master/tensorflow/lite/java/ovic#test-your-submissions"
+                  target="blank">bazel test</a>. 
+                  <br>
+                  You may submit either or both classification and detection models.
+                <br>
+                Maximum of 2 submissions per day.
+              </span></div>
           </li>
           <li>
             <div class="collapsible-header"><i class="material-icons">info</i>Track 2 restriction</div>
-            <div class="collapsible-body"><span>It is recommended that you submit all files in a zip folder.
-                Participants must use Caffe2 and submit executable Python files.
-                Please include instruction on how to run the code in a Readme file. </span></div>
+            <div class="collapsible-body"><span>It is recommended that you submit all files in a zip folder. Participants
+                must use Caffe2 and submit executable Python files. Please include instruction on how to run the code in
+                a Readme file. </span></div>
           </li>
           <li>
             <div class="collapsible-header"><i class="material-icons">info</i>Track 1 and Track 2 restriction</div>
-            <div class="collapsible-body"><span>Filename must match your account username</span></div>
+            <div class="collapsible-body"><span>File format has to be either .lite or .tflite.</span></div>
           </li>
         </ul>
 
+        {% if user.registeruser.contract_signed == True %}
+        <div>
+          <span class="new badge black" data-badge-caption="{{user.get_username}}">Your username: </span>
+        </div>
+        <br>
         <div>
           <form action="#">
             <p>
@@ -63,11 +68,25 @@
                 <span style="color: black;">Track 2</span>
               </label>
             </p>
-            </form>
+          </form>
         </div>
-
         <div>
-          <p>Track 1 and Track 2 submission are closed</p>
+            <p>Submission is currently open. Submission will close on November 15, 2018</p>
+          </div>
+        {% else %}
+        <div class="container">
+          <div class="card z-depth-3 center">
+            <div class="card-content">
+              <p>You have not signed the legal documents sent by the organizers to your email.</p>
+              <p>
+                If you created your account recently, please allow 24 hours for the organizers to send you the legal documents.</p>
+              <p>If you have signed the documents, the documents are being reviewed by the organizers.</p>
+              <p>If you have not received the documents after 24 hours of registration, please contact <a href="mailto:lpirc@ecn.purdue.edu">lpirc@ecn.purdue.edu</a></p>
+              <p>Submission is currently open (1 - 30 November, 2018, except 16-25 November due to the Thanksgiving break.)</p>
+          {% endif %}
+            </div>
+          </div>
+
         </div>
 
         <div id="text" style="display:none">
@@ -75,14 +94,18 @@
             {% csrf_token %}
             <div class="card z-depth-3 center">
               <div class="card-content">
-                <input type="file" name="myfile">
+                <span>Classification:</span>&nbsp;&nbsp;
+                <input type="file" name="track1_classification_file">
+                <br><br>
+                <span>Detection:</span>&nbsp;&nbsp;
+                <input type="file" name="track1_detection_file">
+                <br><br>
                 <button class="btn-floating btn-large waves-effect waves-light pulse" type="submit" name="action">
                   <i class="material-icons right">cloud_upload</i>
                 </button>
               </div>
             </div>
           </form>
-
         </div>
         <div id="text2" style="display:none">
           <form method="post" enctype="multipart/form-data">
@@ -90,6 +113,7 @@
             <div class="card z-depth-3 center">
               <div class="card-content">
                 <input type="file" name="myfile2">
+                <br><br>
                 <button class="btn-floating btn-large waves-effect waves-light pulse" type="submit" name="action">
                   <i class="material-icons right">cloud_upload</i>
                 </button>
@@ -101,41 +125,36 @@
         </div>
 
 
-
+        <div class="container center">
         {% if uploaded_file_url %}
         <p>Track 1 File uploaded: {{ uploaded_file_url }}</p>
-        {% endif %}
-        {% if wrong_file %}
+        {% endif %} {% if wrong_file %}
         <p>{{ wrong_file }}</p>
-        {% endif %}
-
-        {% if uploaded_file_url2 %}
+        {% endif %} {% if uploaded_file_url2 %}
         <p>Track 2 File uploaded: {{ uploaded_file_url2 }}</p>
-        {% endif %}
-        {% if wrong_file2 %}
+        {% endif %} {% if wrong_file2 %}
         <p>{{ wrong_file2 }}</p>
-        {% endif %}
-        {% if invalid_model %}
-        <p>Submission rejected: {{ invalid_model }} did not pass the <a href="https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/lite/java/ovic#run-tests"
-            tager="blank">bazel test</a></p>
-        {% endif %}
-        {% if error_message %}
+        {% endif %} {% if invalid_model %}
+        <p>Submission rejected: {{ invalid_model }} did not pass the <a href="https://github.com/tensorflow/tensorflow/tree/master/tensorflow/lite/java/ovic"
+            target="blank">bazel test</a></p>
+        {% endif %} {% if error_message %}
         <p>Failed to submit file: {{ error_message }}</p>
         {% endif %}
+        </div>
       </div>
     </div>
   </div>
 </div>
-{% endblock %}
-
-{% block scripts %}
+{% endblock %} {% block scripts %}
 <script>
   $(document).ready(function () {
     $('select').formSelect();
   });
+
   $(document).ready(function () {
     $('.collapsible').collapsible();
   });
+
   function myFunction() {
     var checkBox = document.getElementById("myCheck");
     // document.getElementById("mycheck2").checked = false;
@@ -146,7 +165,7 @@
     var text = document.getElementById("text");
     var text2 = document.getElementById("text2");
     if (checkBox.checked == true) {
-      text.style.display = "block";
+      text.style.display = "block";  // comment this line to disable submission
       text2.style.display = "none";
     } else {
       text.style.display = "none";
@@ -162,16 +181,19 @@
     var text2 = document.getElementById("text2");
     var text2 = document.getElementById("text2");
     if (checkBox.checked == true) {
-      text2.style.display = "block";
+      text2.style.display = "block";  // comment this line to disable submission
       text.style.display = "none";
     } else {
       text2.style.display = "none";
     }
   }
+
   function myFunction3() {
     var selected = document.getElementById("selected_track");
     if (selected.selectedIndex == "2") {
+
     }
+
   }
-</script>
-{% endblock %}
+
+</script> {% endblock %}
