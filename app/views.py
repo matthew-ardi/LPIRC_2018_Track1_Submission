@@ -26,7 +26,7 @@ import re
 import logging
 
 from django.core.mail import send_mail
-from api.models import Score, Score_r2
+from api.models import Score, Score_r2, Score_r2_detection
 from app.models import Tfile1, Tfile1_r2
 from app.models import Tfile2
 from hashlib import sha224 as hashfunction
@@ -684,6 +684,8 @@ def score_board(request):
 def score_board_r2(request):
     user = request.user
     usernameLength = len(str(request.user.username))
+
+    # Classification Lists - Public Leaderboard
     filenameList=[]
     runtimeList=[]
     m1List = []
@@ -711,6 +713,22 @@ def score_board_r2(request):
              ref_accList.append(item.ref_acc)
              bucketList.append(item.bucket)
 
+    # Detection Lists - Public Leaderboard
+    filenameList_detect = []
+    runtimeList_detect = []
+    map_over_timeList_detect = []
+    map_of_processedList_detect = []
+
+    scores_detection = Score_r2_detection.objects.all()
+    for item in scores_detection:
+        name = ROUND2_TRACK1_ORIGINAL_DETECTION + item.filename
+        if name in glob.glob(ROUND2_TRACK1_ORIGINAL_DETECTION + '*'):
+            filenameList_detect.append(item.filename)
+            runtimeList_detect.append(item.runtime)
+            map_over_timeList_detect.append(item.map_over_time)
+            map_of_processedList_detect.append(item.map_of_processed)
+
+    # Classification for Private leaderboard
     userSubmittedTime = []
     userRuntimeScore = []
     userAcc_clfScore = []
@@ -755,8 +773,41 @@ def score_board_r2(request):
                 userFeedback_message.append("Not Provided")
     except:
         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        logging.debug('user has not submitted a file')
+        logging.debug('user has not submitted classification file')
 
+    # Detection Private Leaderboard
+    userSubmittedTimeDetect = []
+    userRuntimeDetectScore = []
+    userMapOverTimeDetectScore = []
+    userMapOfProcessedDetectScore = []
+    userFeedbackDetect_message = []
+
+    try:
+        fn = user.tfile1_r2.fn
+        fnList = fn.split(" ")
+
+        for item in fnList:
+            day = re.findall(r'-(\w+-\w+-\w+):(\w+):',item[usernameLength-1:])
+            if len(day[0][1]) <= 1:
+                secondPadding = ":0" + day[0][1]
+            else:
+                secondPadding = ":"+ day[0][1]
+            userSubmittedTimeDetect.append(day[0][0] + secondPadding)
+            try:
+                userRuntimeDetectScore.append(Score_r2_detection.objects.get(filename=item).runtime)
+                userMapOverTimeDetectScore.append('{:0.5e}'.format(Score_r2_detection.objects.get(filename=item).map_over_time))
+                userMapOfProcessedDetectScore.append(Score_r2_detection.objects.get(filename=item).map_of_processed)
+                userFeedbackDetect_message.append(Score_r2_detection.objects.get(filename=item).message)
+            except:
+                userRuntimeDetectScore.append("Not Provided")
+                userMapOverTimeDetectScore.append("Not Provided")
+                userMapOfProcessedDetectScore.append("Not Provided")
+                userFeedbackDetect_message.append("Not Provided")
+    except:
+        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        logging.debug('user has not submitted Detection file')
+
+    # Classification - public leaderboard
     l = len(runtimeList)
     if l < 5:
         for i in range(0,5-l):
@@ -769,6 +820,15 @@ def score_board_r2(request):
             ref_accList.append("None")
             bucketList.append("None")
 
+    l = len(runtimeList_detect)
+    if l < 5:
+        for i in range(0,1-l):
+            filenameList_detect.append("Coming Soon")
+            runtimeList_detect.append("Coming Soon")
+            map_over_timeList_detect.append("Coming Soon")
+            map_of_processedList_detect.append("Coming Soon")
+
+    # collect all metadata to be transmitted to front-end
     RankList = ["1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th","13th","14th","15th","16th","17th","18th","19th","20th"]
     zipScore = zip(
         userSubmittedTime, 
@@ -794,10 +854,28 @@ def score_board_r2(request):
         ref_accList,
         bucketList
         )
+
+    zipScore_detect = zip(
+        userSubmittedTimeDetect,
+        userRuntimeDetectScore,
+        userMapOverTimeDetectScore,
+        userMapOfProcessedDetectScore,
+        userFeedbackDetect_message
+    )
+
+    zipRank_detect = zip(
+        RankList,
+        filenameList_detect,
+        runtimeList_detect,
+        map_over_timeList_detect,
+        map_of_processedList_detect
+    )
     # Score.objects.all().delete() #to clear score objects
     return render(request, 'app/score_board_r2.html',
         {'zipRank': zipRank,
-        'zipScore': zipScore,})
+        'zipScore': zipScore,
+        'zipScore_detect': zipScore_detect,
+        'zipRank_detect': zipRank_detect})
 
 def score_board_admin(request):
     user = request.user

@@ -22,3 +22,10 @@ class Score_r2(models.Model):
     bucket = models.CharField(max_length=100)
     metric = models.FloatField(max_length=10000, null=True)
     message = models.CharField(max_length=10000, default="Not Provided")
+
+class Score_r2_detection(models.Model):
+    filename = models.CharField(max_length=100, unique=True)
+    runtime = models.FloatField(max_length=10000, null=False)
+    map_over_time = models.FloatField(max_length=10000, null=False)
+    map_of_processed = models.FloatField(max_length=10000, null=False)
+    message = models.CharField(max_length=10000, default="Not Provided")

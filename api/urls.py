@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^get_file1_r2_classification/(?P<requested_file>[\s\S]+)$', api_views.get_file1_r2_classification),
     url(r'^get_file1_r2_detection/(?P<requested_file>[\s\S]+)$', api_views.get_file1_r2_detection),
     url(r'^postScore_r2/$', api_views.postScore_r2),
+    url(r'^postScore_r2_detection/$', api_views.postScore_r2_detection),
 
 ]
 
