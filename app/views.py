@@ -691,8 +691,13 @@ def score_board_r2(request):
     accList = []
     n_clfList = []
     acc_over_timeList = []
+    metricList = []
+    ref_accList = []
+    bucketList = []
     # feedback_message = []
     scores = Score_r2.objects.all().order_by('-acc', 'runtime')
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+    logging.debug('getting scoreboard')
     for item in scores:
         name = ROUND2_TRACK1_ORIGINAL_CLASSIFICATION + item.filename
         if name in glob.glob(ROUND2_TRACK1_ORIGINAL_CLASSIFICATION + '*'):
@@ -702,7 +707,9 @@ def score_board_r2(request):
              accList.append(item.acc)
              n_clfList.append(item.n_clf)
              acc_over_timeList.append(item.acc_over_time)
-
+             metricList.append(item.metric)
+             ref_accList.append(item.ref_acc)
+             bucketList.append(item.bucket)
 
     userSubmittedTime = []
     userRuntimeScore = []
@@ -711,6 +718,9 @@ def score_board_r2(request):
     userN_clfScore = []
     userAcc_over_timeScore = []
     userFeedback_message = []
+    userMetric = []
+    userRef_acc = []
+    userBucket = []
 
     try:
         fn = user.tfile1_r2.fn
@@ -729,6 +739,9 @@ def score_board_r2(request):
                 userAccScore.append(Score_r2.objects.get(filename=item).acc)
                 userN_clfScore.append(Score_r2.objects.get(filename=item).n_clf)
                 userAcc_over_timeScore.append(Score_r2.objects.get(filename=item).acc_over_time)
+                userMetric.append(Score_r2.objects.get(filename=item).metric)
+                userRef_acc.append(Score_r2.objects.get(filename=item).ref_acc)
+                userBucket.append(Score_r2.objects.get(filename=item).bucket)
                 userFeedback_message.append(Score_r2.objects.get(filename=item).message)
             except:
                 userRuntimeScore.append("Not Provided")
@@ -736,6 +749,9 @@ def score_board_r2(request):
                 userAccScore.append("Not Provided")
                 userN_clfScore.append("Not Provided")
                 userAcc_over_timeScore.append("Not Provided")
+                userMetric.append("Not Provided")
+                userRef_acc.append("Not Provided")
+                userBucket.append("Not Provided")
                 userFeedback_message.append("Not Provided")
     except:
         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -749,11 +765,35 @@ def score_board_r2(request):
             accList.append("None")
             n_clfList.append("None")
             acc_over_timeList.append("None")
+            metricList.append("None")
+            ref_accList.append("None")
+            bucketList.append("None")
 
     RankList = ["1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th","13th","14th","15th","16th","17th","18th","19th","20th"]
-    zipScore = zip(userSubmittedTime, userRuntimeScore,userAcc_clfScore,userAccScore, userN_clfScore, userAcc_over_timeScore, userFeedback_message)
-    zipRank = zip(filenameList, RankList, runtimeList,acc_clfList,accList, n_clfList, acc_over_timeList)
-
+    zipScore = zip(
+        userSubmittedTime, 
+        userRuntimeScore,
+        userAcc_clfScore,
+        userAccScore, 
+        userN_clfScore, 
+        userAcc_over_timeScore, 
+        userMetric,
+        userRef_acc,
+        userBucket,
+        userFeedback_message
+        )
+    zipRank = zip(
+        filenameList, 
+        RankList, 
+        runtimeList,
+        acc_clfList,
+        accList, 
+        n_clfList, 
+        acc_over_timeList,
+        metricList,
+        ref_accList,
+        bucketList
+        )
     # Score.objects.all().delete() #to clear score objects
     return render(request, 'app/score_board_r2.html',
         {'zipRank': zipRank,

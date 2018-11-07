@@ -330,9 +330,23 @@ def postScore_r2(request):
                             obj.n_clf = body['n_clf']
                             obj.acc_over_time = body['acc_over_time']
                             obj.message = body['message']    
+                            obj.metric = body['metric']
+                            obj.ref_acc = body['ref_acc']
+                            obj.bucket = str(body['bucket'])
                             obj.save()
                         else:
-                            p = Score_r2.objects.create(filename=orgName,runtime=body['runtime'],acc_clf=body['acc_clf'],acc=body['acc'], n_clf=body['n_clf'], acc_over_time=body['acc_over_time'], message=body['message'])
+                            p = Score_r2.objects.create(
+                                filename=orgName,
+                                runtime=body['runtime'],
+                                acc_clf=body['acc_clf'],
+                                acc=body['acc'], 
+                                n_clf=body['n_clf'], 
+                                acc_over_time=body['acc_over_time'],
+                                metric=body['metric'],
+                                ref_acc = body['ref_acc'],
+                                bucket = str(body['bucket']),
+                                message=body['message']
+                                )
                             p.save()
                     except Exception as exc:
                         return HttpResponse(exc)
