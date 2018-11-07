@@ -391,11 +391,13 @@ def postScore_r2_detection(request):
                             obj.runtime = body['runtime']
                             obj.map_over_time = body['mAP_over_time']
                             obj.map_of_processed = body['mAP_of_processed']
-                            obj.message = body['message']    
+                            obj.message = body['message']  
+                            obj.metric = body['metric']  
                             obj.save()
                         else:
                             p = Score_r2_detection.objects.create(
                                 filename=orgName,
+                                metric=body['metric'],
                                 runtime=body['runtime'],
                                 map_over_time=body['mAP_over_time'],
                                 map_of_processed=body['mAP_of_processed'],

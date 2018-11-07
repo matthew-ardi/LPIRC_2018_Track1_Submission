@@ -718,15 +718,17 @@ def score_board_r2(request):
     runtimeList_detect = []
     map_over_timeList_detect = []
     map_of_processedList_detect = []
+    metricList_detect = []
 
-    scores_detection = Score_r2_detection.objects.all()
+    scores_detection = Score_r2_detection.objects.all().order_by('-metric')
     for item in scores_detection:
         name = ROUND2_TRACK1_ORIGINAL_DETECTION + item.filename
         if name in glob.glob(ROUND2_TRACK1_ORIGINAL_DETECTION + '*'):
             filenameList_detect.append(item.filename)
             runtimeList_detect.append(item.runtime)
-            map_over_timeList_detect.append(item.map_over_time)
-            map_of_processedList_detect.append(item.map_of_processed)
+            map_over_timeList_detect.append('{:0.5e}'.format(item.map_over_time))
+            map_of_processedList_detect.append('{:0.5e}'.format(item.map_of_processed))
+            metricList_detect.append('{:0.5e}'.format(item.metric))
 
     # Classification for Private leaderboard
     userSubmittedTime = []
@@ -781,6 +783,7 @@ def score_board_r2(request):
     userMapOverTimeDetectScore = []
     userMapOfProcessedDetectScore = []
     userFeedbackDetect_message = []
+    userMetricDetectScore = []
 
     try:
         fn = user.tfile1_r2.fn
@@ -796,13 +799,16 @@ def score_board_r2(request):
             try:
                 userRuntimeDetectScore.append(Score_r2_detection.objects.get(filename=item).runtime)
                 userMapOverTimeDetectScore.append('{:0.5e}'.format(Score_r2_detection.objects.get(filename=item).map_over_time))
-                userMapOfProcessedDetectScore.append(Score_r2_detection.objects.get(filename=item).map_of_processed)
+                userMapOfProcessedDetectScore.append('{:0.5e}'.format(Score_r2_detection.objects.get(filename=item).map_of_processed))
                 userFeedbackDetect_message.append(Score_r2_detection.objects.get(filename=item).message)
+                userMetricDetectScore.append('{:0.5e}'.format(Score_r2_detection.objects.get(filename=item).metric))
+
             except:
                 userRuntimeDetectScore.append("Not Provided")
                 userMapOverTimeDetectScore.append("Not Provided")
                 userMapOfProcessedDetectScore.append("Not Provided")
                 userFeedbackDetect_message.append("Not Provided")
+                userMetricDetectScore.append("Not Provided")
     except:
         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
         logging.debug('user has not submitted Detection file')
@@ -823,10 +829,11 @@ def score_board_r2(request):
     l = len(runtimeList_detect)
     if l < 5:
         for i in range(0,1-l):
-            filenameList_detect.append("Coming Soon")
-            runtimeList_detect.append("Coming Soon")
-            map_over_timeList_detect.append("Coming Soon")
-            map_of_processedList_detect.append("Coming Soon")
+            filenameList_detect.append("Not Available")
+            runtimeList_detect.append("Not Available")
+            map_over_timeList_detect.append("Not Available")
+            map_of_processedList_detect.append("Not Available")
+            metricList_detect.append("Not Available")
 
     # collect all metadata to be transmitted to front-end
     RankList = ["1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th","13th","14th","15th","16th","17th","18th","19th","20th"]
@@ -860,7 +867,8 @@ def score_board_r2(request):
         userRuntimeDetectScore,
         userMapOverTimeDetectScore,
         userMapOfProcessedDetectScore,
-        userFeedbackDetect_message
+        userFeedbackDetect_message,
+        userMetricDetectScore
     )
 
     zipRank_detect = zip(
@@ -868,7 +876,8 @@ def score_board_r2(request):
         filenameList_detect,
         runtimeList_detect,
         map_over_timeList_detect,
-        map_of_processedList_detect
+        map_of_processedList_detect,
+        metricList_detect
     )
     # Score.objects.all().delete() #to clear score objects
     return render(request, 'app/score_board_r2.html',

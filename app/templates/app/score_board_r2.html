@@ -122,17 +122,19 @@
           {% endif %} {% endif %}
 
           <th>Rank</th>
+          <th>Metric</th>
           <th>Runtime</th>
           <th>mAP over time</th>
           <th>mAP of processed</th>
         </tr>
       </thead>
-        {% for rank, filename, runtime, map_over_time, map_of_processed in zipRank_detect %}
+        {% for rank, filename, runtime, map_over_time, map_of_processed, metric in zipRank_detect %}
         <tr>
           {% if user.is_authenticated %} {% if user.is_staff %}
           <td>{{ filename }}</td>
           {% endif %} {% endif %}
           <td>{{ rank }}</td>
+          <td>{{ metric }}</td>
           <td>{{ runtime }}</td>
           <td>{{ map_over_time }}</td>
           <td>{{ map_of_processed }}</td>
@@ -230,17 +232,19 @@
           <table class="highlight">
               <tr>
                 <th>Submit Date-Time</th>
+                <th>Metric</th>
                 <th>Runtime</th>
                 <th>map_over_time</th>
                 <th>map_of_processed</th>
                 <th>message</th>
               </tr>
-              {% for time, runtime, map_over_time, map_of_processed, message in zipScore_detect %}
+              {% for time, runtime, map_over_time, map_of_processed, message, metric in zipScore_detect %}
               <tr>
                 <th>{{ time }}</th>
+                <td>{{ metric }}</td>
                 <td>{{ runtime }}</td>
                 <td>{{ map_over_time }}</td>
-                <td>{{ map_of_processed|floatformat:-5  }}</td>
+                <td>{{ map_of_processed }}</td>
                 <td>{{ message }}</td>
               </tr>
               {% endfor %}

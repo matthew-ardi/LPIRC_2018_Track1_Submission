@@ -28,4 +28,5 @@ class Score_r2_detection(models.Model):
     runtime = models.FloatField(max_length=10000, null=False)
     map_over_time = models.FloatField(max_length=10000, null=False)
     map_of_processed = models.FloatField(max_length=10000, null=False)
+    metric = models.FloatField(max_length=10000, null=True)
     message = models.CharField(max_length=10000, default="Not Provided")
