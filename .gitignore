@@ -3,7 +3,7 @@ db.sqlite3
 .idea/
 
 # Django API migration
-api/migrations/
+# api/migrations/
 
 # Django collect static folders
 # app/static/
