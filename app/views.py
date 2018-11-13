@@ -697,7 +697,7 @@ def score_board_r2(request):
     ref_accList = []
     bucketList = []
     # feedback_message = []
-    scores = Score_r2.objects.all().order_by('-acc', 'runtime')
+    scores = Score_r2.objects.all().order_by('-metric')
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
     logging.debug('getting scoreboard')
     for item in scores:
