@@ -330,9 +330,23 @@ def postScore_r2(request):
                             obj.n_clf = body['n_clf']
                             obj.acc_over_time = body['acc_over_time']
                             obj.message = body['message']    
+                            obj.metric = body['metric']
+                            obj.ref_acc = body['ref_acc']
+                            obj.bucket = str(body['bucket'])
                             obj.save()
                         else:
-                            p = Score_r2.objects.create(filename=orgName,runtime=body['runtime'],acc_clf=body['acc_clf'],acc=body['acc'], n_clf=body['n_clf'], acc_over_time=body['acc_over_time'], message=body['message'])
+                            p = Score_r2.objects.create(
+                                filename=orgName,
+                                runtime=body['runtime'],
+                                acc_clf=body['acc_clf'],
+                                acc=body['acc'], 
+                                n_clf=body['n_clf'], 
+                                acc_over_time=body['acc_over_time'],
+                                metric=body['metric'],
+                                ref_acc = body['ref_acc'],
+                                bucket = str(body['bucket']),
+                                message=body['message']
+                                )
                             p.save()
                     except Exception as exc:
                         return HttpResponse(exc)
@@ -349,6 +363,62 @@ def postScore_r2(request):
     response.status_code = 401
     return render(request, 'api/action_fail.html')
 
+# function to post scores by JSON format - round 2 LPIRC (Nov 1 - 15, 2018)
+# a sample POST request:
+# curl -X POST -H "Content-Type: application/json" -d '{"filename": "<hash of foo_bar_baz5>.lite","runtime": 123,"metric2": 234,"metric3": 567}' http://127.0.0.1:8000/submissions/postScore/
+#@login_required
+@csrf_exempt
+def postScore_r2_detection(request):
+    if request.method == 'POST':
+        #user = request.user
+        #if request.user.username == 'alanbition':#os.environ['REFEREE']:
+            try:
+                d=[]
+                body_unicode = request.body.decode('utf-8')
+                # body = json.loads(body_unicode)
+                body = ast.literal_eval(body_unicode)
+                content = body['results']
+                for item in content:
+                    body = item
+                    content = body['filename']
+                    orgName = ''.join(content.split())[:-5]
+                    with open(ROUND2_TRACK1_HTO,'r') as json_data:
+                        d = json.load(json_data)
+                        orgName = d[content]
+                    try:
+                        if Score_r2_detection.objects.filter(filename=orgName).exists():
+                            obj = Score_r2_detection.objects.get(filename=orgName)
+                            obj.runtime = body['runtime']
+                            obj.map_over_time = body['mAP_over_time']
+                            obj.map_of_processed = body['mAP_of_processed']
+                            obj.message = body['message']  
+                            obj.metric = body['metric']  
+                            obj.save()
+                        else:
+                            p = Score_r2_detection.objects.create(
+                                filename=orgName,
+                                metric=body['metric'],
+                                runtime=body['runtime'],
+                                map_over_time=body['mAP_over_time'],
+                                map_of_processed=body['mAP_of_processed'],
+                                message=body['message']
+                                )
+                            p.save()
+                    except Exception as exc:
+                        return HttpResponse(exc)
+
+
+
+                response = HttpResponse('Post Successful')
+                response.status_code = 200
+                return response
+            except Exception as exc:
+                return HttpResponse(exc)
+
+    response = HttpResponse('Post Unsuccessful')
+    response.status_code = 401
+    return render(request, 'api/action_fail.html')
+    
 # function to get scores by filename
 # a sample GET request:
 # curl http://127.0.0.1:8000/submissions/getScore/foo_bar_baz.lite

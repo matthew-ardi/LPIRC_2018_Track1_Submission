@@ -1,7 +1,12 @@
-{% extends "app/base.html" %} {% block title %}LPIRC 2018{% endblock %} {% load static %} {% block css %}
+{% extends "app/base.html" %} 
+{% block title %}LPIRC 2018 - Nov 30{% endblock %} 
+{% load static %} 
+{% block css %}
 <style>
 </style>
-{% endblock %} {% if user.is_authenticated %} {% block content %}
+{% endblock %} 
+{% if user.is_authenticated %} 
+{% block content %}
 <br>
 <div class="container">
   <div class="card z-depth-3">
@@ -15,14 +20,18 @@
         <title>Rank</title>
         <div class="center">
         <h3>Public Ranked Leaderboard</h3>
+        <h5>(November 1,2018 - November 30, 2018)</h5>
       </div>
         <h5>Disclaimer:
-            "The test metric below is computed on the ImageNet validation set. The final ranking will be computed on a holdout
+            "The test metric below is computed on the validation set. The final ranking will be computed on a holdout
             set, so the final standings may be different."</h5>
         <!-- </div> -->
-        <div class="container">
-        <div class="card pulse">
+        <div class="center">
+            <h5><b>Classification Leaderboard</b></h5>
+          </div>
+        <div class="card">
           <div class="card-content">
+            
         <table class="highlight">
           <thead>
           <tr>
@@ -34,26 +43,32 @@
             <th>Rank</th>
             <th>Latency</th>
             <th>Acc on Classified</th>
-            <th>Test metric</th>
+            <!-- <th>Test metric</th> -->
             <th># Classified</th>
             <th>Acc/Time</th>
+            <th>Metric</th>
+            <th>ref_acc</th>
+            <th>bucket</th>
           </tr>
         </thead>
-          {% for fileRank, nameRank, runtimeRank, acc_clfRank, accRank, n_clfRank, acc_over_timeRank in zipRank %}
-          <tr>
+        {% for fileRank, nameRank, runtimeRank, acc_clfRank, accRank, n_clfRank, acc_over_timeRank, metric_Rank, ref_acc_Rank, bucket_Rank in zipRank %} 
+        <tr>
             {% if user.is_authenticated %} {% if user.is_staff %}
             <td>{{ fileRank }}</td>
             {% endif %} {% endif %}
             <td>{{ nameRank }}</td>
             <td>{{ runtimeRank }}</td>
-            <td>{{ acc_clfRank }}</td>
+            <!-- <td>{{ acc_clfRank }}</td> -->
             <td>{{ accRank }}</td>
             <td>{{ n_clfRank}}</td>
             <td>{{ acc_over_timeRank}}</td>
+            <td>{{ metric_Rank|floatformat:-5 }}</td>
+            <td>{{ ref_acc_Rank|floatformat:-5 }}</td>
+            <td>{{ bucket_Rank }}</td>
           </tr>
           {% endfor %}
         </table>
-      </div>
+
       </div>
       </div>
 
@@ -64,9 +79,9 @@
         one image.</span></div>
     </li>
     <li>
-      <div class="collapsible-header"><i class="material-icons">whatshot</i>Test Metric</div>
-      <div class="collapsible-body"><span>The main metric is the total number of images corrected classified in a wall-time of 30ms*N divided
-        by N, where N is the total number of test images.</span></div>
+      <div class="collapsible-header"><i class="material-icons">whatshot</i>Metric</div>
+      <div class="collapsible-body"><span>Accuracy improvement over the reference accuracy from the Pareto optimal curve. See <a href="https://gdoc.pub/doc/e/2PACX-1vSFTEMAE_N6RgtidT-4DVTje6f6HRJv7Q_zaCab5H66BFyqEiZ8PsUfD_-YmBE7_z67qDiNgk-CJqeE">
+        track 1 description</a> for details.</span></div>
     </li>
     <li>
       <div class="collapsible-header"><i class="material-icons">adjust</i>Acc on Classified</div>
@@ -82,7 +97,84 @@
       <div class="collapsible-body"><span>Acc/Time is the accuracy divided by either the total inference time or the wall-time, whichever is longer.
         </span></div>
     </li>
+    <li>
+        <div class="collapsible-header"><i class="material-icons">info</i>ref_acc</div>
+        <div class="collapsible-body"><span>The reference accuracy of models from the Pareto optimal curve that have the same latency as the submission.</span></div>
+      </li>
+      <li>
+          <div class="collapsible-header"><i class="material-icons">info</i>Bucket</div>
+          <div class="collapsible-body"><span>The latency bucket against which the submission is scored. Should be either [24, 36], [80, 120], or None if the model is too slow. </span></div>
+        </li>
   </ul>
+  <br>
+  <br>
+  <div class="center">
+      <h5><b>Detection Leaderboard</b></h5>
+    </div>
+    <div class="card">
+        <div class="card-content">
+    <table class="highlight">
+        <thead>
+        <tr>
+
+          {% if user.is_authenticated %} {% if user.is_staff %}
+          <th>filename</th>
+          {% endif %} {% endif %}
+
+          <th>Rank</th>
+          <th>Metric</th>
+          <th>Runtime</th>
+          <th>mAP over time</th>
+          <th>mAP of processed</th>
+        </tr>
+      </thead>
+        {% for rank, filename, runtime, map_over_time, map_of_processed, metric in zipRank_detect %}
+        <tr>
+          {% if user.is_authenticated %} {% if user.is_staff %}
+          <td>{{ filename }}</td>
+          {% endif %} {% endif %}
+          <td>{{ rank }}</td>
+          <td>{{ metric }}</td>
+          <td>{{ runtime }}</td>
+          <td>{{ map_over_time }}</td>
+          <td>{{ map_of_processed }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      </div>
+      </div>
+      <ul class="collapsible">
+          <li>
+            <div class="collapsible-header"><i class="material-icons">timer</i>Runtime</div>
+            <div class="collapsible-body"><span>Latency per image (ms).</span></div>
+          </li>
+          <li>
+            <div class="collapsible-header"><i class="material-icons">whatshot</i>Metric</div>
+            <div class="collapsible-body"><span>COCO mAP computed on the entire minival dataset.</span></div>
+          </li>
+          <li>
+            <div class="collapsible-header"><i class="material-icons">adjust</i>mAP Over Time</div>
+            <div class="collapsible-body"><span>COCO mAP on the minival dataset divided by latency per image.</span></div>
+          </li>
+          <li>
+            <div class="collapsible-header"><i class="material-icons">class</i>mAP of Processed</div>
+            <div class="collapsible-body"><span>COCO mAP computed only on the processed images.</span></div>
+          </li>
+      </ul>
+
+  <br>
+  <br>
+  </div>
+  </div>
+  </div>
+
+  <div class="container">
+      <div class="card z-depth-3">
+        <div class="card-content">
+    <div class="center">
+        <h3>Private Leaderboard</h3>
+        </div>
+      <span class="new badge black" data-badge-caption="{{user.get_username}}">Your username: </span>
           <div class="container">
               <div class="container">
                   <div class="container">
@@ -95,7 +187,9 @@
           </div>
         </div>
         
-        <div class="container">
+        <div>
+            <h5><b>Classification Submissions</b></h5>
+          </div>
             <div class="card">
               <div class="card-content">
         <table class="highlight">
@@ -107,8 +201,11 @@
             <th># Classified</th>
             <th>Acc/Time</th>
             <th>Feedback message</th>
+            <th>Metric</th>
+            <th>ref_acc</th>
+            <th>bucket</th>
           </tr>
-          {% for time, runtimeScore, acc_clfScore, accScore, n_clfScore, acc_over_timeScore, message in zipScore %}
+          {% for time, runtimeScore, acc_clfScore, accScore, n_clfScore, acc_over_timeScore, metric, ref_acc, bucket, message in zipScore %}
           <tr>
             <th>{{ time }}</th>
             <td>{{ runtimeScore }}</td>
@@ -116,18 +213,69 @@
             <td>{{ accScore}}</td>
             <td>{{ n_clfScore }}</td>
             <td>{{ acc_over_timeScore }}</td>
+            <td>{{ metric|floatformat:-5 }}</td>
+            <td>{{ ref_acc|floatformat:-5 }}</td>
+            <td>{{ bucket }}</td>
             <td>{{ message }}</td>
           </tr>
           {% endfor %}
 
         </table>
+
         </div>
         </div>
-        </div>
+        <div>
+            <h5><b>Detection Submissions</b></h5>
+          </div>
+          <div class="card">
+              <div class="card-content">
+          <table class="highlight">
+              <tr>
+                <th>Submit Date-Time</th>
+                <th>Metric</th>
+                <th>Runtime</th>
+                <th>map_over_time</th>
+                <th>map_of_processed</th>
+                <th>message</th>
+              </tr>
+              {% for time, runtime, map_over_time, map_of_processed, message, metric in zipScore_detect %}
+              <tr>
+                <th>{{ time }}</th>
+                <td>{{ metric }}</td>
+                <td>{{ runtime }}</td>
+                <td>{{ map_over_time }}</td>
+                <td>{{ map_of_processed }}</td>
+                <td>{{ message }}</td>
+              </tr>
+              {% endfor %}
+    
+            </table>
+            </div>
+            </div>
+            <ul class="collapsible">
+                <li>
+                  <div class="collapsible-header"><i class="material-icons">info_outline</i>Messages</div>
+                  <div class="collapsible-body"><span>Contain information related to your model evaluation scores and results</span></div>
+                </li>
+                </ul>
+            <div class="container">
+            <p>Note: The time stamps above indicate whether you submitted classification and/or detection models
+              at the same time. 
+              (for example, if you only submit classification model at date-time 11-1-11:41, you will see the score
+            under "Classification Submission" table and "Not Provided" under "Detection Submission" table on the same 
+          date-time 11-1-11:41</p>
+          </div>
     </div>
   </div>
 </div>
-{% endblock %} {% endif %}
+
+{% endblock %} 
+{% else %}
+<br>
+<div class="container">
+  <h2>Please Log In to your account</h2>
+</div>
+{% endif %}
 
 {% block scripts %}
 <script>

@@ -26,7 +26,7 @@ import re
 import logging
 
 from django.core.mail import send_mail
-from api.models import Score, Score_r2
+from api.models import Score, Score_r2, Score_r2_detection
 from app.models import Tfile1, Tfile1_r2
 from app.models import Tfile2
 from hashlib import sha224 as hashfunction
@@ -242,206 +242,258 @@ def simple_upload(request):
 
     try:
         if request.method == 'POST':
-            if request.FILES[TRACK1_HTML_FILE_NAME_1]:
-                classification_file = request.FILES[TRACK1_HTML_FILE_NAME_1]
+            classification_file_exist = False
+            detection_file_exist = False
+            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            logging.debug('post detected ')
+            try:
+                if request.FILES[TRACK1_HTML_FILE_NAME_1]:
+                    classification_file = request.FILES[TRACK1_HTML_FILE_NAME_1]
+                    classification_file_exist = True
+            except:
+                pass
 
             try:
                 if request.FILES[TRACK1_HTML_FILE_NAME_2]:
                     detection_file = request.FILES[TRACK1_HTML_FILE_NAME_2]
+                    detection_file_exist = True
+                    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+                    logging.debug('detection only ')
 
             except:
+                pass
+
+            if classification_file_exist != True and detection_file_exist != True:
+                raise Exception()
+
+            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            logging.debug('request files done ')
+            if classification_file_exist is not True and detection_file_exist is not True:
+                return render(request, 'app/simple_upload.html', {
+                        'wrong_file': "Track 1 Submission Failure: no files detected"
+                    })
+
+            if classification_file_exist is True:
+                user_file_name = str(classification_file.name).rpartition('.')
+
+                # submission files format restriction
+                if "lite" not in user_file_name and "tflite" not in user_file_name:
+                    return render(request, 'app/simple_upload.html', {
+                    'wrong_file': "Track 1 Submission Failure: File format must be .lite or .tflite"
+                })
+            
+            if detection_file_exist is True:
+                user_detect_name = str(detection_file.name).rpartition('.')
+
+                # submission files format restriction
+                if "lite" not in user_detect_name and "tflite" not in user_detect_name:
+                    return render(request, 'app/simple_upload.html', {
+                    'wrong_file': "Track 1 Submission Failure: File format must be .lite or .tflite"
+                })
+
+            # getting date and time for records
+            tz = pytz.timezone('America/New_York')
+            now = datetime.datetime.now(tz)
+            name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(str(request.user.username), now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
+
+            submissionCounts = 0
+
+        #     for i in glob.glob('upload/*'):
+        #          l = len(str(request.user.username))
+        #          nm = re.search(r'^(\w+)-2018-', i[7:])
+        #          nm = nm.group()
+        #          if nm[:-6] == str(request.user.username):
+        #              day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
+        #              day_now = "{0}-{1}".format(now.month,now.day)
+        #              if (day != []):
+        #                 #return render(request, 'app/simple_upload.html', {
+        #         #'wrong_file': "{} {}".format(day[0],day_now)})
+        #                 if (day[0] == day_now):
+        #                     submissionCounts += 1
+        #
+        #     if submissionCounts > 3:
+        #        return render(request, 'app/simple_upload.html', {
+        # 'wrong_file': "Track 1 Submission Failure: Three submissions per day"})
+            true_filename = name+".lite"
+            model_validation_dir = ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION
+            tensorflow_dir = '/home/bofu/tensorflow'
+            try:
+                if classification_file_exist is True:
+                    makedirs(ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION)
+                    with open(ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION+name+".lite", 'wb+') as destination:
+                        for chunk in classification_file.chunks():
+                            destination.write(chunk)
+                
+                if detection_file_exist is True:
+                    makedirs(ROUND2_TRACK1_INVALID_MODEL_DETECTION)
+                    with open(ROUND2_TRACK1_INVALID_MODEL_DETECTION+name+".lite", 'wb+') as destination:
+                        for chunk in detection_file.chunks():
+                            destination.write(chunk)
+
+                # Model validation
+
+                orig_dir = os.getcwd()
                 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-                logging.debug("error getting detection file")
+                logging.debug('This is the output : ' + str(orig_dir))
 
-        user_file_name = str(classification_file.name).rsplit('.',1)
-        user_detect_name = str(detection_file.name).rsplit('.',1)
+                os.chdir(tensorflow_dir)
+                retval = os.getcwd()
+                logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+                logging.debug('This is the output : ' + str(retval))
 
-        # submission files format restriction
-        if user_file_name[1] != "lite" and user_file_name[1] != "tflite":
-            return render(request, 'app/simple_upload.html', {
-            'wrong_file': "Track 1 Submission Failure: File format must be .lite"
-        })
- 
-        if user_file_name[0] != str(request.user.username):
-            return render(request, 'app/simple_upload.html', {
-            'wrong_file': "Track 1 Submission Failure: Classification File name must be the log-in name"
-        })
+                retval = os.system('ls')
+                logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+                logging.debug('This is the output : ' + str(retval))
 
-        if user_detect_name[0] != str(request.user.username):
-            return render(request, 'app/simple_upload.html', {
-            'wrong_file': "Track 1 Submission Failure: Detection File name must be the log-in name"
-        })
+                os.system('touch WORKSPACE')
+                if classification_file_exist is True:
+                    test_output_classification = os.popen('bazel-bin/tensorflow/lite/java/ovic/ovic_validator '+ orig_dir + '/' + ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION + true_filename + " classify").read()
+                    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+                    logging.debug('This is the classification test result : ' + str(test_output_classification))
+                else:
+                    test_output_classification = "None"
 
-        # getting date and time for records
-        tz = pytz.timezone('America/New_York')
-        now = datetime.datetime.now(tz)
-        name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(user_file_name[0], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
+                if detection_file_exist is True:
+                    test_output_detection = os.popen('bazel-bin/tensorflow/lite/java/ovic/ovic_validator '+ orig_dir + '/' + ROUND2_TRACK1_INVALID_MODEL_DETECTION + true_filename + " detect").read()
+                    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+                    logging.debug('This is the detection test result : ' + str(test_output_detection))
+                else:
+                    test_output_detection = "None"
 
-        submissionCounts = 0
+                output_split = test_output_classification.split()
+                logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+                logging.debug('This is the test result : ' + output_split[0])
+                os.chdir(orig_dir)
+                
+                if classification_file_exist is True and 'Successfully' in test_output_classification:
+                    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+                    logging.debug('test passed')
+                elif 'Failed' in test_output_classification:
+                    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+                    logging.debug('test failed')
+                    return render(request, 'app/simple_upload.html', {
+                        'invalid_model': classification_file.name #" Classification model did not pass the bazel test"
+                    })
+                elif classification_file_exist is False:
+                    pass
+                else:
+                    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+                    logging.debug('unknown error')
+                    return render(request, 'app/simple_upload.html', {
+                        'error_message': 'Error in process of validation'
+                    })
 
-    #     for i in glob.glob('upload/*'):
-    #          l = len(str(request.user.username))
-    #          nm = re.search(r'^(\w+)-2018-', i[7:])
-    #          nm = nm.group()
-    #          if nm[:-6] == str(request.user.username):
-    #              day = re.findall(r'-(\w+-\w+)-\w+:',i[l-1:])
-    #              day_now = "{0}-{1}".format(now.month,now.day)
-    #              if (day != []):
-    #                 #return render(request, 'app/simple_upload.html', {
-    #         #'wrong_file': "{} {}".format(day[0],day_now)})
-    #                 if (day[0] == day_now):
-    #                     submissionCounts += 1
-    #
-    #     if submissionCounts > 3:
-    #        return render(request, 'app/simple_upload.html', {
-    # 'wrong_file': "Track 1 Submission Failure: Three submissions per day"})
-        true_filename = name+".lite"
-        # model_validation_dir = ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION
-        # tensorflow_dir = '/home/bofu/tensorflow'
-        # try:
-        #     makedirs(ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION)
-        #     makedirs(ROUND2_TRACK1_INVALID_MODEL_DETECTION)
-        #     with open(ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION+name+".lite", 'wb+') as destination:
-        #         for chunk in classification_file.chunks():
-        #             destination.write(chunk)
+                if detection_file_exist is True and 'Successfully' in test_output_detection:
+                    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+                    logging.debug('test passed')
+                elif 'Failed' in test_output_detection:
+                    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+                    logging.debug('test failed')
+                    return render(request, 'app/simple_upload.html', {
+                        'invalid_model': detection_file.name #" Classification model did not pass the bazel test"
+                    })
+                elif detection_file_exist is False:
+                    pass
+                else:
+                    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+                    logging.debug('unknown error')
+                    return render(request, 'app/simple_upload.html', {
+                        'error_message': 'Error in process of validation'
+                    })
+            except:
+                logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+                logging.debug('unknown error1')
 
-        #     with open(ROUND2_TRACK1_INVALID_MODEL_DETECTION+name+".lite", 'wb+') as destination:
-        #         for chunk in detection_file.chunks():
-        #             destination.write(chunk)
+            # final_dir = os.getcwd()
 
-        #     # Model validation
+            # logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            # logging.debug('final_dir = ' + final_dir)
 
-        #     orig_dir = os.getcwd()
-        #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        #     logging.debug('This is the output : ' + str(orig_dir))
+            # try:
+            #     os.remove(ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION+true_filename)
+            #     os.remove(ROUND2_TRACK1_INVALID_MODEL_DETECTION+true_filename)
+            # except OSError as e:
+            #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            #     logging.debug('Failed with: ' + e.strerror)
+            #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+            #     logging.debug('Error code: ' + e.code)
 
-        #     os.chdir(tensorflow_dir)
-        #     retval = os.getcwd()
-        #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        #     logging.debug('This is the output : ' + str(retval))
+            # ORIGINAL FILE UPLOAD
+            # file upload process by chunks to save system's memory
+            # save classification with original name
 
-        #     retval = os.system('ls')
-        #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        #     logging.debug('This is the output : ' + str(retval))
+            if classification_file_exist is True:
+                makedirs(ROUND2_TRACK1_ORIGINAL_CLASSIFICATION)
+                with open(ROUND2_TRACK1_ORIGINAL_CLASSIFICATION + name +".lite", 'wb+') as destination:
+                    for chunk in classification_file.chunks():
+                        destination.write(chunk)
+            
+            if detection_file_exist is True:
+                makedirs(ROUND2_TRACK1_ORIGINAL_DETECTION)
+                with open(ROUND2_TRACK1_ORIGINAL_DETECTION + name +".lite", 'wb+') as destination:
+                    for chunk in detection_file.chunks():
+                        destination.write(chunk)
 
-        #     os.system('touch WORKSPACE')
-        #     test_output_classification = os.popen('bazel-bin/tensorflow/contrib/lite/java/ovic/ovic_validator '+ orig_dir + '/' + ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION + true_filename).read()
-        #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        #     logging.debug('This is the classification test result : ' + str(test_output_classification))
+            
+            # hash file name - classification model
+            hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
+            hash_of_filename = hash_of_filename + ".lite"
+            nameStore = name + ".lite"
 
-        #     output_split = test_output_classification.split()
-        #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        #     logging.debug('This is the test result : ' + output_split[0])
-        #     os.chdir(orig_dir)
-        #     if 'Successfully' in test_output_classification:
-        #         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        #         logging.debug('test passed')
-        #     elif 'Failed' in test_output_classification:
-        #         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        #         logging.debug('test failed')
-        #         return render(request, 'app/simple_upload.html', {
-        #             'invalid_model': classification_file.name #" Classification model did not pass the bazel test"
-        #         })
-        #     else:
-        #         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        #         logging.debug('unknown error')
-        #         return render(request, 'app/simple_upload.html', {
-        #             'error_message': 'Error in process of validation'
-        #         })
-        # except:
-        #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        #     logging.debug('unknown error1')
+            try:
+                with open(ROUND2_TRACK1_HTO, "r") as jsonFile:
+                    jsonFile.close()
 
-        # final_dir = os.getcwd()
+            except Exception as exc:
+                with open(ROUND2_TRACK1_HTO, "w") as jsonFile:
+                    json.dump({}, jsonFile, indent=2)
+                    jsonFile.close()
 
-        # logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        # logging.debug('final_dir = ' + final_dir)
-
-        # try:
-        #     os.remove(ROUND2_TRACK1_INVALID_MODEL_CLASSIFICATION+true_filename)
-        #     os.remove(ROUND2_TRACK1_INVALID_MODEL_DETECTION+true_filename)
-        # except OSError as e:
-        #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        #     logging.debug('Failed with: ' + e.strerror)
-        #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        #     logging.debug('Error code: ' + e.code)
-
-        # ORIGINAL FILE UPLOAD
-        # file upload process by chunks to save system's memory
-        # save classification with original name
-
-        makedirs(ROUND2_TRACK1_ORIGINAL_CLASSIFICATION)
-        with open(ROUND2_TRACK1_ORIGINAL_CLASSIFICATION + name +".lite", 'wb+') as destination:
-            for chunk in classification_file.chunks():
-                destination.write(chunk)
-        makedirs(ROUND2_TRACK1_ORIGINAL_DETECTION)
-        with open(ROUND2_TRACK1_ORIGINAL_DETECTION + name +".lite", 'wb+') as destination:
-            for chunk in detection_file.chunks():
-                destination.write(chunk)
-
-        
-        # hash file name
-        hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
-        hash_of_filename = hash_of_filename + ".lite"
-        nameStore = name + ".lite"
-
-        try:
-            with open(ROUND2_TRACK1_HTO, "r") as jsonFile:
-                jsonFile.close()
-
-        except Exception as exc:
-            with open(ROUND2_TRACK1_HTO, "w") as jsonFile:
-                json.dump({}, jsonFile, indent=2)
-                jsonFile.close()
-
-        with open(ROUND2_TRACK1_HTO, "r+") as jsonFile:
-            data = json.load(jsonFile)
-            data[hash_of_filename] = nameStore
-            jsonFile.seek(0)
-            json.dump(data, jsonFile, indent=2)
-            jsonFile.truncate()
+            with open(ROUND2_TRACK1_HTO, "r+") as jsonFile:
+                data = json.load(jsonFile)
+                data[hash_of_filename] = nameStore
+                jsonFile.seek(0)
+                json.dump(data, jsonFile, indent=2)
+                jsonFile.truncate()
 
 
-        # file upload process by chunks to save system's memory
-        makedirs(ROUND2_TRACK1_HASHED_CLASSIFICATION)
-        with open(ROUND2_TRACK1_HASHED_CLASSIFICATION + hash_of_filename, 'wb+') as destination:
-            for chunk in classification_file.chunks():
-                destination.write(chunk)
+            # file upload process by chunks to save system's memory
+            if classification_file_exist is True:
+                makedirs(ROUND2_TRACK1_HASHED_CLASSIFICATION)
+                with open(ROUND2_TRACK1_HASHED_CLASSIFICATION + hash_of_filename, 'wb+') as destination:
+                    for chunk in classification_file.chunks():
+                        destination.write(chunk)
 
-        makedirs(ROUND2_TRACK1_HASHED_DETECTION)
-        with open(ROUND2_TRACK1_HASHED_DETECTION + hash_of_filename, 'wb+') as destination:
-            for chunk in detection_file.chunks():
-                destination.write(chunk)
+            if detection_file_exist is True:
+                makedirs(ROUND2_TRACK1_HASHED_DETECTION)
+                with open(ROUND2_TRACK1_HASHED_DETECTION + hash_of_filename, 'wb+') as destination:
+                    for chunk in detection_file.chunks():
+                        destination.write(chunk)
 
-
-        try:
-            newFileName = name+".lite"
-            # filenameModel, created = Tfile1.objects.get_or_create(        # round 1 June 2018
-            filenameModel, created = Tfile1_r2.objects.get_or_create(       # round 2 November 1 - 15, 2018
-                user = user,
-                defaults={"fn":newFileName}
-            )
-            if not created:
-                nameString = filenameModel.fn
-                nameString = nameString+" "+newFileName
-                filenameModel.fn = nameString
-            filenameModel.save()
-
-        except Exception as ex:
-            return render(request, 'app/simple_upload.html', {
-                'wrong_file': ex
+            if classification_file_exist is True and detection_file_exist is True:
+                return render(request, 'app/simple_upload.html', {
+                    'uploaded_file_url': "Your classification and detection models have been successfully submitted"
+                })
+            elif classification_file_exist is True:
+                return render(request, 'app/simple_upload.html', {
+                    'uploaded_file_url': "your classification model has been successfully submitted"
+                })
+            elif detection_file_exist is True:
+                return render(request, 'app/simple_upload.html', {
+                    'uploaded_file_url': "your detection model has been successfully submitted"
+                })
+            else:
+                return render(request, 'app/simple_upload.html', {
+                    'wrong_file': "Track 1 Submission Failure[1742]"
             })
-
-        return render(request, 'app/simple_upload.html', {
-            'uploaded_file_url': classification_file.name + " and " + detection_file.name + " has been successfully submitted"
-        })
-
+        else:
+            return render(request, 'app/simple_upload.html')
     except:
         try:
             if request.method == 'POST' and request.FILES[TRACK2_HTML_INPUT_NAME]:
                 myfile = request.FILES[TRACK2_HTML_INPUT_NAME]
 
-            user_file_name = str(myfile.name).rsplit('.',1)
+            user_file_name = str(myfile.name).rpartition('.')
             # if myfile.name[-5:] != ".lite":
             #     return render(request, 'app/simple_upload.html', {
             #
@@ -449,14 +501,10 @@ def simple_upload(request):
             #
             # })
             # if str(myfile.name[:-5]) != str(request.user.username):
-            if user_file_name[0] != str(request.user.username):
-                return render(request, 'app/simple_upload.html', {
-                'wrong_file2': "Track 2 Submission Failure: File name must be the log-in name!"
-            })
 
             tz = pytz.timezone('America/New_York')
             now = datetime.datetime.now(tz)
-            name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(user_file_name[0], now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
+            name = "{0}-{1}-{2}-{3}-{4}:{5}:{6}:{7}".format(str(request.user.username), now.year, now.month, now.day,now.hour,now.minute,now.second,now.microsecond)
 
             # for i in glob.glob('upload2/*'):
             #     l = len(str(request.user.username))
@@ -478,7 +526,7 @@ def simple_upload(request):
 
             # file upload process by chunks to save system's memory
             makedirs(ROUND2_TRACK2_ORIGINAL_DIR)
-            with open(ROUND2_TRACK2_ORIGINAL_DIR + name +"." + user_file_name[1], 'wb+') as destination:
+            with open(ROUND2_TRACK2_ORIGINAL_DIR + name +".lite", 'wb+') as destination:
                 for chunk in myfile.chunks():
                     destination.write(chunk)
 
@@ -494,8 +542,8 @@ def simple_upload(request):
 
 
             hash_of_filename = hashfunction(name.encode('utf-8')).hexdigest()
-            hash_of_filename = hash_of_filename + "." + user_file_name[1]
-            nameStore = name + "." + user_file_name[1]
+            hash_of_filename = hash_of_filename + ".lite"
+            nameStore = name + ".lite"
 
             try:
                 with open(ROUND2_TRACK2_HTO, "r") as jsonFile:
@@ -636,6 +684,8 @@ def score_board(request):
 def score_board_r2(request):
     user = request.user
     usernameLength = len(str(request.user.username))
+
+    # Classification Lists - Public Leaderboard
     filenameList=[]
     runtimeList=[]
     m1List = []
@@ -643,8 +693,13 @@ def score_board_r2(request):
     accList = []
     n_clfList = []
     acc_over_timeList = []
+    metricList = []
+    ref_accList = []
+    bucketList = []
     # feedback_message = []
-    scores = Score_r2.objects.all().order_by('-acc', 'runtime')
+    scores = Score_r2.objects.all().order_by('-metric')
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+    logging.debug('getting scoreboard')
     for item in scores:
         name = ROUND2_TRACK1_ORIGINAL_CLASSIFICATION + item.filename
         if name in glob.glob(ROUND2_TRACK1_ORIGINAL_CLASSIFICATION + '*'):
@@ -654,8 +709,28 @@ def score_board_r2(request):
              accList.append(item.acc)
              n_clfList.append(item.n_clf)
              acc_over_timeList.append(item.acc_over_time)
+             metricList.append(item.metric)
+             ref_accList.append(item.ref_acc)
+             bucketList.append(item.bucket)
 
+    # Detection Lists - Public Leaderboard
+    filenameList_detect = []
+    runtimeList_detect = []
+    map_over_timeList_detect = []
+    map_of_processedList_detect = []
+    metricList_detect = []
 
+    scores_detection = Score_r2_detection.objects.all().order_by('-metric')
+    for item in scores_detection:
+        name = ROUND2_TRACK1_ORIGINAL_DETECTION + item.filename
+        if name in glob.glob(ROUND2_TRACK1_ORIGINAL_DETECTION + '*'):
+            filenameList_detect.append(item.filename)
+            runtimeList_detect.append(item.runtime)
+            map_over_timeList_detect.append('{:0.5e}'.format(item.map_over_time))
+            map_of_processedList_detect.append('{:0.5e}'.format(item.map_of_processed))
+            metricList_detect.append('{:0.5e}'.format(item.metric))
+
+    # Classification for Private leaderboard
     userSubmittedTime = []
     userRuntimeScore = []
     userAcc_clfScore = []
@@ -663,6 +738,9 @@ def score_board_r2(request):
     userN_clfScore = []
     userAcc_over_timeScore = []
     userFeedback_message = []
+    userMetric = []
+    userRef_acc = []
+    userBucket = []
 
     try:
         fn = user.tfile1_r2.fn
@@ -681,6 +759,9 @@ def score_board_r2(request):
                 userAccScore.append(Score_r2.objects.get(filename=item).acc)
                 userN_clfScore.append(Score_r2.objects.get(filename=item).n_clf)
                 userAcc_over_timeScore.append(Score_r2.objects.get(filename=item).acc_over_time)
+                userMetric.append(Score_r2.objects.get(filename=item).metric)
+                userRef_acc.append(Score_r2.objects.get(filename=item).ref_acc)
+                userBucket.append(Score_r2.objects.get(filename=item).bucket)
                 userFeedback_message.append(Score_r2.objects.get(filename=item).message)
             except:
                 userRuntimeScore.append("Not Provided")
@@ -688,11 +769,51 @@ def score_board_r2(request):
                 userAccScore.append("Not Provided")
                 userN_clfScore.append("Not Provided")
                 userAcc_over_timeScore.append("Not Provided")
+                userMetric.append("Not Provided")
+                userRef_acc.append("Not Provided")
+                userBucket.append("Not Provided")
                 userFeedback_message.append("Not Provided")
     except:
         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-        logging.debug('user has not submitted a file')
+        logging.debug('user has not submitted classification file')
 
+    # Detection Private Leaderboard
+    userSubmittedTimeDetect = []
+    userRuntimeDetectScore = []
+    userMapOverTimeDetectScore = []
+    userMapOfProcessedDetectScore = []
+    userFeedbackDetect_message = []
+    userMetricDetectScore = []
+
+    try:
+        fn = user.tfile1_r2.fn
+        fnList = fn.split(" ")
+
+        for item in fnList:
+            day = re.findall(r'-(\w+-\w+-\w+):(\w+):',item[usernameLength-1:])
+            if len(day[0][1]) <= 1:
+                secondPadding = ":0" + day[0][1]
+            else:
+                secondPadding = ":"+ day[0][1]
+            userSubmittedTimeDetect.append(day[0][0] + secondPadding)
+            try:
+                userRuntimeDetectScore.append(Score_r2_detection.objects.get(filename=item).runtime)
+                userMapOverTimeDetectScore.append('{:0.5e}'.format(Score_r2_detection.objects.get(filename=item).map_over_time))
+                userMapOfProcessedDetectScore.append('{:0.5e}'.format(Score_r2_detection.objects.get(filename=item).map_of_processed))
+                userFeedbackDetect_message.append(Score_r2_detection.objects.get(filename=item).message)
+                userMetricDetectScore.append('{:0.5e}'.format(Score_r2_detection.objects.get(filename=item).metric))
+
+            except:
+                userRuntimeDetectScore.append("Not Provided")
+                userMapOverTimeDetectScore.append("Not Provided")
+                userMapOfProcessedDetectScore.append("Not Provided")
+                userFeedbackDetect_message.append("Not Provided")
+                userMetricDetectScore.append("Not Provided")
+    except:
+        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        logging.debug('user has not submitted Detection file')
+
+    # Classification - public leaderboard
     l = len(runtimeList)
     if l < 5:
         for i in range(0,5-l):
@@ -701,15 +822,69 @@ def score_board_r2(request):
             accList.append("None")
             n_clfList.append("None")
             acc_over_timeList.append("None")
+            metricList.append("None")
+            ref_accList.append("None")
+            bucketList.append("None")
 
+    l = len(runtimeList_detect)
+    if l < 5:
+        for i in range(0,1-l):
+            filenameList_detect.append("Not Available")
+            runtimeList_detect.append("Not Available")
+            map_over_timeList_detect.append("Not Available")
+            map_of_processedList_detect.append("Not Available")
+            metricList_detect.append("Not Available")
+
+    # collect all metadata to be transmitted to front-end
     RankList = ["1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th","13th","14th","15th","16th","17th","18th","19th","20th"]
-    zipScore = zip(userSubmittedTime, userRuntimeScore,userAcc_clfScore,userAccScore, userN_clfScore, userAcc_over_timeScore, userFeedback_message)
-    zipRank = zip(filenameList, RankList, runtimeList,acc_clfList,accList, n_clfList, acc_over_timeList)
+    zipScore = zip(
+        userSubmittedTime, 
+        userRuntimeScore,
+        userAcc_clfScore,
+        userAccScore, 
+        userN_clfScore, 
+        userAcc_over_timeScore, 
+        userMetric,
+        userRef_acc,
+        userBucket,
+        userFeedback_message
+        )
+    zipRank = zip(
+        filenameList, 
+        RankList, 
+        runtimeList,
+        acc_clfList,
+        accList, 
+        n_clfList, 
+        acc_over_timeList,
+        metricList,
+        ref_accList,
+        bucketList
+        )
 
+    zipScore_detect = zip(
+        userSubmittedTimeDetect,
+        userRuntimeDetectScore,
+        userMapOverTimeDetectScore,
+        userMapOfProcessedDetectScore,
+        userFeedbackDetect_message,
+        userMetricDetectScore
+    )
+
+    zipRank_detect = zip(
+        RankList,
+        filenameList_detect,
+        runtimeList_detect,
+        map_over_timeList_detect,
+        map_of_processedList_detect,
+        metricList_detect
+    )
     # Score.objects.all().delete() #to clear score objects
     return render(request, 'app/score_board_r2.html',
         {'zipRank': zipRank,
-        'zipScore': zipScore,})
+        'zipScore': zipScore,
+        'zipScore_detect': zipScore_detect,
+        'zipRank_detect': zipRank_detect})
 
 def score_board_admin(request):
     user = request.user
