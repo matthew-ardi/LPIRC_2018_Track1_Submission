@@ -743,7 +743,7 @@ def score_board_r2(request):
     userBucket = []
 
     try:
-        fn = user.tfile1_r2.fn
+        fn = Tfile1_r2.objects.get(user=user).fn
         fnList = fn.split(" ")
 
         for item in fnList:
@@ -786,7 +786,7 @@ def score_board_r2(request):
     userMetricDetectScore = []
 
     try:
-        fn = user.tfile1_r2.fn
+        fn = Tfile1_r2.objects.get(user=user).fn
         fnList = fn.split(" ")
 
         for item in fnList:

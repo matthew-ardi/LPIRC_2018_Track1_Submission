@@ -6,7 +6,8 @@ import logging
 import subprocess
 import ast
 
-from api.models import Score, Score_r2
+from api.models import Score, Score_r2, Score_r2_detection
+from app.models import Tfile1_r2
 from os import listdir
 from os.path import isfile, join
 from django.views.decorators.csrf import csrf_exempt
@@ -334,6 +335,9 @@ def postScore_r2(request):
                             obj.ref_acc = body['ref_acc']
                             obj.bucket = str(body['bucket'])
                             obj.save()
+                            files = Tfile1_r2.objects.get(user=User.object.get(username=orgName.split('-',1)[0]))
+                            files.fn += " " + orgName
+                            files.save()
                         else:
                             p = Score_r2.objects.create(
                                 filename=orgName,
@@ -348,6 +352,11 @@ def postScore_r2(request):
                                 message=body['message']
                                 )
                             p.save()
+                            files = Tfile1_r2.objects.create(
+                                user=User.object.get(username=orgName.split('-',1)[0])
+                                fn = orgName
+                                )
+                            files.save()
                     except Exception as exc:
                         return HttpResponse(exc)
 
@@ -394,6 +403,9 @@ def postScore_r2_detection(request):
                             obj.message = body['message']  
                             obj.metric = body['metric']  
                             obj.save()
+                            files = Tfile1_r2.objects.get(user=User.object.get(username=orgName.split('-',1)[0]))
+                            files.fn += " " + orgName
+                            files.save()
                         else:
                             p = Score_r2_detection.objects.create(
                                 filename=orgName,
@@ -404,6 +416,11 @@ def postScore_r2_detection(request):
                                 message=body['message']
                                 )
                             p.save()
+                            files = Tfile1_r2.objects.create(
+                                user=User.object.get(username=orgName.split('-',1)[0])
+                                fn = orgName
+                                )
+                            files.save()
                     except Exception as exc:
                         return HttpResponse(exc)
 
