@@ -6,7 +6,7 @@ import logging
 import subprocess
 import ast
 
-from api.models import Score, Score_r2
+from api.models import Score, Score_r2, Score_r2_detection
 from os import listdir
 from os.path import isfile, join
 from django.views.decorators.csrf import csrf_exempt
