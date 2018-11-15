@@ -14,6 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
