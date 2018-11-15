@@ -743,26 +743,23 @@ def score_board_r2(request):
     userBucket = []
 
     try:
-        fn = Tfile1_r2.objects.get(user=user).fn
-        fnList = fn.split(" ")
-
-        for item in fnList:
-            day = re.findall(r'-(\w+-\w+-\w+):(\w+):',item[usernameLength-1:])
+        for item in Score_r2.objects.filter(filename__startswith=user).iterator():
+            day = re.findall(r'-(\w+-\w+-\w+):(\w+):',item.filename[usernameLength-1:])
             if len(day[0][1]) <= 1:
                 secondPadding = ":0" + day[0][1]
             else:
                 secondPadding = ":"+ day[0][1]
             userSubmittedTime.append(day[0][0] + secondPadding)
             try:
-                userRuntimeScore.append(Score_r2.objects.get(filename=item).runtime)
-                userAcc_clfScore.append(Score_r2.objects.get(filename=item).acc_clf)
-                userAccScore.append(Score_r2.objects.get(filename=item).acc)
-                userN_clfScore.append(Score_r2.objects.get(filename=item).n_clf)
-                userAcc_over_timeScore.append(Score_r2.objects.get(filename=item).acc_over_time)
-                userMetric.append(Score_r2.objects.get(filename=item).metric)
-                userRef_acc.append(Score_r2.objects.get(filename=item).ref_acc)
-                userBucket.append(Score_r2.objects.get(filename=item).bucket)
-                userFeedback_message.append(Score_r2.objects.get(filename=item).message)
+                userRuntimeScore.append(item.runtime)
+                userAcc_clfScore.append(item.acc_clf)
+                userAccScore.append(item.acc)
+                userN_clfScore.append(item.n_clf)
+                userAcc_over_timeScore.append(item.acc_over_time)
+                userMetric.append(item.metric)
+                userRef_acc.append(item.ref_acc)
+                userBucket.append(item.bucket)
+                userFeedback_message.append(item.message)
             except:
                 userRuntimeScore.append("Not Provided")
                 userAcc_clfScore.append("Not Provided")
@@ -786,22 +783,19 @@ def score_board_r2(request):
     userMetricDetectScore = []
 
     try:
-        fn = Tfile1_r2.objects.get(user=user).fn
-        fnList = fn.split(" ")
-
-        for item in fnList:
-            day = re.findall(r'-(\w+-\w+-\w+):(\w+):',item[usernameLength-1:])
+        for item in Score_r2_detection.objects.filter(filename__startswith=user).iterator():
+            day = re.findall(r'-(\w+-\w+-\w+):(\w+):',item.filename[usernameLength-1:])
             if len(day[0][1]) <= 1:
                 secondPadding = ":0" + day[0][1]
             else:
                 secondPadding = ":"+ day[0][1]
             userSubmittedTimeDetect.append(day[0][0] + secondPadding)
             try:
-                userRuntimeDetectScore.append(Score_r2_detection.objects.get(filename=item).runtime)
-                userMapOverTimeDetectScore.append('{:0.5e}'.format(Score_r2_detection.objects.get(filename=item).map_over_time))
-                userMapOfProcessedDetectScore.append('{:0.5e}'.format(Score_r2_detection.objects.get(filename=item).map_of_processed))
-                userFeedbackDetect_message.append(Score_r2_detection.objects.get(filename=item).message)
-                userMetricDetectScore.append('{:0.5e}'.format(Score_r2_detection.objects.get(filename=item).metric))
+                userRuntimeDetectScore.append(item.runtime)
+                userMapOverTimeDetectScore.append('{:0.5e}'.format(item.map_over_time))
+                userMapOfProcessedDetectScore.append('{:0.5e}'.format(item.map_of_processed))
+                userFeedbackDetect_message.append(item.message)
+                userMetricDetectScore.append('{:0.5e}'.format(item.metric))
 
             except:
                 userRuntimeDetectScore.append("Not Provided")
