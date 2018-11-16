@@ -680,6 +680,13 @@ def score_board(request):
         {'zipRank': zipRank,
         'zipScore': zipScore,})
 
+# Generates ordinals numbers used for ranking
+def ordinals():
+    i = 1
+    while True:
+        yield str(i) + ("th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th")[i%10]
+        i += 1
+
 # Score board for track 1 round 2 (Nov 1 - 15, 2018)
 def score_board_r2(request):
     user = request.user
@@ -836,7 +843,6 @@ def score_board_r2(request):
             metricList_detect.append("Not Available")
 
     # collect all metadata to be transmitted to front-end
-    RankList = ["1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th","13th","14th","15th","16th","17th","18th","19th","20th"]
     zipScore = zip(
         userSubmittedTime, 
         userRuntimeScore,
@@ -849,9 +855,9 @@ def score_board_r2(request):
         userBucket,
         userFeedback_message
         )
-    zipRank = zip(
+    allRank = zip(
         filenameList, 
-        RankList, 
+        ordinals(), 
         runtimeList,
         acc_clfList,
         accList, 
@@ -861,6 +867,8 @@ def score_board_r2(request):
         ref_accList,
         bucketList
         )
+    zipRank = filter(lambda score: score[9] == "[24.0, 36.0]", allRank)
+    zipRank2 = filter(lambda score: score[9] != "[24.0, 36.0]", allRank)
 
     zipScore_detect = zip(
         userSubmittedTimeDetect,
@@ -872,7 +880,7 @@ def score_board_r2(request):
     )
 
     zipRank_detect = zip(
-        RankList,
+        ordinals(),
         filenameList_detect,
         runtimeList_detect,
         map_over_timeList_detect,
@@ -882,6 +890,7 @@ def score_board_r2(request):
     # Score.objects.all().delete() #to clear score objects
     return render(request, 'app/score_board_r2.html',
         {'zipRank': zipRank,
+        'zipRank2': zipRank2,
         'zipScore': zipScore,
         'zipScore_detect': zipScore_detect,
         'zipRank_detect': zipRank_detect})
