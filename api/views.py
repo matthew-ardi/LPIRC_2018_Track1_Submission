@@ -468,19 +468,6 @@ def listFiles1(request):
     return render(request, 'api/action_fail.html')
 
 @login_required
-def listFiles2(request):
-    # checking for username
-    user = request.user
-    if user.username == 'jingchi':
-        submission_folder = BASE_DIR + track2_submissions_folder
-        files = [f for f in listdir(submission_folder) if isfile(join(submission_folder, f))]
-        response = HttpResponse(json.dumps(files), content_type ="application/json")
-        response.status_code = 200
-        return response
-
-    return render(request, 'api/action_fail.html')
-
-@login_required
 def getFile1(request, requested_file):
 
     # checking for username
@@ -500,22 +487,70 @@ def getFile1(request, requested_file):
 
     return render(request, 'api/action_fail.html')
 
+
+###### TRACK 2 ######
+
+@login_required
+def listFiles2(request):
+    # checking for username
+    user = request.user
+    if user.username == os.environ['ALLOWED_USER2']:
+        submission_folder = BASE_DIR + track2_submissions_folder
+        files = [f for f in listdir(submission_folder) if isfile(join(submission_folder, f))]
+        response = HttpResponse(json.dumps(files), content_type ="application/json")
+        response.status_code = 200
+        return response
+
+    #default permission denied 401 response
+    response = HttpResponse("")
+    response.status_code = 401
+    response['WWW-Authenticate'] = 'Basic realm="restricted area"'
+    return response
+
 @login_required
 def getFile2(request, requested_file):
 
     # checking for username
     user = request.user
-    if user.username == 'jingchi':
+    if user.username == os.environ['ALLOWED_USER2']:
         try:
             #grab requested file from in-memory, make response with correct MIME-type
             returnFile = BASE_DIR + track2_submissions_folder + requested_file
             response = HttpResponse(open(returnFile, 'rb').read(),\
                                                  content_type='application/tfile')
-            response['Content-Disposition'] = 'attachment; filename=requested_file'
-        except Exception:
+            response['Content-Disposition'] = 'attachment; filename='+requested_file
+        except Exception as e:
             response = HttpResponse("The file does not exist")
             response.status_code = 401
             response['WWW-Authenticate'] = 'Basic realm="restricted area"'
+            print(e)
         return response
 
-    return render(request, 'api/action_fail.html')
+    #default permission denied 401 response
+    response = HttpResponse("")
+    response.status_code = 401
+    response['WWW-Authenticate'] = 'Basic realm="restricted area"'
+    return response
+
+def fetchFiles2(request):
+    # checking for username
+    user = request.user
+    if user.username == os.environ['ALLOWED_USER2']:
+
+            #shutil is a native library
+            #compress the submissions_track1 files directory and save this compressed file as files.zip in the root directory
+            shutil.make_archive("files", 'zip', BASE_DIR + track2_submissions_folder)
+
+            #grab ZIP file from in-memory, make response with correct MIME-type
+            file_path = BASE_DIR + "/files.zip"
+            filename = "files.zip"
+            response = HttpResponse(open(file_path, 'rb').read(),\
+                                                     content_type='application/zip')
+            response['Content-Disposition'] = 'attachment; filename=fb.zip'
+            return response
+
+    #default permission denied 401 response
+    response = HttpResponse("")
+    response.status_code = 401
+    response['WWW-Authenticate'] = 'Basic realm="restricted area"'
+    return response
