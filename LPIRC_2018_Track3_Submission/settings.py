@@ -10,14 +10,20 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
-import os, sys, dj_database_url
+import os, sys, dj_database_url, logging
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR =  os.path.dirname(PROJECT_ROOT)
 
 # Environment Variables Import
-PRODUCTION = True
+try:
+    import local_settings
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+    logging.warning('running on local')
+    PRODUCTION = False
+except ModuleNotFoundError:
+    PRODUCTION = True
 
 try:
     REFEREE = os.environ['REFEREE']
