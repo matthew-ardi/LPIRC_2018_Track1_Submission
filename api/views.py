@@ -354,7 +354,7 @@ def postScore_r2(request):
                                 )
                             p.save()
                             files = Tfile1_r2.objects.create(
-                                user=User.object.get(username=orgName.split('-',1)[0])
+                                user=User.object.get(username=orgName.split('-',1)[0]),
                                 fn = orgName
                                 )
                             files.save()
@@ -418,7 +418,7 @@ def postScore_r2_detection(request):
                                 )
                             p.save()
                             files = Tfile1_r2.objects.create(
-                                user=User.object.get(username=orgName.split('-',1)[0])
+                                user=User.object.get(username=orgName.split('-',1)[0]),
                                 fn = orgName
                                 )
                             files.save()
