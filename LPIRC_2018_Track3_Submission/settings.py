@@ -18,11 +18,12 @@ BASE_DIR =  os.path.dirname(PROJECT_ROOT)
 
 # Environment Variables Import
 try:
+    # See if local settings can be found. If so, the server is running locally. If not, it is running on production.
     import local_settings
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
     logging.warning('running on local')
     PRODUCTION = False
-except ModuleNotFoundError:
+except ImportError:
     PRODUCTION = True
 
 try:
