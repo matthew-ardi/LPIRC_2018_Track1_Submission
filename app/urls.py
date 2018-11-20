@@ -32,19 +32,19 @@ urlpatterns = [
         'sponsors_list': sponsors,
         'organizers_list': organizers
     }), name='index'),
-    url(r'^index2/$', auth_views.login, {'template_name': 'app/index.html'}, name='index2'),
+    url(r'^index2/$', auth_views.LoginView, {'template_name': 'app/index.html'}, name='index2'),
     url(r'^register/$', app_views.register, name='register'),
     #url(r'^login/$', auth_views.login, {'template_name': 'app/login.html'}, name='login'),
     url(r'^redirect_login/$', app_views.redirect_login, name='redirect_login'),
-    url(r'^logout/$', auth_views.logout, {'next_page': '/'}),
+    url(r'^logout/$', auth_views.LogoutView, {'next_page': '/'}),
     url(r'^admin_email/$', app_views.admin_email, name='admin_email'),
 
     #reset password
-    url(r'^password_reset/$', auth_views.password_reset, name='password_reset'),
-    url(r'^password_reset_email_sent/$', auth_views.password_reset_done, name='password_reset_done'),
+    url(r'^password_reset/$', auth_views.PasswordResetForm, name='password_reset'),
+    url(r'^password_reset_email_sent/$', auth_views.SetPasswordForm, name='password_reset_done'),
     url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-        auth_views.password_reset_confirm, name='password_reset_confirm'),
-    url(r'^reset/done/$', auth_views.password_reset_complete, name='password_reset_complete'),
+        auth_views.PasswordChangeForm, name='password_reset_confirm'),
+    url(r'^reset/done/$', auth_views.PasswordChangeForm, name='password_reset_complete'),
 
     #social oAuth
     url(r'^oauth/', include('social_django.urls', namespace='social')),
