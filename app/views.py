@@ -855,7 +855,7 @@ def score_board_r2(request):
         userBucket,
         userFeedback_message
         )
-    allRank = zip(
+    allRank = list(zip(
         filenameList, 
         ordinals(), 
         runtimeList,
@@ -866,7 +866,7 @@ def score_board_r2(request):
         metricList,
         ref_accList,
         bucketList
-        )
+        ))
     zipRank = filter(lambda score: score[9] == "[24.0, 36.0]", allRank)
     zipRank2 = filter(lambda score: score[9] != "[24.0, 36.0]", allRank)
 
