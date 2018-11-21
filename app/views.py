@@ -24,6 +24,7 @@ import datetime
 import glob
 import re
 import logging
+from itertools import tee, filterfalse
 
 from django.core.mail import send_mail
 from api.models import Score, Score_r2, Score_r2_detection
@@ -680,6 +681,12 @@ def score_board(request):
         {'zipRank': zipRank,
         'zipScore': zipScore,})
 
+def partition(pred, iterable):
+    'Use a predicate to partition entries into false entries and true entries'
+    # partition(is_odd, range(10)) --> 0 2 4 6 8   and  1 3 5 7 9
+    t1, t2 = tee(iterable)
+    return filterfalse(pred, t1), filter(pred, t2)
+
 # Generates ordinals numbers used for ranking
 def ordinals():
     i = 1
@@ -849,9 +856,8 @@ def score_board_r2(request):
         userBucket,
         userFeedback_message
         )
-    allRank = list(zip(
+    allRank = zip(
         filenameList, 
-        ordinals(), 
         runtimeList,
         acc_clfList,
         accList, 
@@ -860,9 +866,12 @@ def score_board_r2(request):
         metricList,
         ref_accList,
         bucketList
-        ))
-    zipRank = filter(lambda score: score[9] == "[24.0, 36.0]", allRank)
-    zipRank2 = filter(lambda score: score[9] != "[24.0, 36.0]", allRank)
+        )
+    # Partition classification results by bucket
+    zipRankH, zipRankL = partition(lambda score: score[8] == "[24.0, 36.0]", allRank)
+    # Ordinals give a string representation of the rank for each submission
+    zipRankH = ((c,)+d for (c,d) in zip(ordinals(), zipRankH))
+    zipRankL = ((c,)+d for (c,d) in zip(ordinals(), zipRankL))
 
     zipScore_detect = zip(
         userSubmittedTimeDetect,
@@ -883,8 +892,8 @@ def score_board_r2(request):
     )
     # Score.objects.all().delete() #to clear score objects
     return render(request, 'app/score_board_r2.html',
-        {'zipRank': zipRank,
-        'zipRank2': zipRank2,
+        {'zipRankL': zipRankL,
+        'zipRankH': zipRankH,
         'zipScore': zipScore,
         'zipScore_detect': zipScore_detect,
         'zipRank_detect': zipRank_detect})
