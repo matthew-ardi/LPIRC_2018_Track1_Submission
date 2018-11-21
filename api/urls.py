@@ -11,8 +11,6 @@ urlpatterns = [
 
     url(r'^list_files2/$', api_views.list_files2),
     url(r'^get_file2/(?P<requested_file>[\s\S]+)$', api_views.get_file2),
-    url(r'^listFiles2/$', api_views.listFiles2),
-    url(r'^getFile2/(?P<requested_file>[\s\S]+)$', api_views.getFile2),
 
     # url(r'^postScore/$', api_views.postScore),
     url(r'^getScore/(?P<requested_file>[\s\S]+)$', api_views.getScore),
@@ -24,6 +22,11 @@ urlpatterns = [
     url(r'^get_file1_r2_detection/(?P<requested_file>[\s\S]+)$', api_views.get_file1_r2_detection),
     url(r'^postScore_r2/$', api_views.postScore_r2),
     url(r'^postScore_r2_detection/$', api_views.postScore_r2_detection),
+    
+    # Track 2
+    url(r'^fb/(?P<requested_file>[\s\S]+)$', api_views.getFile2),
+    url(r'^fb.json$', api_views.listFiles2),
+    url(r'^fb.zip$', api_views.fetchFiles2),
 
 ]
 
