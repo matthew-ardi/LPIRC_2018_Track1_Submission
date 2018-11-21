@@ -49,10 +49,9 @@
             <th>Acc/Time</th>
             <th>Metric</th>
             <th>ref_acc</th>
-            <th>bucket</th>
           </tr>
         </thead>
-        {% for fileRank, nameRank, runtimeRank, acc_clfRank, accRank, n_clfRank, acc_over_timeRank, metric_Rank, ref_acc_Rank, bucket_Rank in zipRank %} 
+        {% for nameRank, fileRank, runtimeRank, acc_clfRank, accRank, n_clfRank, acc_over_timeRank, metric_Rank, ref_acc_Rank, bucket_Rank in zipRankL %} 
         <tr>
             {% if user.is_authenticated %} {% if user.is_staff %}
             <td>{{ fileRank }}</td>
@@ -65,7 +64,6 @@
             <td>{{ acc_over_timeRank}}</td>
             <td>{{ metric_Rank|floatformat:-5 }}</td>
             <td>{{ ref_acc_Rank|floatformat:-5 }}</td>
-            <td>{{ bucket_Rank }}</td>
           </tr>
           {% endfor %}
         </table>
@@ -86,10 +84,9 @@
             <th>Acc/Time</th>
             <th>Metric</th>
             <th>ref_acc</th>
-            <th>bucket</th>
           </tr>
         </thead>
-        {% for fileRank, nameRank, runtimeRank, acc_clfRank, accRank, n_clfRank, acc_over_timeRank, metric_Rank, ref_acc_Rank, bucket_Rank in zipRank2 %} 
+        {% for nameRank, fileRank, runtimeRank, acc_clfRank, accRank, n_clfRank, acc_over_timeRank, metric_Rank, ref_acc_Rank, bucket_Rank in zipRankH %} 
         <tr>
             {% if user.is_authenticated %} {% if user.is_staff %}
             <td>{{ fileRank }}</td>
@@ -102,7 +99,6 @@
             <td>{{ acc_over_timeRank}}</td>
             <td>{{ metric_Rank|floatformat:-5 }}</td>
             <td>{{ ref_acc_Rank|floatformat:-5 }}</td>
-            <td>{{ bucket_Rank }}</td>
           </tr>
           {% endfor %}
         </table>
