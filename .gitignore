@@ -20,6 +20,7 @@ model_validation/
 upload/
 upload2/
 hash_to_originalfilename.json
+files.zip
 
 # submissions directory for round 2 (Nov 1 - 15, 2018)
 round2/
